@@ -1,0 +1,115 @@
+
+#myAge.age {
+	position:relative;
+	
+	width:580px;
+	margin-left:50px;
+	height:360px;
+	
+	svg {
+		width:580px;
+		height:350px;
+		.country {
+			path {
+				fill:none;
+				stroke-width:4;
+				&.family {
+					stroke:#951c55;
+				}
+				&.single {
+					stroke:#999;
+				}
+				&.bg {
+					stroke:#bdbdbd;
+				}
+			}
+			.labels {
+				.label {
+					circle {
+						stroke:#fff;
+						stroke-width:2;
+						&.bg {
+							fill-opacity:0;
+							stroke:none;
+						}
+					}
+					text {
+						@include fs-headline(1);
+						font-size:12px;
+						fill:#951c55;
+						display: none;
+						text-anchor:start;
+					}
+					&:hover:not(:last-child) {
+						text {
+							display: block;
+						}
+					}
+				}
+				&.family {
+					circle {
+						fill:#951c55;
+					}
+				}
+				&.single {
+					circle {
+						fill:#951c55;
+					}
+				}
+			}
+		}
+		.markers {
+			
+			.marker {
+				
+				circle {
+					stroke:#fff;
+					stroke-width:3;
+				}
+				&.family {
+					circle {
+						fill:#951c55;
+					}
+				}
+				&.single {
+					circle {
+						fill:#999;
+					}
+				}
+
+				text {
+					@include fs-header(1);	
+					fill:#951c55;
+				}
+			}
+		}
+	}
+	div.annotation {
+		position:absolute;
+		width:190px;
+		padding-top:40px;
+		@include fs-textSans(1);
+		font-size:12px;
+		border-left:1px solid #951c55;
+		p {
+			margin:0;
+			padding-left:5px;
+			b {
+				white-space: nowrap;
+			}
+		}
+		&.top {
+			margin-top:-105px;
+			margin-left:-190px;
+			text-align: right;
+			border-right:1px solid #951c55;
+			border-left:none;
+			padding-top:0px;
+			padding-bottom:40px;
+			p {
+				padding-left:0;
+				padding-right:5px;
+			}
+		}
+	}
+}

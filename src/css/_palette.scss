@@ -3,3 +3,38 @@
 @function colour($name) {
     @return map-get($pasteup-palette, $name);
 }
+
+$australia:#008751;
+$canada:#ff0000;
+$germany:#00A651;//#FFCC00;
+$italy:#18B9F8;
+$spain:#E60026;
+$france:#007FFF;
+$norway:#EF2B2D;
+$sweden:#005B99;
+$us:#00247D;
+$uk:#3C3B6E;
+
+
+$countries-list: australia, canada, germany, italy, spain, france, norway, sweden, us, uk;
+$colors-list: $australia, $canada, $germany, $italy, $spain, $france, $norway, $sweden, $us, $uk;
+@each $current-color in $colors-list {
+    $i: index($colors-list, $current-color);
+    .#{nth($countries-list, $i)} path,
+    .#{nth($countries-list, $i)} line.life {
+        //stop-color: $current-color;
+        stroke: $current-color;
+    }
+    .#{nth($countries-list, $i)} circle.life {
+        //stop-color: $current-color;
+        fill: $current-color;
+    }
+    /*.country.#{nth($countries-list, $i)}:hover {
+		.generation {
+			path {
+				stroke: $current-color !important;
+			}
+			
+		}
+	}*/
+}

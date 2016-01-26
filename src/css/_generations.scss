@@ -1,0 +1,38 @@
+#generations {
+	width:100%;
+	height:600px;
+	svg {
+		width:1000px;
+		height:400px;
+
+		.country {
+			.generation {
+				path {
+					fill:none;
+				}
+				line.life {
+					//stroke-opacity:0.4;
+					stroke-dasharray:1,2;
+					shape-rendering: crispEdges;
+				}
+				&:hover {
+					path,line {
+						stroke-width:2;
+					}
+					line.life{
+						stroke-dasharray:2,2;
+					}
+				}
+			}
+			&.unselected {
+				.generation {
+					path {
+						stroke:#ddd;
+					}
+				}
+			}
+		}
+
+	}
+
+}

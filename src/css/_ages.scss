@@ -1,0 +1,97 @@
+#ages {
+	width:900px;
+	min-height:10px;
+	overflow:hidden;
+	.row {
+		overflow:hidden;
+		margin-bottom:30px;
+		>div {
+			float:left;
+		}
+		.description {
+			width:200px;
+			padding-right:20px;
+			h2 {
+				margin:0;
+				color:#333;
+				font-size:16px;
+			}	
+			p {
+				font-size:14px;
+				line-height: 16px;
+			}
+		}
+		.ages {
+			width:calc(100% - 200px);
+			padding-top:20px;
+		}
+		
+		.age {
+			width:calc(100% / 8); // /14
+			float:left;
+			h4 {
+				font-size:11px;
+				margin:0;
+				color:#767676;
+			}
+			svg {
+				width:100%;
+				height:130px;
+				.country {
+					path {
+						fill:none;
+						stroke-width:2;
+						&.family {
+							stroke:#951c55;
+						}
+						&.single {
+							stroke:#999;
+						}
+					}
+					.labels {
+						.label {
+							circle {
+								stroke:#fff;
+								stroke-width:2;
+								&.bg {
+									fill-opacity:0;
+									stroke:none;
+									visibility: visible;
+								}
+							}
+							text {
+								@include fs-headline(1);
+								font-size:12px;
+								fill:#951c55;
+								display: none;
+								text-anchor:start;
+							}
+							&:hover {
+								circle {
+									visibility: visible;
+								}
+								text {
+									display: block;
+								}
+							}
+						}
+						&.family {
+							circle {
+								fill:#951c55;
+								visibility: hidden;
+							}
+						}
+						&.single {
+							circle {
+								fill:#951c55;
+								visibility: hidden;
+							}
+						}
+					}
+				}
+			}
+		}	
+	}
+	
+
+}

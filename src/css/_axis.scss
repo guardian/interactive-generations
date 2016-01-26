@@ -1,0 +1,90 @@
+.axes {
+	.axis {
+
+		&.hidden {
+			.tick {
+				text {
+					visibility: hidden;		
+				}
+			}
+			
+		}
+
+		path,line {
+			fill:none;
+			shape-rendering: crispEdges;
+			stroke:#bbb;
+		}
+		path {
+			//display: none;
+		}
+		
+		&.x,
+		&.y {
+			path {
+				display: none;
+			}
+		}
+
+		.tick {
+			line {
+				//display: none;
+			}
+			text {
+				//display: none;
+			}
+		}
+
+		&.y {
+			.tick {
+				line {
+					stroke:#ddd;
+					stroke-dasharray: 1,1;
+					//visibility: hidden;
+					&.visible {
+						visibility: visible;
+					}
+				}
+				text {
+					text-anchor:start !important;
+				}
+			}
+		}
+		&.x {
+			line {
+				stroke:#bbb;
+			}
+			line.zero {
+				stroke:#bbb;
+			}
+			.tick:first-child {
+				text {
+					text-anchor:start !important;
+				}
+			}
+			.tick:nth-last-child(2) {
+				text {
+					text-anchor:end !important;
+				}
+			}
+			.tick {
+				line {
+					display: none;
+				}
+			}
+		}
+
+		text {
+			fill: #bdbdbd;
+			@include fs-textSans(1);
+			font-size: 11px;
+			text-anchor:middle;
+		}
+		.tick.last-tick {
+			text {
+				text-anchor:start !important;
+			}
+		}
+		
+	}
+}

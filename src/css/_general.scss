@@ -2,26 +2,18 @@ body,
 figure.interactive {
     margin: 0;
     padding: 0;
-    background-color: #dcdcdc;
 }
 
 // Link styles don't exist on the app
-a {
-    &,
-    &:hover,
-    &:active {
-        color: #005689;
-    }
 
-    text-decoration: none;
-    &:hover {
-        text-decoration: underline;
-    }
-}
 
 .interactive-container {
     margin: 0 auto;
-    box-sizing: border-box;
+    
+    &,* {
+        box-sizing: border-box;
+    }
+
     background-color: white;
 
     padding: 10px;
@@ -34,28 +26,35 @@ a {
             max-width: map-get($mq-breakpoints, $bp);
         }
     }
-}
 
-.interactive-es6-headline {
-	@include fs-headline(5);
-}
+    a {
+        &,
+        &:hover,
+        &:active {
+            color: #005689;
+        }
 
-.test-msg {
-	color: #005689;
-	@include fs-textSans(3);
-}
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 
-.fonts {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	margin-top: 24px;
-	li {
-		margin-bottom: 6px;
-	}
+    .header {
+        overflow:hidden;
+        margin-bottom:30px;
+        >div{
+            float: left;
+        }
+        .country-text {
+            width:300px;
+            h2 {
+                color:#333;
+                p {
+                    @include fs-bodyCopy(1);
+                    color:#333;
+                }
+            }
+        }
+    }
 }
-
-.fonts__egyptian { @include fs-headline(3); }
-.fonts__text-egyptian { @include fs-bodyCopy(2); }
-.fonts__sans { @include f-headlineSans; }
-.fonts__text-sans { @include fs-textSans(4); }
