@@ -1,4 +1,4 @@
-import { nestDataByAgeGroup } from '../lib/utils';
+import { nestDataByAgeGroup,updateExtents } from '../lib/utils';
 import AgeChart from './AgeChart';
 
 export function Age(data,options) {
@@ -101,7 +101,7 @@ export function Ages(data,options) {
 					})
 
 }
-function updateExtents(data) {	
+/*function updateExtents(data) {	
 		
 	let extents={
 		years:d3.extent(data,d=>d.year),
@@ -111,7 +111,7 @@ function updateExtents(data) {
 	}
 
 	return extents;
-} 
+} */
 d3.selection.prototype.moveToFront = function() {
     return this.each(function(){
         this.parentNode.appendChild(this);

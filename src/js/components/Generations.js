@@ -1,4 +1,4 @@
-import { createPeople } from '../lib/utils';
+import { createPeople,updateExtents } from '../lib/utils';
 
 export default function Generations(data,options) {
 
@@ -161,7 +161,7 @@ export default function Generations(data,options) {
 		
 	}
 
-	function updateExtents() {	
+	/*function updateExtents() {	
 		
 		extents={
 			born:[1900,2015],
@@ -171,7 +171,7 @@ export default function Generations(data,options) {
 			age:d3.set(data.map(d=>d.Age)).values()
 		}
 
-	} 
+	} */
 }
 d3.selection.prototype.moveToFront = function() {
     return this.each(function(){

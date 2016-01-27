@@ -1,6 +1,6 @@
 import d3 from 'd3';
 
-const AGES=([
+export const AGES=([
     //"14 and Under",
     //"15 to 19 years",
     "20 to 24 years",
@@ -16,7 +16,7 @@ const AGES=([
     "70 to 74 years",
     "75 to 79 years",
     "80 years and over"
-]).reverse();
+]);
 
 const country_fix={
     "United Kingdom":"UK",
@@ -53,6 +53,18 @@ export function loadData(callback,options) {
 
 }
 
+export function updateExtents(data) {  
+        
+    let extents={
+        born:[1900,2015],
+        years:[1978,2013],///d3.extent(data,d=>d.year),
+        family:d3.extent(data.filter(d=>d.family>0),d=>d.family),
+        single:d3.extent(data.filter(d=>d.single>0),d=>d.single),
+        age:d3.set(data.map(d=>d.Age)).values()
+    }
+
+    return extents;
+}
 export function nestData(data) {
 
     let nested=d3.nest()
@@ -72,6 +84,17 @@ export function nestData(data) {
         .entries(data);
 
     return nested;
+}
+export function getAgeGroups(group_years) {
+    return AGES.map(d=>{
+        let year=+d.split(" ")[0];
+            year=(year - year%group_years);
+        return {
+            age:d,
+            age_short:year+" to "+(year+group_years)    
+        }
+        
+    });
 }
 export function nestDataByAgeGroup(data,years,ages,countries) {
     let group_years=years || 5;

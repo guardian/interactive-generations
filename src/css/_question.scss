@@ -1,0 +1,118 @@
+form {
+
+    width: 100%;
+    
+    
+    background:white;
+    border-radius: 10px;
+    overflow: hidden;
+
+    
+
+    @include mq(tablet) {
+        background: white;
+        height:78px;
+        border-radius: 100px;
+        border: 1px solid #bdbdbd;
+    }
+
+    button.confirm-btn {
+        @include fs-textSans(4);
+        font-size: 20px;
+        font-weight: 500;
+        float:right;
+        //-webkit-appearance:none;
+        
+        visibility: visible;
+        width: 100%;
+        margin:5px 0;
+        background-color: #005689;
+        height:50px;
+        span {
+            display: none;
+        }
+        @include mq(tablet) {
+            width: 200px;
+            height: 68px;
+            
+            margin:5px;
+            span {
+                display: inline;
+            }
+        }
+        padding:0;
+
+        &.disabled,
+        &.disabled:hover {
+            
+            background-color: #bdbdbd;
+            
+            cursor: default;
+        }
+
+    }
+    
+    
+    
+    
+
+    
+
+    select {
+
+        @include fs-textSans(1);
+        color:#bdbdbd;
+        font-size:20px;
+        
+
+        background: white;
+        margin:5px;
+        width: calc(100% - 10px);
+        height:50px;
+        line-height: 50px;
+        text-align:center;
+        padding: 0;
+        padding-left:30px;
+        
+        -webkit-box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);
+        box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);
+
+        @include mq(tablet) {
+            text-align:left;
+            background: white;
+            width: calc(100% - 220px);
+            line-height: 78px;
+            height:78px;
+            padding: 0 0 0 30px;
+            padding-left:30px;
+            margin: 0 0 0 3px;
+
+            -webkit-box-shadow: none;
+            box-shadow: none;    
+        }
+        //font-weight: 500;
+        outline: 0;
+        
+        
+        border:none;
+
+        
+        
+        
+        
+
+        transition: background-color 0.1s ease-out;
+        transition: color 0.1s ease-out;
+
+        -webkit-appearance:none;
+
+        option {
+            @include fs-headline(1);
+            font-size:20px;
+            text-align: center;
+            @include mq(tablet) {
+                text-align:left;
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-import { nestDataByCountry } from '../lib/utils';
+import { nestDataByCountry,updateExtents } from '../lib/utils';
 
 export function BubbleBuckets(data,options) {
 
@@ -47,13 +47,48 @@ export function BubbleBuckets(data,options) {
 								extents:extents,
 								margins:margins,
 								first:!i,
-								ages:options.ages
+								ages:options.ages,
+								mouseMoveCallback:(year,value)=>{
+									bubble_buckets.forEach(d=>{d.update(year,value)})
+								}
 							})
 						);
 					})
 
 	buckets.append("h3")
 				.html(d=>d.key)
+
+	this.updateAge=(age)=>{
+
+		options.filter.ages=[age];
+
+		nested_data=nestDataByCountry(data,options.group_years);
+	
+
+		if(options.filter) {
+			if(options.filter.ages) {
+				console.log(options.filter.ages)
+				nested_data=nested_data.map(d=>{
+
+					d.values=d.values.filter(v=>options.filter.ages.indexOf(v.key)>-1);
+
+					return d;
+				})		
+			}
+		}
+
+		console.log(nested_data)
+
+		buckets
+			.data(nested_data)
+				.select("div.chart")
+				.each(function(d,i){
+					console.log(i,d)
+					bubble_buckets[i].updateAge(d);
+				})
+
+		//bubble_buckets.forEach(d=>{d.updateAge(age)})
+	}
 
 	new Slider(data,{
 		container:options.container,
@@ -69,6 +104,8 @@ function BubbleBucket(data,options) {
 	let svg=d3.select(options.container)
 				.append("svg");
 
+	let CURRENT_YEAR=0;
+
 	let box=svg.node().getBoundingClientRect();
 	let WIDTH = options.width || box.width,
 		HEIGHT= options.height || box.height;
@@ -79,6 +116,24 @@ function BubbleBucket(data,options) {
 		bottom:10,
 		left:10
 	}
+
+	svg.on("mousemove",function(){
+		let x=d3.mouse(this)[0]-margins.left;
+		//console.log(x,this)
+		let year=Math.floor((x/(WIDTH-(margins.left+margins.right))) * (2013-1978))+1978;
+		//console.log(x,year)
+		if(year>=1978 && year<=2013) {
+			if(options.mouseMoveCallback) {
+				//console.log(data.values[0])
+				let value=data.values[0].values.find(d=>(year===+d.key));
+				if(value) {
+					value=value.values.family;
+					options.mouseMoveCallback(year,value);
+				}
+				
+			}	
+		}
+	})
 
 	//console.log(data.key,data.values)
 
@@ -110,49 +165,44 @@ function BubbleBucket(data,options) {
 						.attr("class","range")
 						.classed("highlight",d => options.ages.indexOf(d.key)>-1)
 						.attr("transform",d=>{
-							let x=0,//xscale(d.key),
+							let x=-margins.left,//xscale(d.key),
 								y=0;
 							return `translate(${x},${y})`;
 						})
-	/*range
-		.filter(d=>(d.extents[0] && d.extents[1]))
-		.append("line")
-			.attr("x1",0)
-			.attr("y1",d=>{
-				//console.log("!",d.extents[0],yscale(d.extents[0]))
-				return yscale(d.extents[0])
-			})
-			.attr("x2",0)
-			.attr("y2",d=>yscale(d.extents[1]))*/
 	range
 		.filter(d=>(d.extents[0] && d.extents[1]))
 		.append("rect")
 		.attr("x",0)
 		.attr("y",d=>{
-			return yscale(d.extents[1])
+			return yscale(d.extents[1])-2
 		})
 		.attr("width",WIDTH)
 		.attr("height",d=>{
-			return yscale(d.extents[0])-yscale(d.extents[1])
+			return yscale(d.extents[0])-yscale(d.extents[1])+4
 		})
 	range
 		.filter(d=>(d.extents[0] && d.extents[1]))
 		.append("line")
+			.attr("class","l1")
 			.attr("x1",0)
-			.attr("y1",d=>{
-				return yscale(d.extents[0])
-			})
+			.attr("y1",d=>yscale(d.extents[0])+2)
 			.attr("x2",WIDTH)
-			.attr("y2",d=>yscale(d.extents[0]))
+			.attr("y2",d=>yscale(d.extents[0])+2)
 	range
 		.filter(d=>(d.extents[0] && d.extents[1]))
 		.append("line")
+			.attr("class","l2")
 			.attr("x1",0)
-			.attr("y1",d=>{
-				return yscale(d.extents[1])
-			})
+			.attr("y1",d=>yscale(d.extents[1])-2)
 			.attr("x2",WIDTH)
-			.attr("y2",d=>yscale(d.extents[1]))
+			.attr("y2",d=>yscale(d.extents[1])-2)
+
+	let gauge=range.append("line")
+					.attr("class","gauge hidden")
+					.attr("x1",0)
+					.attr("x2",WIDTH)
+					.attr("y1",0)
+					.attr("y1",0)
 
 	let sparkline=bubbles.selectAll("g.sparkline")
 					.data(data.values)
@@ -161,7 +211,7 @@ function BubbleBucket(data,options) {
 						.attr("class","sparkline")
 						.classed("highlight",d => options.ages.indexOf(d.key)>-1)
 						.attr("transform",d=>{
-							let x=xscale(d.key)-sparkline_xscale.range()[1]/2,
+							let x=0,//xscale(d.key)-sparkline_xscale.range()[1]/2,
 								y=0;
 							return `translate(${x},${y})`;
 						})
@@ -193,8 +243,8 @@ function BubbleBucket(data,options) {
 						.attr("class","bubble")
 						.classed("highlight",d => options.ages.indexOf(d.key)>-1)
 						.attr("transform",d=>{
-							let x=sparkline_xscale(d.values[0].key),//xscale(d.key),
-								y=yscale(d.values[0].values["family"]);
+							let x=sparkline_xscale(d.values[d.values.length-1].key),//xscale(d.key),
+								y=yscale(d.values[d.values.length-1].values["family"]);
 							return `translate(${x},${y})`;
 						})
 						.style("opacity",d=>{
@@ -213,11 +263,12 @@ function BubbleBucket(data,options) {
 			.attr("y",0)
 			.text(d=>{
 				let values=data.values.map(v=>v.values);
-
-				let year=d3.min(values.map(v=>d3.min(v,y=>+y.key)))
+				//console.log("AAAAHHH",values[0][values[0].length-1].key)
+				//let year=d3.min(values.map(v=>d3.min(v,y=>+y.key)))
 				//console.log("!",year)
+				CURRENT_YEAR=+values[0][values[0].length-1].key;
 
-				return year;
+				return CURRENT_YEAR;
 			})
 
 	let yAxis = d3.svg.axis()
@@ -254,12 +305,95 @@ function BubbleBucket(data,options) {
 				.attr("y","-7")
 	
 
-	this.update=function(year) {
-		update(year);
+	this.updateAge = (data) => {
+		updateAge(data);
 	}
 
-	function update(year) {
-		console.log(data.key,year)
+	function updateAge(__data) {
+		
+		data=__data;
+
+		//console.log("---->",data)
+
+		bubble.data(data.values);
+		bubble
+			.transition()
+			.duration(500)
+			.delay(250)
+			.attr("transform",d=>{
+							//console.log(CURRENT_YEAR)
+							//console.log(d.values,d.values.find(d=>{console.log(+d.key,CURRENT_YEAR);return +d.key===CURRENT_YEAR}))
+							let x=sparkline_xscale(CURRENT_YEAR),//xscale(d.key),
+								y=yscale(d.values.find(d=>{return +d.key===CURRENT_YEAR}).values["family"]);
+							return `translate(${x},${y})`;
+						})
+
+		sparkline.data(data.values);
+		sparkline
+			.transition()
+			.duration(500)
+			.delay(250)
+			/*.attr("transform",d=>{
+						let x=0,//xscale(d.key)-sparkline_xscale.range()[1]/2,
+							y=0;
+						//console.log(d.key,xscale.domain(),xscale(d.key),`translate(${x},${y})`)
+						return `translate(${x},${y})`;
+					})*/
+					.select("path")
+					.attr("d",d=>{
+						return line(d.values.map(v=>{
+							return {
+								x:+v.key,
+								y:v.values.family
+							}
+						}))
+					})
+
+		range
+			.data(data.values)
+			.datum(d => {
+				d.extents=d3.extent(d.values.filter(v=>v.values.family>0),v=>v.values.family)
+				//console.log(d)
+				return d;
+			})
+
+		range
+			.filter(d=>(d.extents[0] && d.extents[1]))
+			.select("rect")
+				.transition()
+				.duration(500)
+				.delay(250)
+					.attr("y",d=>{
+						return yscale(d.extents[1])-2
+					})
+					.attr("height",d=>{
+						return yscale(d.extents[0])-yscale(d.extents[1])+4
+					})
+		range
+			.filter(d=>(d.extents[0] && d.extents[1]))
+			.select("line.l1")
+				.transition()
+				.duration(500)
+				.delay(250)
+					.attr("y1",d=>yscale(d.extents[0])+2)
+					.attr("y2",d=>yscale(d.extents[0])+2)
+		range
+			.filter(d=>(d.extents[0] && d.extents[1]))
+			.select("line.l2")
+				.transition()
+				.duration(500)
+				.delay(250)
+					.attr("y1",d=>yscale(d.extents[1])-2)
+					.attr("y2",d=>yscale(d.extents[1])-2)
+
+	}
+
+	this.update = (year,value) => {
+		update(year,value);
+	}
+
+	function update(year,value) {
+		//console.log(data.key,year)
 		
 		bucket_year.select("text").text((d)=>{
 			//console.log(d)
@@ -270,7 +404,8 @@ function BubbleBucket(data,options) {
 			if(!years.length) {
 				years=[values[0][0]];
 			}
-			return years[years.length-1].key;//year;
+			CURRENT_YEAR=+years[years.length-1].key;
+			return CURRENT_YEAR;
 		});
 		/*sparkline
 			.select("path")
@@ -291,10 +426,34 @@ function BubbleBucket(data,options) {
 						y=0;
 					return `translate(${x},${y})`;
 				})*/
+		//console.log(value)
+		gauge
+			.classed("hidden",false)
+			.transition()
+			.duration(50)
+			.attr("y1",yscale(value)).attr("y2",yscale(value))
 
 		bubble
+			.classed("higher",d=>{
+				let __value=d.values.filter(v=>{return +v.key<=year});
+
+				if(!__value.length) {
+					__value=[d.values[0]];
+				}
+
+				return value<__value[__value.length-1].values["family"];
+			})
+			.classed("lower",d=>{
+				let __value=d.values.filter(v=>{return +v.key<=year});
+
+				if(!__value.length) {
+					__value=[d.values[0]];
+				}
+
+				return value>__value[__value.length-1].values["family"];
+			})
 			.transition()
-			.duration(100)
+			.duration(50)
 			.attr("transform",d=>{
 				
 
@@ -392,14 +551,4 @@ function Slider(data,options){
 
     handle.call(drag);
 }
-function updateExtents(data) {	
-		
-	let extents={
-		years:d3.extent(data,d=>d.year),
-		family:d3.extent(data.filter(d=>d.family>0),d=>d.family),
-		single:d3.extent(data.filter(d=>d.single>0),d=>d.single),
-		age:d3.set(data.map(d=>d.Age)).values()
-	}
-
-	return extents;
-} 
+ 

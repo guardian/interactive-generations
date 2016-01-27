@@ -1,15 +1,16 @@
 import mainHTML from './text/main.html!text'
-import { loadData } from './lib/utils';
+import { getAgeGroups,loadData } from './lib/utils';
 import Generations from './components/Generations';
 import {Ages,Age} from './components/Ages';
 import {BubbleBuckets} from './components/BubbleBuckets';
 import { requestAnimationFrame, cancelAnimationFrame } from './lib/request-animation-frame-shim';
+import AgeSelector from './components/AgeSelector';
 
 export function init(el, context, config, mediator) {
     
 
     let queries=window.location.search.replace("?","").split("&"),
-        selected_age=20,
+        selected_age=25,
         selected_country="UK";
     console.log(queries)
     
@@ -27,7 +28,7 @@ export function init(el, context, config, mediator) {
     })
 
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
-    document.querySelector(".country-text h2").innerHTML=selected_age+" to "+(selected_age+group_years)+" years old in "+selected_country;
+    //document.querySelector(".country-text h2").innerHTML=selected_age+" to "+(selected_age+group_years)+" years old in "+selected_country;
     
     let frameRequest = requestAnimationFrame(function checkInnerHTML(time) {
         //console.log(time)
@@ -35,6 +36,8 @@ export function init(el, context, config, mediator) {
         if(b && b.getBoundingClientRect().height) {
             cancelAnimationFrame(checkInnerHTML);
 
+            
+            
             
             loadData((data) => {
 
@@ -58,7 +61,8 @@ export function init(el, context, config, mediator) {
                     //console.log(d.age,d.Age)
                 });
                 
-                new BubbleBuckets(data,{
+                console.log(data)
+                let bubbleBuckets=new BubbleBuckets(data,{
                     container:"#buckets",
                     filter:{
                         ages:[selected_age+" to "+(selected_age+group_years)]
@@ -67,15 +71,24 @@ export function init(el, context, config, mediator) {
                     incomes:["family"],
                     group_years:group_years
                 })
-                return;
+
+                AgeSelector(getAgeGroups(group_years),{
+                    changeCallback:(age)=>{
+                        bubbleBuckets.updateAge(age)
+                    }
+                })
+            
+                
+                /*
                 new BubbleBuckets(data,{
                     container:"#buckets",
                     ages:[selected_age+" to "+(selected_age+group_years)],
                     incomes:["family"],
                     group_years:group_years
                 })
+                */
 
-                
+                /*
                 let myAge=new Age(data,{
                     container:"#myAge",
                     countries:[selected_country],
@@ -85,11 +98,12 @@ export function init(el, context, config, mediator) {
                     group_years:group_years
                 })
                 myAge.addAnnotations();
+                */
                 
                 new Ages(data,{
                     container:"#ages",
                     countries:["Australia","UK","Italy","US","UK","Spain","France","Germany","Canada","Norway","Sweden"],
-                    incomes:["family","single"],
+                    incomes:["family"],//,"single"],
                     selected:"Australia",
                     group_years:group_years
                 })

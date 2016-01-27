@@ -19,23 +19,41 @@
 					circle {
 						fill:#767676;
 						stroke:none;
+						stroke-width:2;
 					}
 					&.highlight {
 						circle {
-							fill:#a0091d;
+							fill:#00456e;
+						}
+						&.lower {
+							circle {
+								fill:#d61d00;
+							}
+						}
+						&.higher {
+							circle {
+								fill:#4a7801;
+							}
 						}
 					}
 				}
 
 				.range {
 					rect {
-						fill:#f6f6f6;
+						fill:#f8f8f8;
 
 					}
 					line {
 						shape-rendering: crispEdges;
 						stroke:#eee;
 						stroke-width:1;
+						&.gauge {
+							stroke:#7d7569;
+							stroke-dasharray:1,1;
+							&.hidden {
+								visibility: hidden;	
+							}
+						}
 					}
 				}
 				.sparkline {
