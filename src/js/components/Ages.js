@@ -1,9 +1,25 @@
-import { nestDataByAgeGroup,updateExtents } from '../lib/utils';
+import { nestDataByAgeGroup,updateExtents,nestDataByYear } from '../lib/utils';
 import AgeChart from './AgeChart';
 
 export function Age(data,options) {
 	let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
-	//console.log(nested_data)
+	console.log(nested_data)
+
+	let nested_data_year=nestDataByYear(data,null,options.countries);
+	console.log("nested_data_year",nested_data_year)
+
+	nested_data.forEach(a=>{
+		a.values.forEach(d=>{
+			let range=nested_data_year.find(y=>y.key===d.key);
+			d.range=range.values.map(v=>{
+						return {
+							year:v.key,
+							value:v.values.family
+						}
+					}
+				)	
+		})
+	})
 
 	let extents=updateExtents(data);
 
@@ -12,6 +28,7 @@ export function Age(data,options) {
 			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],family:c.values.family,single:c.values.single,year:+c.key}})
 		}]
 		,{
+		deviation:nested_data[0].values[0].range,
 		first:true,
 		age:options.ages[0],
 		container:options.container,
@@ -38,6 +55,25 @@ export function Ages(data,options) {
 
 	let nested_data=nestDataByAgeGroup(data,options.group_years);
 	console.log(nested_data)
+
+	let nested_data_year=nestDataByYear(data,null,options.countries);
+	console.log("nested_data_year",nested_data_year)
+
+	nested_data.forEach(a=>{
+		a.values.forEach(d=>{
+			let range=nested_data_year.find(y=>y.key===d.key);
+			if(range){
+				d.range=range.values.map(v=>{
+						return {
+							year:v.key,
+							value:v.values.family
+						}
+					}
+				)		
+			}
+			
+		})
+	})
 
 	let extents=updateExtents(data);
 
@@ -84,13 +120,14 @@ export function Ages(data,options) {
 					.each(function(d,i){
 						//console.log(d.key,d.country,d.values.filter(c=>c.key===d.country)[0].values)
 
-						
+						//console.log("!!!!!!!",d.values.filter(c=>c.key===d.country)[0])
 
 						new AgeChart([{
 								key:d.country,
 								values:d.values.filter(c=>c.key===d.country)[0].values.map(c=>{return{key:d.key,country:d.country,family:c.values.family,single:c.values.single,year:+c.key}})
 							}]
 							,{
+							deviation:d.values.filter(c=>c.key===d.country)[0].range,
 							first:!i,
 							age:d.key,
 							container:this,

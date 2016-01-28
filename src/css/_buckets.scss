@@ -7,6 +7,7 @@
 		float:left;
 		padding-left:5px;
 		padding-right:5px;
+		position:relative;
 		
 		div.chart {
 			border-bottom:1px solid #ddd;
@@ -23,21 +24,30 @@
 					}
 					&.highlight {
 						circle {
-							fill:#00456e;
+							fill:#005689;
 						}
 						&.lower {
 							circle {
-								fill:#d61d00;
+								fill:#800c0c;
 							}
 						}
 						&.higher {
 							circle {
-								fill:#4a7801;
+								fill:#a9af2b;
 							}
 						}
 					}
 				}
-
+				.deviation {
+					path {
+						fill:#eee;
+						&.border {
+							fill:none;
+							stroke:#ddd;
+							stroke-width:1;
+						}
+					}
+				}
 				.range {
 					rect {
 						fill:#f8f8f8;
@@ -82,6 +92,36 @@
 			@include fs-textSans(1);
 			font-weight: normal;
 			color:#333;
+		}
+
+		div.annotation {
+			//display: none;
+			position:absolute;
+			width:190px;
+			padding-top:40px;
+			@include fs-textSans(1);
+			font-size:12px;
+			border-left:1px solid #951c55;
+			p {
+				margin:0;
+				padding-left:5px;
+				b {
+					white-space: nowrap;
+				}
+			}
+			&.top {
+				margin-top:-105px;
+				margin-left:-190px;
+				text-align: right;
+				border-right:1px solid #951c55;
+				border-left:none;
+				padding-top:0px;
+				padding-bottom:40px;
+				p {
+					padding-left:0;
+					padding-right:5px;
+				}
+			}
 		}
 
 	}

@@ -1,8 +1,7 @@
 export default function AgeChart(data,options) {
 	
-	console.log(data)
-
-	
+	//console.log(data)
+	//console.log(options.deviation)
 
 	let svg=d3.select(options.container)
 						.append("svg");
@@ -73,6 +72,10 @@ export default function AgeChart(data,options) {
 				    //.interpolate("cardinal")
 					//.tension(0)
 		
+		let deviation=svg.append("g")
+					.attr("class","deviation")
+					.attr("transform","translate("+(margins.left+padding.left)+","+margins.top+")")
+
 		let axes=svg.append("g")
 					.attr("class","axes")
 					.attr("transform","translate("+(margins.left+padding.left)+","+margins.top+")")
@@ -238,7 +241,26 @@ export default function AgeChart(data,options) {
 			      .attr("transform", "translate("+0+"," + yscale.range()[0] + ")")
 			      .call(xAxis);
 
-		
+		deviation.append("path")
+			.attr("d",()=>{
+				let points1=options.deviation.map(d=>({x:+d.year,y:d.value[0]})),
+					points2=options.deviation.map(d=>({x:+d.year,y:d.value[1]})).reverse();
+				
+				//console.log("POINTS",points1.concat(points2));
+
+				return line(points1.concat(points2));
+
+			})
+		deviation.append("path")
+				.attr("class","border")
+				.attr("d",()=>{
+					return line(options.deviation.map(d=>({x:+d.year,y:d.value[0]})));
+				})
+		deviation.append("path")
+				.attr("class","border")
+				.attr("d",()=>{
+					return line(options.deviation.map(d=>({x:+d.year,y:d.value[1]})));
+				})
 	}
 
 	function addMarkers() {

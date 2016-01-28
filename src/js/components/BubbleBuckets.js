@@ -1,13 +1,25 @@
-import { nestDataByCountry,updateExtents } from '../lib/utils';
+import { nestDataByCountry,updateExtents,nestDataByYear } from '../lib/utils';
 
 export function BubbleBuckets(data,options) {
 
 	let nested_data=nestDataByCountry(data,options.group_years);
-	
+	let nested_data_year=nestDataByYear(data);
+	//console.log(nested_data,nested_data_year)
+
+	nested_data.forEach(d=>{
+		let range=nested_data_year.find(y=>y.key===d.key);
+		d.range=range.values.map(v=>{
+					return {
+						year:v.key,
+						value:v.values.family
+					}
+				}
+			)
+	})
 
 	if(options.filter) {
 		if(options.filter.ages) {
-			console.log(options.filter.ages)
+			//console.log(options.filter.ages)
 			nested_data=nested_data.map(d=>{
 
 				d.values=d.values.filter(v=>options.filter.ages.indexOf(v.key)>-1);
@@ -38,6 +50,29 @@ export function BubbleBuckets(data,options) {
 			left:10,
 			right:10
 		};
+	/*
+	let annotations=buckets
+		.filter(d=>{
+			//console.log(d.key,d.values[0].key)
+			d.annotations=options.annotations.filter(a=>{
+				return a.country===d.key && a.age===d.values[0].key
+			}).map(a=>{
+				a.value=data.find(v=>(v.age===a.age && v.Country===a.country));
+				return a;
+			})
+			//d.annotations=annotations;
+			//console.log(annotations)
+			return d.annotations.length>0;
+		})
+		.selectAll("div.annotation")
+		.data(d=>d.annotations)
+		.enter()
+			.append("div")
+				.attr("class","annotation top")
+				.html(d=>{
+					return "<p>"+d.text+"</p>";
+				})*/
+
 	let bucket=buckets.append("div")
 					.attr("class","chart")
 					.each(function(d,i){
@@ -50,13 +85,17 @@ export function BubbleBuckets(data,options) {
 								ages:options.ages,
 								mouseMoveCallback:(year,value)=>{
 									bubble_buckets.forEach(d=>{d.update(year,value)})
-								}
+								}//,
+								//annotations:annotations.filter(a=>a.country===d.key)
 							})
 						);
 					})
 
 	buckets.append("h3")
 				.html(d=>d.key)
+
+	
+
 
 	this.updateAge=(age)=>{
 
@@ -101,6 +140,8 @@ export function BubbleBuckets(data,options) {
 }
 function BubbleBucket(data,options) {
 
+	//console.log("bubblebucket",data)
+
 	let svg=d3.select(options.container)
 				.append("svg");
 
@@ -141,6 +182,10 @@ function BubbleBucket(data,options) {
 		sparkline_xscale=d3.scale.linear().domain(options.extents.years).range([0,(WIDTH-(margins.left+margins.right))/1]),
 		yscale=d3.scale.linear().domain([0,options.extents.family[1]]).range([HEIGHT-(margins.top+margins.bottom),0]);
 
+	let deviation=svg.append("g")
+					.attr("class","deviation")
+					.attr("transform","translate("+(margins.left)+","+margins.top+")")
+
 	let axes=svg.append("g")
 					.attr("class","axes")
 					.attr("transform","translate("+(margins.left)+","+margins.top+")")
@@ -169,6 +214,7 @@ function BubbleBucket(data,options) {
 								y=0;
 							return `translate(${x},${y})`;
 						})
+	/*
 	range
 		.filter(d=>(d.extents[0] && d.extents[1]))
 		.append("rect")
@@ -195,7 +241,7 @@ function BubbleBucket(data,options) {
 			.attr("x1",0)
 			.attr("y1",d=>yscale(d.extents[1])-2)
 			.attr("x2",WIDTH)
-			.attr("y2",d=>yscale(d.extents[1])-2)
+			.attr("y2",d=>yscale(d.extents[1])-2)*/
 
 	let gauge=range.append("line")
 					.attr("class","gauge hidden")
@@ -271,6 +317,28 @@ function BubbleBucket(data,options) {
 				return CURRENT_YEAR;
 			})
 
+	deviation.append("path")
+			.attr("d",()=>{
+
+				let points1=data.range.map(d=>({x:+d.year,y:d.value[0]})),
+					points2=data.range.map(d=>({x:+d.year,y:d.value[1]})).reverse();
+				
+				//console.log("POINTS",points);
+
+				return line(points1.concat(points2));
+
+			})
+	deviation.append("path")
+			.attr("class","border")
+			.attr("d",()=>{
+				return line(data.range.map(d=>({x:+d.year,y:d.value[0]})));
+			})
+	deviation.append("path")
+			.attr("class","border")
+			.attr("d",()=>{
+				return line(data.range.map(d=>({x:+d.year,y:d.value[1]})));
+			})
+
 	let yAxis = d3.svg.axis()
 			    .scale(yscale)
 			    .orient("left")
@@ -304,6 +372,16 @@ function BubbleBucket(data,options) {
 				.attr("x",0)
 				.attr("y","-7")
 	
+	/*options.annotations
+		.style("left",d=>{
+			console.log("annotations",d);
+			return (sparkline_xscale(d.year)+margins.left+5)+"px"
+		})
+		.style("top",d=>{
+			console.log("annotations",d);
+			return (yscale(d.value.family)-margins.top)+"px"
+		})*/
+
 
 	this.updateAge = (data) => {
 		updateAge(data);

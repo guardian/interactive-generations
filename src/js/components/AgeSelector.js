@@ -27,6 +27,11 @@ export default function AgeSelector(data,options) {
 								d3.select(this).attr("selected","selected")
 							}
 						})
+	countries
+		.filter(d=>{
+			return (d.age_short===options.age)?"selected":"";
+		})
+		.attr("selected","selected")
 	/*
 	this.data.map((d)=>d.country).sort((a,b)=>{
 		if(a < b) return -1;

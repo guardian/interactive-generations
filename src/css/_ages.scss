@@ -89,6 +89,16 @@
 						}
 					}
 				}
+				.deviation {
+					path {
+						fill:#eee;
+						&.border {
+							fill:none;
+							stroke:#ddd;
+							stroke-width:1;
+						}
+					}
+				}
 			}
 		}	
 	}

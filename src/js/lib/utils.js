@@ -129,6 +129,35 @@ export function nestDataByAgeGroup(data,years,ages,countries) {
 
     return nested;
 }
+export function nestDataByYear(data,ages,countries) {
+    let nested=d3.nest()
+        .key(d => d.Country)
+        .key(d => d.year)
+        .rollup(leaves => {
+            return {
+                family:d3.extent(leaves,d=>d.family),
+                single:d3.extent(leaves,d=>d.single)
+            }
+        })
+        .entries(
+            data
+            .filter(d=>d.family>0)
+            .filter(d=>{
+                if(!countries) {
+                    return 1;
+                }
+                return countries.indexOf(d.Country)>-1;
+            })
+            .filter(d=>{
+                if(!ages) {
+                    return 1;
+                }
+                return ages.indexOf(d.age)>-1;
+            })
+        );
+
+    return nested;
+}
 export function nestDataByCountry(data,years,ages,countries) {
     let group_years=years || 5;
     let nested=d3.nest()

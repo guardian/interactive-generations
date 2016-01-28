@@ -83,6 +83,16 @@
 				}
 			}
 		}
+		.deviation {
+			path {
+				fill:#eee;
+				&.border {
+					fill:none;
+					stroke:#ddd;
+					stroke-width:1;
+				}
+			}
+		}
 	}
 	div.annotation {
 		position:absolute;
