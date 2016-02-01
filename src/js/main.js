@@ -1,10 +1,11 @@
 import mainHTML from './text/main.html!text'
-import { getAgeGroups,loadData } from './lib/utils';
+import { getAgeGroups,loadData,AGES,COUNTRIES,age_fix } from './lib/utils';
 import Generations from './components/Generations';
 import {Ages,Age} from './components/Ages';
 import {BubbleBuckets} from './components/BubbleBuckets';
 import { requestAnimationFrame, cancelAnimationFrame } from './lib/request-animation-frame-shim';
 import AgeSelector from './components/AgeSelector';
+import InlineSelector from './components/InlineSelector';
 //import annotations from '../assets/data/annotations.json!json';
 
 export function init(el, context, config, mediator) {
@@ -28,9 +29,14 @@ export function init(el, context, config, mediator) {
       }  
     })
 
+    let status={
+        age:"25 to 29 years",
+        country:"UK"
+    }
+
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
-    document.querySelector(".country-text h2").innerHTML=selected_age+" to "+(selected_age+group_years)+" years old in "+selected_country;
-    
+    //document.querySelector(".country-text h2").innerHTML=selected_age+" to "+(selected_age+group_years)+" years old in "+selected_country;
+
     let frameRequest = requestAnimationFrame(function checkInnerHTML(time) {
         //console.log(time)
         var b=document.querySelector("#ages");
@@ -56,13 +62,19 @@ export function init(el, context, config, mediator) {
 
                 
                 data.forEach(d=>{
+                    /*
                     let year=+d.Age.split(" ")[0];
                     year=(year - year%group_years);
                     d.age= year+" to "+(year+group_years);
-                    //console.log(d.age,d.Age)
+                    */
+
+                    d.age=d.Age;//(age_fix[d.Age] || d.Age).replace(/years/gi,""); 
+        
+
                 });
                 
                 console.log("--->",data)
+                /*
                 let bubbleBuckets=new BubbleBuckets(data,{
                     container:"#buckets",
                     filter:{
@@ -80,7 +92,7 @@ export function init(el, context, config, mediator) {
                         bubbleBuckets.updateAge(age)
                     }
                 })
-                
+                */
                 
                 
                 /*
@@ -92,21 +104,38 @@ export function init(el, context, config, mediator) {
                 })
                 */
 
+                new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
+                    container:"#myAgeGroup",
+                    selected:status.age,
+                    changeCallback:(age)=>{
+                        status.age=age;
+                        myAge.update(status);
+                    }
+                })
+
+                new InlineSelector(COUNTRIES.map(d=>({name:d,shortname:d})),{
+                    container:"#myCountry",
+                    selected:status.country,
+                    changeCallback:(country)=>{
+                        status.country=country;
+                        myAge.update(status);
+                    }
+                })
             
                 let myAge=new Age(data,{
                     container:"#myAge",
-                    countries:[selected_country],
-                    ages:[selected_age+" to "+(selected_age+group_years)],
+                    countries:[status.country],
+                    ages:[status.age],
                     incomes:["family"],
                     markers:true,
                     group_years:group_years
                 })
-                myAge.addAnnotations();
+                //myAge.addAnnotations();
                 
-                
+                return;
                 new Ages(data,{
                     container:"#ages",
-                    countries:["Australia","UK","Italy","US","UK","Spain","France","Germany","Canada","Norway","Sweden"],
+                    countries:COUNTRIES,
                     incomes:["family"],//,"single"],
                     selected:"Australia",
                     group_years:10

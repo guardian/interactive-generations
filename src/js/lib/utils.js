@@ -22,7 +22,10 @@ const country_fix={
     "United Kingdom":"UK",
     "United States":"US"
 }
-const age_fix={
+
+export const COUNTRIES=["Australia","UK","Italy","US","Spain","France","Germany","Canada","Norway","Sweden"];
+
+export const age_fix={
     "80 years and over":"&ge;80 years",
     "14 and Under":"&le;14 years"
 }
@@ -69,7 +72,8 @@ export function nestData(data) {
 
     let nested=d3.nest()
         .key(d => d.Country)
-        .key(d => (age_fix[d.Age] || d.Age))
+        //.key(d => (age_fix[d.Age] || d.Age))
+        .key(d => d.Age)
         .rollup(leaves => {
             return leaves.map(d=>{
                 //console.log(d)
@@ -86,6 +90,11 @@ export function nestData(data) {
     return nested;
 }
 export function getAgeGroups(group_years) {
+    return AGES.map(d=>({
+        age:d,
+        age_short:d
+    }))
+    /*
     return AGES.map(d=>{
         let year=+d.split(" ")[0];
             year=(year - year%group_years);
@@ -94,16 +103,24 @@ export function getAgeGroups(group_years) {
             age_short:year+" to "+(year+group_years)    
         }
         
-    });
+    });*/
 }
 export function nestDataByAgeGroup(data,years,ages,countries) {
     let group_years=years || 5;
+
+    console.log("!!!!!!",years,ages,countries)
+
     let nested=d3.nest()
-        .key(d => {
+        /*.key(d => {
             let year=+d.Age.split(" ")[0];
             year=(year - year%group_years);
             return year+" to "+(year+group_years);
-        })//(age_fix[d.Age] || d.Age).replace(/years/gi,""))
+        })*/ //(age_fix[d.Age] || d.Age).replace(/years/gi,""))
+        /*.key(d => {
+            console.log(d,d.Age,age_fix)
+            return (age_fix[d.Age] || d.Age).replace(/years/gi,""); 
+        })*/
+        .key(d => d.Age)
         .key(d => d.Country)
         .key(d => d.year)
         .rollup(leaves => {
@@ -120,6 +137,7 @@ export function nestDataByAgeGroup(data,years,ages,countries) {
                 return countries.indexOf(d.Country)>-1;
             })
             .filter(d=>{
+                //console.log(d,ages)
                 if(!ages) {
                     return 1;
                 }
@@ -149,9 +167,11 @@ export function nestDataByYear(data,ages,countries) {
                 return countries.indexOf(d.Country)>-1;
             })
             .filter(d=>{
+                //console.log(ages,d)
                 if(!ages) {
                     return 1;
                 }
+                
                 return ages.indexOf(d.age)>-1;
             })
         );
@@ -162,11 +182,15 @@ export function nestDataByCountry(data,years,ages,countries) {
     let group_years=years || 5;
     let nested=d3.nest()
         .key(d => d.Country)
-        .key(d => {
+        /*.key(d => {
             let year=+d.Age.split(" ")[0];
             year=(year - year%group_years);
             return year+" to "+(year+group_years);
-        })//(age_fix[d.Age] || d.Age).replace(/years/gi,""))
+        })*/ 
+        /*.key(d=>{
+            return (age_fix[d.Age] || d.Age).replace(/years/gi,""); 
+        })*/
+        .key(d => d.Age)
         .key(d => d.year)
         .rollup(leaves => {
             return {

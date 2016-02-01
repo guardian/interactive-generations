@@ -2,6 +2,7 @@ import { nestDataByAgeGroup,updateExtents,nestDataByYear } from '../lib/utils';
 import AgeChart from './AgeChart';
 
 export function Age(data,options) {
+	//console.log(data,options)
 	let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
 	console.log(nested_data)
 
@@ -36,11 +37,11 @@ export function Age(data,options) {
 		countries:options.countries,
 		markers:options.markers,
 		incomes:options.incomes,
-		width:580,
+		//width:580,
 		height:350,
 		margins:{
-			top:20,
-			bottom:50,
+			top:74,
+			bottom:30,
 			left:10,
 			right:60
 		}
@@ -48,6 +49,45 @@ export function Age(data,options) {
 
 	this.addAnnotations=function(index,position) {
 		chart.addAnnotations(index,position);
+	}
+
+	function update() {
+		nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
+		console.log(nested_data)
+		
+		nested_data_year=nestDataByYear(data,null,options.countries);
+		console.log("nested_data_year",nested_data_year)
+
+		nested_data.forEach(a=>{
+			a.values.forEach(d=>{
+				let range=nested_data_year.find(y=>y.key===d.key);
+				d.range=range.values.map(v=>{
+							return {
+								year:v.key,
+								value:v.values.family
+							}
+						}
+					)	
+			})
+		})
+	}
+
+	this.update=function(status){
+		console.log(status)
+		options.ages=[status.age];
+		options.countries=[status.country];
+		update(status)
+		
+		console.log(nested_data)
+
+		chart.update([{
+			key:options.countries[0],
+			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],family:c.values.family,single:c.values.single,year:+c.key}})
+		}],{
+			deviation:nested_data[0].values[0].range,
+			age:options.ages[0],
+			countries:options.countries
+		});
 	}
 
 }

@@ -1,7 +1,7 @@
 <div class="interactive-container">
-    <div id="question">
+    <div id="question" style="display:none;">
         <h2>How old are you?</h2>
-        <form id="selectYourCountry">
+        <form id="selectYourCountry" class="question">
             <select id="countrySelector" required="true" tabindex="1">
                 <option>Select your age group &dtrif;</option>
             </select>
@@ -9,8 +9,8 @@
     </div>
 	<div id="buckets"></div>
     <div class="header">
-    	<div id="myCountry" class="country-text">
-    		<h2>Country name</h2>
+    	<div class="person-profile">
+    		<h2><span>I'm a </span><form class="fancy-selector"><select id="myAgeGroup"></select></form><span> old from </span><form class="fancy-selector"><select id="myCountry" class="fancy-selector"></select></form></h2>
     		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque fugiat voluptatum debitis neque, hic nisi facilis, odit nobis laborum? Doloremque iure culpa nisi nihil, dolores aperiam atque at eligendi animi.</p>
     	</div>
     	<div id="myAge" class="age"></div>	

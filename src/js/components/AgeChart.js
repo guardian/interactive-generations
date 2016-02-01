@@ -25,7 +25,8 @@ export default function AgeChart(data,options) {
 		right:0
 	};
 
-	let country;
+	let country,marker,deviation,axes,label;
+
 	let extents=options.extents;
 
 	let family_path,single_path;
@@ -33,7 +34,7 @@ export default function AgeChart(data,options) {
 	let xscale=d3.scale.linear().domain(extents.years).range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
 		yscale=d3.scale.linear().domain([0,extents.family[1]]).range([HEIGHT-(margins.top+margins.bottom),0]);
 
-	let marker;
+	
 
 	data.forEach(d=>{
 		d.markers={};
@@ -45,8 +46,11 @@ export default function AgeChart(data,options) {
 			}
 		})
 	})
-	
-	
+
+	let line = d3.svg.line()
+				    .x(function(d) { return xscale(d.x); })
+				    .y(function(d) { return yscale(d.y); })
+				    .defined(function(d) { return d.y; })
 
 	buildVisual();
 	if(options.markers) {
@@ -65,26 +69,21 @@ export default function AgeChart(data,options) {
 	function buildVisual() {
 		
 		
-		let line = d3.svg.line()
-				    .x(function(d) { return xscale(d.x); })
-				    .y(function(d) { return yscale(d.y); })
-				    .defined(function(d) { return d.y; })
-				    //.interpolate("cardinal")
-					//.tension(0)
 		
-		let deviation=svg.append("g")
+		
+		deviation=svg.append("g")
 					.attr("class","deviation")
 					.attr("transform","translate("+(margins.left+padding.left)+","+margins.top+")")
 
-		let axes=svg.append("g")
+		axes=svg.append("g")
 					.attr("class","axes")
 					.attr("transform","translate("+(margins.left+padding.left)+","+margins.top+")")
 
-		let country=svg.append("g")
+		country=svg.append("g")
 							.attr("class","countries")
 							.attr("transform","translate("+(margins.left+padding.left)+","+margins.top+")")
 							.selectAll("g.country")
-							.data(data.filter(d => options.countries.indexOf(d.key)>-1))
+							.data(data.filter(d => options.countries.indexOf(d.key)>-1),d=>d.year)
 							.enter()
 							.append("g")
 								.attr("class",d=>(d.key.toLowerCase()+" country"))
@@ -150,7 +149,7 @@ export default function AgeChart(data,options) {
 					
 		}
 
-		let label=country.append("g")
+		label=country.append("g")
 					.attr("class","labels")
 					.classed("family",true)
 					.classed("single",false)
@@ -203,7 +202,7 @@ export default function AgeChart(data,options) {
 		let yaxis=axes.append("g")
 			      .attr("class", "y axis")
 			      .classed("hidden",!options.first)
-			      .attr("transform", "translate("+(0)+"," + 0 + ")")
+			      .attr("transform", "translate("+(xscale.range()[1])+"," + 0 + ")")
 			      .call(yAxis);
 
 		yaxis.selectAll(".tick")
@@ -211,6 +210,7 @@ export default function AgeChart(data,options) {
 				.select("line")
 					//.classed("visible",true)
 					.attr("x2",(d,i) => {
+						return -WIDTH;
 						return xscale.range()[1]
 					})
 		yaxis.selectAll(".tick")
@@ -242,6 +242,7 @@ export default function AgeChart(data,options) {
 			      .call(xAxis);
 
 		deviation.append("path")
+			.attr("class","bg")
 			.attr("d",()=>{
 				let points1=options.deviation.map(d=>({x:+d.year,y:d.value[0]})),
 					points2=options.deviation.map(d=>({x:+d.year,y:d.value[1]})).reverse();
@@ -252,12 +253,12 @@ export default function AgeChart(data,options) {
 
 			})
 		deviation.append("path")
-				.attr("class","border")
+				.attr("class","border b1")
 				.attr("d",()=>{
 					return line(options.deviation.map(d=>({x:+d.year,y:d.value[0]})));
 				})
 		deviation.append("path")
-				.attr("class","border")
+				.attr("class","border b2")
 				.attr("d",()=>{
 					return line(options.deviation.map(d=>({x:+d.year,y:d.value[1]})));
 				})
@@ -300,6 +301,161 @@ export default function AgeChart(data,options) {
 				.attr("y",-30)
 				.text(d=>d.year)
 	}
+
+	function updateMarkers() {
+		let markers_data=[data[0].values[0]];
+		console.log(markers_data)
+
+		marker
+			.data(markers_data)
+						.attr("transform",d=>{
+							let x=xscale(d.year),
+								y=yscale(d.family);
+							return "translate("+x+","+y+")"
+						})
+
+		marker.select("text.income")
+				.text(d=>"$"+d3.format(",.0f")(d.family))
+
+		marker.select("text.year")
+				.text(d=>d.year)
+	}
+
+	this.update=function(__data,__options) {
+		console.log(__data,__options);
+
+		options.countries=__options.countries;
+		options.deviation=__options.deviation;
+
+		console.log("options.countries",options.countries)
+
+		data=__data;
+
+		data.forEach(d=>{
+			d.markers={};
+			d.values.forEach(v=>{
+				d.markers[v.year]={
+					family:v.family,
+					single:v.single,
+					year:v.year
+				}
+			})
+		})
+
+		console.log("data",data)
+
+		update();
+		
+	}
+	function update() {
+
+		country
+			.data(data.filter(d => options.countries.indexOf(d.key)>-1),d=>d.year)
+			.attr("class",d=>(d.key.toLowerCase()+" country"))
+			.attr("rel",d=>d.key)
+
+		
+		if(options.incomes.indexOf("family")>-1) {
+
+			country
+				.select("path.bg")
+				.attr("d",d => {
+						let values=d.values.map(v => {
+							return {
+								x:v.year,
+								y:v.family
+							}
+						});
+
+						return line(values)
+					}
+				)
+
+			country
+				.select("path.family")
+				.attr("d",d => {
+						let values=d.values.map(v => {
+							return {
+								x:v.year,
+								y:v.family
+							}
+						});
+
+						return line(values)
+					}
+				)
+			
+			label=label
+				.data(data[0].values)
+
+			let new_label=label
+							.enter()
+							.append("g")
+								.attr("class","label")
+								.attr("rel",d=>d.year+" "+d.family)
+								.each(d=>{
+									console.log("NEW ",d)
+								})
+								
+			new_label.append("circle")
+					.attr("class","bg")
+					.attr("cx",0)
+					.attr("cy",0)
+					.attr("r",18)
+			new_label.append("circle")
+					.attr("cx",0)
+					.attr("cy",0)
+					.attr("r",4)
+			new_label.append("text")
+					.attr("class","income")
+					.attr("x",0)
+					.attr("y",-10)
+			new_label.append("text")
+					.attr("class","year")
+					.attr("x",0)
+					.attr("y",-20)
+
+			label.exit().remove();
+					
+
+			label.attr("transform",d=>{
+							let x=xscale(d.year),
+								y=yscale(d.family)
+							return `translate(${x},${y})`
+						})
+			
+			label.select("text.income")
+					.text(d=>"$"+d3.format(",.0f")(d.family))
+			label.select("text.year")
+					.text(d=>d.year)
+
+			deviation.select("path.bg")
+				.attr("d",()=>{
+					let points1=options.deviation.map(d=>({x:+d.year,y:d.value[0]})),
+						points2=options.deviation.map(d=>({x:+d.year,y:d.value[1]})).reverse();
+					
+					//console.log("POINTS",points1.concat(points2));
+
+					return line(points1.concat(points2));
+
+				})
+			deviation.select("path.b1")
+					.attr("d",()=>{
+						return line(options.deviation.map(d=>({x:+d.year,y:d.value[0]})));
+					})
+			deviation.select("path.b2")
+					.attr("d",()=>{
+						return line(options.deviation.map(d=>({x:+d.year,y:d.value[1]})));
+					})
+
+			if(options.markers) {
+				updateMarkers();
+				transition();
+			}
+			
+		}
+	}
+
 	this.addAnnotations=function() {
 		//console.log("!!!!!!!",data[0].values.length-2)
 		addAnnotations(1,"bottom");

@@ -43,17 +43,32 @@ figure.interactive {
     .header {
         overflow:hidden;
         margin-bottom:30px;
+
         >div{
             float: left;
         }
-        .country-text {
-            width:300px;
+        .person-profile {
+            position: absolute;
+            width:500px;
+            z-index: 9999;
             h2 {
+                @include fs-header(5);
                 color:#333;
-                p {
-                    @include fs-bodyCopy(1);
-                    color:#333;
+                overflow:hidden;
+                line-height: 42px;
+                span,form {
+                    display: inline-block;
+                    float:left;
+                    height:36px;
+                    line-height:34px;
+                    margin-bottom:3px;
                 }
+            }
+            p {
+                @include fs-bodyCopy(1);
+                color:#333;
+                text-shadow: 0 0 3px #ffffff;
+                //background-color:#fff;
             }
         }
     }
