@@ -7,7 +7,10 @@ export default function AgeChart(data,options) {
 	let SMALL=false;
 
 	let svg=d3.select(options.container)
-						.append("svg");
+						.append("svg")
+	if(options.height) {
+		svg.attr("height",options.height)
+	}
 
 	let defs=svg.append("defs");
 
@@ -225,7 +228,8 @@ export default function AgeChart(data,options) {
 
 		let yaxis=axes.append("g")
 			      .attr("class", "y axis")
-			      .classed("hidden",!options.first)
+			      //.classed("hidden",!options.first)
+			      .classed("hidden",!options.axis.x)
 			      .attr("transform", "translate("+(xscale.range()[1])+"," + 0 + ")")
 			      .call(yAxis);
 
@@ -233,13 +237,16 @@ export default function AgeChart(data,options) {
 				//.filter((d,i) => d!==0)
 				.select("line")
 					//.classed("visible",true)
+					.attr("x1",(d,i)=>{
+						return padding.right
+					})
 					.attr("x2",(d,i) => {
 						return -WIDTH;
 						return xscale.range()[1]
 					})
 		yaxis.selectAll(".tick")
 				.select("text")
-					.attr("x",0)
+					.attr("x",padding.right)
 					.attr("y","-7")
 
 		let xAxis = d3.svg.axis()
@@ -264,7 +271,8 @@ export default function AgeChart(data,options) {
 
 		let xaxis=axes.append("g")
 			      .attr("class", "x axis")
-			      .classed("hidden",!options.first)
+			      //.classed("hidden",!options.first)
+			      .classed("hidden",!options.axis.x)
 			      .attr("transform", "translate("+0+"," + yscale.range()[0] + ")")
 			      .call(xAxis);
 
@@ -279,7 +287,7 @@ export default function AgeChart(data,options) {
 				return line(points1.concat(points2));
 
 			})
-			.style("fill","url(#patternStripe)");
+			//.style("fill","url(#patternStripe)");
 
 		deviation.append("path")
 				.attr("class","border b1")
@@ -490,7 +498,7 @@ export default function AgeChart(data,options) {
 	this.addAnnotations=function() {
 		//console.log("!!!!!!!",data[0].values.length-2)
 		addAnnotations(1,"bottom");
-        addAnnotations(data[0].values.length-3,"top");
+        addAnnotations(data[0].values.length-3,"bottom");
 	}
 	this.removeAnnotations=function() {
 		d3.select(options.container).selectAll("div.annotation").remove();

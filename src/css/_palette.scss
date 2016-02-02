@@ -38,6 +38,16 @@ $generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s;
             fill: $current-color;
         }
     }
+    .sparkline.#{nth($generation-list, $i)} {
+        path {
+            stroke: $current-color;
+        }
+    }
+    .bubble.#{nth($generation-list, $i)} {
+        circle {
+            fill: $current-color;
+        }
+    }
     form.fancy-selector.#{nth($generation-list, $i)} {
         border-bottom-color: $current-color;
         select {

@@ -1,6 +1,6 @@
 form.fancy-selector {
     
-    
+    display: inline-block;
     
     background:white;
     //border-radius: 10px;
@@ -22,6 +22,8 @@ form.fancy-selector {
     }
 
     select {
+        
+        width:100%;
 
         @include fs-header(5);
         color:#f37021;
@@ -69,15 +71,20 @@ form.fancy-selector {
         transition: background-color 0.1s ease-out;
         transition: color 0.1s ease-out;
 
-        -webkit-appearance:none;
+        -webkit-appearance: none;
+        -moz-appearance:    none;
+        appearance:         none;
 
         option {
           
-            text-align: center;
+            //text-align: center;
             @include mq(tablet) {
+                //@include fs-textSans(1);
+                font-weight: normal;
+                color:#333;
                 text-align:right;
-                display: inline-block;
-                width:auto;
+                //display: inline-block;
+                //width:auto;
             }
         }
     }

@@ -1,10 +1,10 @@
-import { nestDataByAgeGroup,updateExtents,nestDataByYear } from '../lib/utils';
+import { nestDataByAgeGroup,updateExtents,nestDataByYear,getShortAgeGroup,AGES } from '../lib/utils';
 import AgeChart from './AgeChart';
 
 export function Age(data,options) {
 	//console.log(data,options)
 	let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
-	console.log(nested_data)
+	console.log("NESTED_DATA",nested_data)
 
 	let nested_data_year=nestDataByYear(data,null,options.countries);
 	console.log("nested_data_year",nested_data_year)
@@ -38,13 +38,24 @@ export function Age(data,options) {
 		markers:options.markers,
 		incomes:options.incomes,
 		//width:580,
-		height:350,
+		height:450,
 		margins:{
-			top:74,
+			top:50,
 			bottom:30,
 			left:10,
-			right:60
-		}
+			right:10
+		},
+		padding:{
+			top:0,
+			bottom:0,
+			left:0,
+			right:40
+		},
+		axis:{
+			x:true,
+			y:true
+		},
+		pattern:true
 	})
 
 	this.addAnnotations=function(index,position) {
@@ -114,7 +125,6 @@ export function Ages(data,options) {
 					}
 				)		
 			}
-			
 		})
 	})
 
@@ -130,8 +140,12 @@ export function Ages(data,options) {
 			.attr("class","row")
 	let description=row.append("div")
 						.attr("class","description")
+
+
 	description.append("h2")
 			.html(d=>d)
+
+
 
 	description.append("p")
 			.html("Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur alias quaerat ad dolores cumque corporis sapiente maiores! Maxime quisquam fugiat facere optio, veritatis, fugit dicta.")
@@ -140,7 +154,7 @@ export function Ages(data,options) {
 						.attr("class","ages")
 	let age=ages.selectAll("div.age")
 				.data((c)=>{
-						return nested_data.map((d)=>{
+						return nested_data.sort((a,b)=>(AGES.indexOf(a.key)-AGES.indexOf(b.key))).map((d)=>{
 							//console.log(d)
 							return {
 								country:c,
@@ -155,9 +169,7 @@ export function Ages(data,options) {
 					.attr("class","age")
 					.style("width",d => "calc(100% / "+nested_data.length+")")
 					.attr("rel",d=>d.key);
-	age
-		.append("h4")
-			.html(d=>d.key)
+	
 
 	age
 					.each(function(d,i){
@@ -176,9 +188,27 @@ export function Ages(data,options) {
 							container:this,
 							extents:extents,
 							countries:[d.country],
-							incomes:options.incomes
+							incomes:options.incomes,
+							margins:{
+								top:2,
+								bottom:2,
+								left:5,
+								right:5
+							},
+							height:80,
+							axis:{
+								x:false,
+								y:false
+							},
+							pattern:false
 						})
 					})
+
+
+
+	age
+		.append("h4")
+			.html(d=>getShortAgeGroup(d.key))
 
 }
 /*function updateExtents(data) {	

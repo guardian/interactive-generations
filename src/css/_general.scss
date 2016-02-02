@@ -18,7 +18,7 @@ figure.interactive {
 
     padding: 10px;
     @include mq(mobileLandscape) {
-        padding: 20px;
+        padding: 0px;
     }
 
     @each $bp in (tablet, desktop, leftCol, wide) {
@@ -39,10 +39,53 @@ figure.interactive {
             text-decoration: underline;
         }
     }
+    
+    
+
+    .section {
+            
+        margin:10px 5rem 100px;
+
+        &.main-column {
+            margin-left:15rem;
+        }
+
+        &.top-border {
+            border-top:1px solid #ddd;
+        }
+
+        h2 {
+            @include fs-header(5);
+            color:#333;
+            overflow:hidden;
+            line-height: 42px;
+            margin-bottom: 0;
+            span,form {
+                display: inline-block;
+                float:left;
+                height:36px;
+                line-height:34px;
+                margin-bottom:3px;
+            }
+        }
+        h4 {
+            @include fs-header(3);
+            color:#333;
+            overflow:hidden;
+            margin-top:0;
+            margin-bottom:20px;
+        }
+
+        p {
+             @include fs-bodyCopy(1);
+                color:#333;
+        }
+
+    }
 
     .header {
         overflow:hidden;
-        margin-bottom:30px;
+        //margin-bottom:30px;
         position:relative;
 
         >div{
@@ -52,23 +95,10 @@ figure.interactive {
             position: absolute;
             width:100%;
             z-index: 9999;
+            top:30px;
             
-            h2 {
-                @include fs-header(5);
-                color:#333;
-                overflow:hidden;
-                line-height: 42px;
-                span,form {
-                    display: inline-block;
-                    float:left;
-                    height:36px;
-                    line-height:34px;
-                    margin-bottom:3px;
-                }
-            }
             p {
-                @include fs-bodyCopy(1);
-                color:#333;
+               
                 //text-shadow: 0 0 3px #fff;
                 width:500px;
                 background-color: rgba(255,255,255,0.5);

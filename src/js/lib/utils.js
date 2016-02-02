@@ -78,7 +78,7 @@ const country_fix={
 export const COUNTRIES=["Australia","UK","Italy","US","Spain","France","Germany","Canada","Norway","Sweden"];
 
 export const age_fix={
-    "80 years and over":"&ge;80 years",
+    "80 years and over":"80+",
     "14 and Under":"&le;14 years"
 }
 export function loadData(callback,options) {
@@ -141,6 +141,13 @@ export function nestData(data) {
 
     return nested;
 }
+export function getShortAgeGroup(age) {
+    if(age_fix[age]) {
+        return age_fix[age];
+    }
+    return age.replace(/(\d{2})\sto\s(\d{2})\syears/gi,"$1-$2");
+
+}
 export function getAgeGroups(group_years) {
     return AGES.map(d=>({
         age:d,
@@ -176,11 +183,15 @@ export function nestDataByAgeGroup(data,years,ages,countries) {
         .key(d => d.Country)
         .key(d => d.year)
         .rollup(leaves => {
+            //console.log("!!!!!!!!!!!!!!!!!!!!!",leaves);
+            return leaves[0];
+        })
+        /*.rollup(leaves => {
             return {
                 family:d3.mean(leaves,d=>d.family),
                 single:d3.mean(leaves,d=>d.single)
             }
-        })
+        })*/
         .entries(
             data.filter(d=>{
                 if(!countries) {
@@ -195,6 +206,7 @@ export function nestDataByAgeGroup(data,years,ages,countries) {
                 }
                 return ages.indexOf(d.age)>-1;
             })
+            .sort((a,b)=>(a.year-b.year))
         );
 
     return nested;
@@ -226,6 +238,7 @@ export function nestDataByYear(data,ages,countries) {
                 
                 return ages.indexOf(d.age)>-1;
             })
+            .sort((a,b)=>(a.year-b.year))
         );
 
     return nested;
@@ -263,6 +276,7 @@ export function nestDataByCountry(data,years,ages,countries) {
                 }
                 return ages.indexOf(d.age)>-1;
             })
+            .sort((a,b)=>(a.year-b.year))
         );
 
     return nested;

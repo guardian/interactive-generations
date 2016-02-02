@@ -1,7 +1,7 @@
 #ages {
-	width:900px;
+	//width:100%;
 	min-height:10px;
-	overflow:hidden;
+	//overflow:hidden;
 	.row {
 		overflow:hidden;
 		margin-bottom:30px;
@@ -12,14 +12,11 @@
 			width:200px;
 			padding-right:20px;
 			h2 {
+				@include fs-header(3);
+                color:#333;
 				margin:0;
-				color:#333;
-				font-size:16px;
 			}	
-			p {
-				font-size:14px;
-				line-height: 16px;
-			}
+			
 		}
 		.ages {
 			width:calc(100% - 200px);
@@ -30,19 +27,21 @@
 			width:calc(100% / 8); // /14
 			float:left;
 			h4 {
-				font-size:11px;
+				@include fs-textSans(1);
+				font-weight: normal;
+                color:#b3b3b4;
 				margin:0;
-				color:#767676;
+				margin-bottom:15px;
 			}
 			svg {
 				width:100%;
-				height:130px;
+				//height:130px;
 				.country {
 					path {
 						fill:none;
 						stroke-width:2;
 						&.family {
-							stroke:#951c55;
+							//stroke:#951c55;
 						}
 						&.single {
 							stroke:#999;
@@ -62,7 +61,7 @@
 							text {
 								@include fs-headline(1);
 								font-size:12px;
-								fill:#951c55;
+								//fill:#951c55;
 								display: none;
 								text-anchor:start;
 							}
@@ -91,10 +90,10 @@
 				}
 				.deviation {
 					path {
-						fill:#eee;
+						fill:#f4f4f4;
 						&.border {
 							fill:none;
-							stroke:#ddd;
+							stroke:#dadada;
 							stroke-width:1;
 						}
 					}

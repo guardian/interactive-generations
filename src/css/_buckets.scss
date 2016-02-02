@@ -3,7 +3,7 @@
 	overflow:hidden;
 	div.bucket {
 		width:calc(100% / 10);
-		height:300px;
+		height:140px;
 		float:left;
 		padding-left:5px;
 		padding-right:5px;
@@ -11,39 +11,36 @@
 		
 		div.chart {
 			border-bottom:1px solid #ddd;
-			height: 80%;
+			height: calc(100% - 20px);
 			svg {
 				width:100%;
 				height: 100%;
 
 				.bubble {
 					circle {
-						fill:#767676;
-						stroke:none;
+						//fill:#767676;
+						stroke:#fff;
 						stroke-width:2;
 					}
-					&.highlight {
+					
+					&.lower {
 						circle {
-							fill:#005689;
-						}
-						&.lower {
-							circle {
-								fill:#800c0c;
-							}
-						}
-						&.higher {
-							circle {
-								fill:#a9af2b;
-							}
+							fill:#ff0055 !important;
 						}
 					}
+					&.higher {
+						circle {
+							fill:#99cc00 !important;
+						}
+					}
+					
 				}
 				.deviation {
 					path {
-						fill:#eee;
+						fill:#f4f4f4;
 						&.border {
 							fill:none;
-							stroke:#ddd;
+							stroke:#dadada;
 							stroke-width:1;
 						}
 					}
@@ -58,7 +55,7 @@
 						stroke:#eee;
 						stroke-width:1;
 						&.gauge {
-							stroke:#7d7569;
+							stroke:#333;
 							stroke-dasharray:1,1;
 							&.hidden {
 								visibility: hidden;	
@@ -71,7 +68,7 @@
 						fill:none;
 						stroke-width:2;
 						
-						stroke:#aaa;
+						//stroke:#aaa;
 						
 					}
 				}
@@ -79,9 +76,9 @@
 				.bucket-year {
 					text {
 						@include fs-textSans(1);
+						font-weight: normal;
 						text-anchor:middle;
-						font-size:20px;
-						fill:#ddd;
+						fill:#b3b3b4;
 					}
 				}
 			}
@@ -89,9 +86,10 @@
 		h3 {
 			width:100%;
 			text-align: center;
-			@include fs-textSans(1);
-			font-weight: normal;
-			color:#333;
+			@include fs-header(1);
+			font-size:14px;
+            color:#333;
+            margin:0;
 		}
 
 		div.annotation {
@@ -139,6 +137,7 @@ svg.slider {
 		height:20px;
 		background-color:#ddd;
 	}*/
+	display:none;
 	line {
 		shape-rendering: crispEdges;
 		stroke:#777;

@@ -66,18 +66,81 @@ export function init(el, context, config, mediator) {
                 });
                 
                 console.log("--->",data)
-                /*
+                
+                new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
+                    container:"#myAgeGroup",
+                    selected:status.age,
+                    changeCallback:(age)=>{
+
+                        //bubbleBuckets.updateAge(age);
+                        //return;
+
+                        status.age=age;
+                        myAge.update(status);
+                        d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+
+                        myAge.removeAnnotations();
+                        myAge.addAnnotations();
+
+
+                    }
+                })
+
+                new InlineSelector(COUNTRIES.map(d=>({name:d,shortname:d})),{
+                    container:"#myCountry",
+                    selected:status.country,
+                    changeCallback:(country)=>{
+                        status.country=country;
+                        myAge.update(status);
+                        //d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+                        myAge.removeAnnotations();
+                        myAge.addAnnotations();
+                    }
+                })
+
+                new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
+                    container:"#myAgeGroup2",
+                    selected:status.age,
+                    changeCallback:(age)=>{
+
+                        bubbleBuckets.updateAge(age);
+                        return;
+
+                        status.age=age;
+                        myAge.update(status);
+                        d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+
+                        myAge.removeAnnotations();
+                        myAge.addAnnotations();
+
+
+                    }
+                })
+
+                let myAge=new Age(data,{
+                    container:"#myAge",
+                    countries:[status.country],
+                    ages:[status.age],
+                    incomes:["family"],
+                    markers:true,
+                    group_years:group_years
+                })
+                myAge.addAnnotations();
+                
+                //return;
                 let bubbleBuckets=new BubbleBuckets(data,{
                     container:"#buckets",
                     filter:{
-                        ages:[selected_age+" to "+(selected_age+group_years)]
+                        ages:[status.age]
                     },
-                    ages:[selected_age+" to "+(selected_age+group_years)],
+                    ages:[status.age],
                     incomes:["family"],
                     group_years:group_years//,
                     //annotations:annotations
                 })
 
+                
+                /*
                 AgeSelector(getAgeGroups(group_years),{
                     age:selected_age+" to "+(selected_age+group_years),
                     changeCallback:(age)=>{
@@ -96,42 +159,11 @@ export function init(el, context, config, mediator) {
                 })
                 */
 
-                new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
-                    container:"#myAgeGroup",
-                    selected:status.age,
-                    changeCallback:(age)=>{
-                        status.age=age;
-                        myAge.update(status);
-                        d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
-
-                        myAge.removeAnnotations();
-                        myAge.addAnnotations();
-                    }
-                })
-
-                new InlineSelector(COUNTRIES.map(d=>({name:d,shortname:d})),{
-                    container:"#myCountry",
-                    selected:status.country,
-                    changeCallback:(country)=>{
-                        status.country=country;
-                        myAge.update(status);
-                        //d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
-                        myAge.removeAnnotations();
-                        myAge.addAnnotations();
-                    }
-                })
-            
-                let myAge=new Age(data,{
-                    container:"#myAge",
-                    countries:[status.country],
-                    ages:[status.age],
-                    incomes:["family"],
-                    markers:true,
-                    group_years:group_years
-                })
-                myAge.addAnnotations();
                 
-                return;
+                
+                
+                
+                
                 new Ages(data,{
                     container:"#ages",
                     countries:COUNTRIES,
