@@ -50,6 +50,9 @@ export function Age(data,options) {
 	this.addAnnotations=function(index,position) {
 		chart.addAnnotations(index,position);
 	}
+	this.removeAnnotations=function() {
+		chart.removeAnnotations();
+	}
 
 	function update() {
 		nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);

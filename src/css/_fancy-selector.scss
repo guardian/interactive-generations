@@ -3,7 +3,7 @@ form.fancy-selector {
     
     
     background:white;
-    border-radius: 10px;
+    //border-radius: 10px;
     overflow: visible;
     position: relative;
     //width:100px;
@@ -12,9 +12,10 @@ form.fancy-selector {
     @include mq(tablet) {
         
         //height:25px;
-        border-radius: 10px;
+        //border-radius: 10px;
         //border: 1px solid #bdbdbd;
-        background-color: #f0f0f0; 
+        background-color: #f7f7f7; 
+        border-bottom:1px solid #f37021;
 
         margin:0 5px;
         padding:0 10px;
@@ -23,8 +24,8 @@ form.fancy-selector {
     select {
 
         @include fs-header(5);
-        color:#000;
-        font-size:20px;
+        color:#f37021;
+        font-size:24px;
 
         //position: absolute;
 

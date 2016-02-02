@@ -1,5 +1,5 @@
 import mainHTML from './text/main.html!text'
-import { getAgeGroups,loadData,AGES,COUNTRIES,age_fix } from './lib/utils';
+import { getAgeGroups,loadData,AGES,COUNTRIES,age_fix,AGES_GENERATIONS,GENERATIONS } from './lib/utils';
 import Generations from './components/Generations';
 import {Ages,Age} from './components/Ages';
 import {BubbleBuckets} from './components/BubbleBuckets';
@@ -62,15 +62,7 @@ export function init(el, context, config, mediator) {
 
                 
                 data.forEach(d=>{
-                    /*
-                    let year=+d.Age.split(" ")[0];
-                    year=(year - year%group_years);
-                    d.age= year+" to "+(year+group_years);
-                    */
-
                     d.age=d.Age;//(age_fix[d.Age] || d.Age).replace(/years/gi,""); 
-        
-
                 });
                 
                 console.log("--->",data)
@@ -110,6 +102,10 @@ export function init(el, context, config, mediator) {
                     changeCallback:(age)=>{
                         status.age=age;
                         myAge.update(status);
+                        d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+
+                        myAge.removeAnnotations();
+                        myAge.addAnnotations();
                     }
                 })
 
@@ -119,6 +115,9 @@ export function init(el, context, config, mediator) {
                     changeCallback:(country)=>{
                         status.country=country;
                         myAge.update(status);
+                        //d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+                        myAge.removeAnnotations();
+                        myAge.addAnnotations();
                     }
                 })
             
@@ -130,7 +129,7 @@ export function init(el, context, config, mediator) {
                     markers:true,
                     group_years:group_years
                 })
-                //myAge.addAnnotations();
+                myAge.addAnnotations();
                 
                 return;
                 new Ages(data,{

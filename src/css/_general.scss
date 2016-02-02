@@ -43,14 +43,16 @@ figure.interactive {
     .header {
         overflow:hidden;
         margin-bottom:30px;
+        position:relative;
 
         >div{
             float: left;
         }
         .person-profile {
             position: absolute;
-            width:500px;
+            width:100%;
             z-index: 9999;
+            
             h2 {
                 @include fs-header(5);
                 color:#333;
@@ -67,8 +69,10 @@ figure.interactive {
             p {
                 @include fs-bodyCopy(1);
                 color:#333;
-                text-shadow: 0 0 3px #ffffff;
-                //background-color:#fff;
+                //text-shadow: 0 0 3px #fff;
+                width:500px;
+                background-color: rgba(255,255,255,0.5);
+                pointer-events:none;
             }
         }
     }

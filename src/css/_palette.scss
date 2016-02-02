@@ -15,6 +15,36 @@ $sweden:#005B99;
 $us:#00247D;
 $uk:#3C3B6E;
 
+$under-20s:#e31f26;
+$gen-y:#f37021;
+$gen-x:#fdb913;
+$baby-boomers:#fcdd03;
+$over-70s:#c5d4ea;
+
+$generation-list: under-20s, gen-y, gen-x, baby-boomers, over-70s;
+$generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s;
+@each $current-color in $generation-colors-list {
+    $i: index($generation-colors-list, $current-color);
+    .country.#{nth($generation-list, $i)} {
+        path {
+            stroke: $current-color;
+        }
+        circle {
+            fill: $current-color;
+        }
+    }
+    .marker.#{nth($generation-list, $i)} {
+        circle,text {
+            fill: $current-color;
+        }
+    }
+    form.fancy-selector.#{nth($generation-list, $i)} {
+        border-bottom-color: $current-color;
+        select {
+            color: $current-color;
+        }
+    }
+}
 
 $countries-list: australia, canada, germany, italy, spain, france, norway, sweden, us, uk;
 $colors-list: $australia, $canada, $germany, $italy, $spain, $france, $norway, $sweden, $us, $uk;
@@ -29,12 +59,4 @@ $colors-list: $australia, $canada, $germany, $italy, $spain, $france, $norway, $
         //stop-color: $current-color;
         fill: $current-color;
     }
-    /*.country.#{nth($countries-list, $i)}:hover {
-		.generation {
-			path {
-				stroke: $current-color !important;
-			}
-			
-		}
-	}*/
 }

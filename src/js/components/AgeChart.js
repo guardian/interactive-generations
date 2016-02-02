@@ -1,10 +1,34 @@
+import { AGES_GENERATIONS,GENERATIONS } from '../lib/utils';
 export default function AgeChart(data,options) {
 	
-	//console.log(data)
+	console.log("AgeChart",data)
 	//console.log(options.deviation)
+
+	let SMALL=false;
 
 	let svg=d3.select(options.container)
 						.append("svg");
+
+	let defs=svg.append("defs");
+
+	defs.append("pattern")
+			.attr({
+				id:"patternStripe",
+				width:5,
+				height:5,
+				patternUnits:"userSpaceOnUse",
+				patternTransform:"rotate(45)"
+			})
+			.append("rect")
+				.attr({
+					width:1, 
+					height:5,
+					transform:"translate(0,0)"
+				})
+				.style({
+					fill:"#000",
+					"fill-opacity":0.1
+				})
 
 	let box=svg.node().getBoundingClientRect();
 	let WIDTH = options.width || box.width,
@@ -86,7 +110,7 @@ export default function AgeChart(data,options) {
 							.data(data.filter(d => options.countries.indexOf(d.key)>-1),d=>d.year)
 							.enter()
 							.append("g")
-								.attr("class",d=>(d.key.toLowerCase()+" country"))
+								.attr("class",d=>(d.key.toLowerCase()+" country "+GENERATIONS[AGES_GENERATIONS[options.age]].short_name))
 								//.classed("unselected",d=>d.key!==options.selected)
 								.attr("rel",d=>d.key)
 		
@@ -180,7 +204,7 @@ export default function AgeChart(data,options) {
 		label.append("text")
 				.attr("class","year")
 				.attr("x",0)
-				.attr("y",-20)
+				.attr("y",-24)
 				.text(d=>d.year)
 		
 
@@ -223,12 +247,15 @@ export default function AgeChart(data,options) {
 				    .orient("bottom")
 				    //.ticks(2)
 				    .tickValues(()=>{
-						return extents.years;
+				    	if(SMALL) {
+				    		return extents.years;	
+				    	}
+						return xscale.ticks();
 					})
 				    .tickFormat((d)=>{
 				    	let year=d3.format("0d")(d);
 				    	if(year%1000===0) {
-				    		//return year;
+				    		return year;
 				    	}
 				    	return "'"+year.substr(2)
 				    	//return !(d%60)?d/60:self.extents.minute.minute
@@ -252,6 +279,8 @@ export default function AgeChart(data,options) {
 				return line(points1.concat(points2));
 
 			})
+			.style("fill","url(#patternStripe)");
+
 		deviation.append("path")
 				.attr("class","border b1")
 				.attr("d",()=>{
@@ -277,9 +306,9 @@ export default function AgeChart(data,options) {
 					.data(markers_data)
 					.enter()
 					.append("g")
-						.attr("class","marker")
-						.classed("family",true)
-						.classed("single",false)
+						.attr("class","marker "+GENERATIONS[AGES_GENERATIONS[options.age]].short_name)
+						//.classed("family",true)
+						//.classed("single",false)
 						.attr("transform",d=>{
 							let x=xscale(d.year),
 								y=yscale(d.family);
@@ -307,6 +336,7 @@ export default function AgeChart(data,options) {
 		console.log(markers_data)
 
 		marker
+			.attr("class","marker "+GENERATIONS[AGES_GENERATIONS[options.age]].short_name)
 			.data(markers_data)
 						.attr("transform",d=>{
 							let x=xscale(d.year),
@@ -326,6 +356,7 @@ export default function AgeChart(data,options) {
 
 		options.countries=__options.countries;
 		options.deviation=__options.deviation;
+		options.age=__options.age;
 
 		console.log("options.countries",options.countries)
 
@@ -351,7 +382,7 @@ export default function AgeChart(data,options) {
 
 		country
 			.data(data.filter(d => options.countries.indexOf(d.key)>-1),d=>d.year)
-			.attr("class",d=>(d.key.toLowerCase()+" country"))
+			.attr("class",d=>(d.key.toLowerCase()+" country "+GENERATIONS[AGES_GENERATIONS[options.age]].short_name))
 			.attr("rel",d=>d.key)
 
 		
@@ -413,7 +444,7 @@ export default function AgeChart(data,options) {
 			new_label.append("text")
 					.attr("class","year")
 					.attr("x",0)
-					.attr("y",-20)
+					.attr("y",-24)
 
 			label.exit().remove();
 					
@@ -461,6 +492,9 @@ export default function AgeChart(data,options) {
 		addAnnotations(1,"bottom");
         addAnnotations(data[0].values.length-3,"top");
 	}
+	this.removeAnnotations=function() {
+		d3.select(options.container).selectAll("div.annotation").remove();
+	}
 	function addAnnotations(index,position) {
 		console.log(index)
 		let __markers=d3.values(data[0].markers),
@@ -486,7 +520,11 @@ export default function AgeChart(data,options) {
 
 		console.log(text)
 
-		let annotation=d3.select(options.container).append("div")
+		let annotation=d3.select(options.container)
+							.append("div")
+							.datum({
+
+							})
 							.attr("class","annotation "+position)
 							.style("left",d=>{
 								let left=xscale(year);

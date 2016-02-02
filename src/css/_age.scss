@@ -15,13 +15,13 @@
 				fill:none;
 				stroke-width:4;
 				&.family {
-					stroke:#951c55;
+					//stroke:#f37021;
 				}
 				&.single {
 					stroke:#999;
 				}
 				&.bg {
-					stroke:#bdbdbd;
+					stroke:#dadada;
 				}
 			}
 			.labels {
@@ -35,9 +35,14 @@
 						}
 					}
 					text {
-						@include fs-headline(1);
+						/*@include fs-headline(1);
 						font-size:12px;
-						fill:#951c55;
+						fill:#f37021;*/
+						
+						@include fs-textSans(2);
+						font-weight: bold;
+						fill:#808080;
+
 						display: none;
 						text-anchor:start;
 					}
@@ -49,7 +54,7 @@
 				}
 				&.family {
 					circle {
-						fill:#951c55;
+						//fill:#f37021;
 					}
 				}
 				&.single {
@@ -69,7 +74,7 @@
 				}
 				&.family {
 					circle {
-						fill:#951c55;
+						//fill:#f37021;
 					}
 				}
 				&.single {
@@ -79,17 +84,20 @@
 				}
 
 				text {
-					@include fs-header(1);	
-					fill:#951c55;
+					@include fs-textSans(3);
+					font-weight: bold;
+					fill:#808080;
+					//@include fs-header(1);	
+					//fill:#f37021;
 				}
 			}
 		}
 		.deviation {
 			path {
-				fill:#eee;
+				fill:#f4f4f4;
 				&.border {
 					fill:none;
-					stroke:#ddd;
+					stroke:#dadada;
 					stroke-width:1;
 				}
 			}

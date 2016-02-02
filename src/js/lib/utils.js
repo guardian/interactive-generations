@@ -17,7 +17,59 @@ export const AGES=([
     "75 to 79 years",
     "80 years and over"
 ]);
-
+export const AGES_GENERATIONS={
+    //"14 and Under",
+    //"15 to 19 years",
+    "20 to 24 years":"Gen Y",
+    "25 to 29 years":"Gen Y",
+    "30 to 34 years":"Gen Y",
+    "35 to 39 years":"Gen X",
+    "40 to 44 years":"Gen X",
+    "45 to 49 years":"Gen X",
+    "50 to 54 years":"Baby boomers",
+    "55 to 59 years":"Baby boomers",
+    "60 to 64 years":"Baby boomers",
+    "65 to 69 years":"Baby boomers",
+    "70 to 74 years":"Over 70s",
+    "75 to 79 years":"Over 70s",
+    "80 years and over":"Over 70s"
+};
+export const GENERATIONS={
+    "Gen Y":{
+        name:"Gen Y",
+        short_name:"gen-y",
+        ages:[  "20 to 24 years",
+                "25 to 29 years",
+                "30 to 34 years"
+            ]
+    },
+    "Gen X":{
+        name:"Gen X",
+        short_name:"gen-x",
+        ages:[  ,
+                "35 to 39 years",
+                "40 to 44 years",
+                "45 to 49 years"
+            ]
+    },
+    "Baby boomers":{
+        name:"Baby boomers",
+        short_name:"baby-boomers",
+        ages:[  "50 to 54 years",
+                "55 to 59 years",
+                "60 to 64 years",
+                "65 to 69 years"
+            ]
+    },
+    "Over 70s":{
+        name:"Over 70s",
+        short_name:"over-70s",
+        ages:[  "70 to 74 years",
+                "75 to 79 years",
+                "80 years and over"
+            ]
+    }
+};
 const country_fix={
     "United Kingdom":"UK",
     "United States":"US"
