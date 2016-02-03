@@ -43,7 +43,13 @@ export function BubbleBuckets(data,options) {
 						.data(nested_data)
 						.enter()
 						.append("div")
-							.attr("class","bucket");
+							.attr("class","bucket")
+							.on("click",(d)=>{
+								console.log(d)
+								if(options.clickCallback) {
+									options.clickCallback(d.key);
+								}
+							})
 	let margins={
 			top:10,
 			bottom:0,
@@ -72,8 +78,7 @@ export function BubbleBuckets(data,options) {
 				.html(d=>{
 					return "<p>"+d.text+"</p>";
 				})*/
-	buckets.append("h3")
-				.html(d=>d.key)
+	
 	let bucket=buckets.append("div")
 					.attr("class","chart")
 					.each(function(d,i){
@@ -92,7 +97,8 @@ export function BubbleBuckets(data,options) {
 						);
 					})
 
-	
+	buckets.append("h3")
+				.html(d=>d.key)
 
 	
 
@@ -336,7 +342,7 @@ function BubbleBucket(data,options) {
 	yaxis.selectAll(".tick")
 			//.filter((d,i) => d!==0)
 			.select("line")
-				//.classed("visible",true)
+				.classed("hidden",d=>(d!==0))
 				.attr("x2",(d,i) => {
 					return WIDTH
 				})

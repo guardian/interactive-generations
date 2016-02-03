@@ -72,7 +72,7 @@ export function init(el, context, config, mediator) {
                     selected:status.age,
                     changeCallback:(age)=>{
 
-                        //bubbleBuckets.updateAge(age);
+                        bubbleBuckets.updateAge(age);
                         //return;
 
                         status.age=age;
@@ -86,7 +86,7 @@ export function init(el, context, config, mediator) {
                     }
                 })
 
-                new InlineSelector(COUNTRIES.map(d=>({name:d,shortname:d})),{
+                let country_selector=new InlineSelector(COUNTRIES.map(d=>({name:d,shortname:d})),{
                     container:"#myCountry",
                     selected:status.country,
                     changeCallback:(country)=>{
@@ -98,7 +98,7 @@ export function init(el, context, config, mediator) {
                     }
                 })
 
-                new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
+                /*new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup2",
                     selected:status.age,
                     changeCallback:(age)=>{
@@ -115,7 +115,7 @@ export function init(el, context, config, mediator) {
 
 
                     }
-                })
+                })*/
 
                 let myAge=new Age(data,{
                     container:"#myAge",
@@ -135,7 +135,16 @@ export function init(el, context, config, mediator) {
                     },
                     ages:[status.age],
                     incomes:["family"],
-                    group_years:group_years//,
+                    group_years:group_years,
+                    clickCallback:(country)=>{
+                        /*status.country=country;
+                        myAge.update(status);
+                        myAge.removeAnnotations();
+                        myAge.addAnnotations();*/
+
+                        country_selector.selectOption(country);
+                    }
+                    //,
                     //annotations:annotations
                 })
 

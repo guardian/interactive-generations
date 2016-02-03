@@ -51,4 +51,18 @@ export default function InlineSelector(list,__options) {
 			.html(d=>(d.name+" &dtrif;"))
 	}
 
+	this.selectOption=(value)=>{
+		container.selectAll("option")
+				.each((d,i)=>{
+					if(d.shortname===value) {
+						console.log("selecting",i,d)
+						container.node().selectedIndex=i;
+					}
+				})
+		updateOptions(value);
+
+		if(options.changeCallback) {
+			options.changeCallback(value)
+		}
+	}
 }

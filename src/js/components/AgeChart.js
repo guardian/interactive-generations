@@ -1,7 +1,7 @@
 import { AGES_GENERATIONS,GENERATIONS } from '../lib/utils';
 export default function AgeChart(data,options) {
 	
-	console.log("AgeChart",data)
+	//console.log("AgeChart",data)
 	//console.log(options.deviation)
 
 	let SMALL=false;

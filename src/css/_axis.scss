@@ -47,6 +47,9 @@
 					&.visible {
 						visibility: visible;
 					}
+					&.hidden {
+						visibility: hidden;
+					}
 				}
 				text {
 					//text-anchor:start !important;
