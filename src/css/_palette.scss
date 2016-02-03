@@ -20,9 +20,10 @@ $gen-y:#f37021;
 $gen-x:#fdb913;
 $baby-boomers:#fcdd03;
 $over-70s:#c5d4ea;
+$average:#000;
 
-$generation-list: under-20s, gen-y, gen-x, baby-boomers, over-70s;
-$generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s;
+$generation-list: under-20s, gen-y, gen-x, baby-boomers, over-70s, average;
+$generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s, $average;
 @each $current-color in $generation-colors-list {
     $i: index($generation-colors-list, $current-color);
     .country.#{nth($generation-list, $i)} {

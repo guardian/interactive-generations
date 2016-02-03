@@ -3,8 +3,14 @@ import AgeChart from './AgeChart';
 
 export function Age(data,options) {
 	//console.log(data,options)
+
+	let FIELDNAME="income";
+
 	let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
 	console.log("NESTED_DATA",nested_data)
+
+	let avg_nested_data=nestDataByAgeGroup(data,options.group_years,["TOTAL"],options.countries);
+	console.log("AVG_NESTED_DATA",avg_nested_data)
 
 	let nested_data_year=nestDataByYear(data,null,options.countries);
 	console.log("nested_data_year",nested_data_year)
@@ -15,48 +21,52 @@ export function Age(data,options) {
 			d.range=range.values.map(v=>{
 						return {
 							year:v.key,
-							value:v.values.family
+							value:v.values[FIELDNAME]
 						}
 					}
 				)	
 		})
 	})
 
+	
+
 	let extents=updateExtents(data);
 
 	let chart=new AgeChart([{
 			key:options.countries[0],
-			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],family:c.values.family,single:c.values.single,year:+c.key}})
+			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}})
 		}]
 		,{
-		deviation:nested_data[0].values[0].range,
-		first:true,
-		age:options.ages[0],
-		container:options.container,
-		extents:extents,
-		countries:options.countries,
-		markers:options.markers,
-		incomes:options.incomes,
-		//width:580,
-		height:450,
-		margins:{
-			top:50,
-			bottom:30,
-			left:10,
-			right:10
-		},
-		padding:{
-			top:0,
-			bottom:0,
-			left:0,
-			right:40
-		},
-		axis:{
-			x:true,
-			y:true
-		},
-		pattern:true
-	})
+			deviation:nested_data[0].values[0].range,
+			first:true,
+			age:options.ages[0],
+			container:options.container,
+			extents:extents,
+			countries:options.countries,
+			markers:options.markers,
+			incomes:options.incomes,
+			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}}),
+			//width:580,
+			height:450,
+			margins:{
+				top:50,
+				bottom:30,
+				left:10,
+				right:10
+			},
+			padding:{
+				top:0,
+				bottom:0,
+				left:0,
+				right:40
+			},
+			axis:{
+				x:true,
+				y:true
+			},
+			pattern:true
+		}
+	);
 
 	this.addAnnotations=function(index,position) {
 		chart.addAnnotations(index,position);
@@ -68,6 +78,9 @@ export function Age(data,options) {
 	function update() {
 		nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
 		console.log(nested_data)
+
+		avg_nested_data=nestDataByAgeGroup(data,options.group_years,["TOTAL"],options.countries);
+		console.log("AVG_NESTED_DATA",avg_nested_data)
 		
 		nested_data_year=nestDataByYear(data,null,options.countries);
 		console.log("nested_data_year",nested_data_year)
@@ -78,12 +91,13 @@ export function Age(data,options) {
 				d.range=range.values.map(v=>{
 							return {
 								year:v.key,
-								value:v.values.family
+								value:v.values[FIELDNAME]
 							}
 						}
 					)	
 			})
 		})
+
 	}
 
 	this.update=function(status){
@@ -96,16 +110,19 @@ export function Age(data,options) {
 
 		chart.update([{
 			key:options.countries[0],
-			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],family:c.values.family,single:c.values.single,year:+c.key}})
+			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}})
 		}],{
 			deviation:nested_data[0].values[0].range,
 			age:options.ages[0],
-			countries:options.countries
+			countries:options.countries,
+			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}})
 		});
 	}
 
 }
 export function Ages(data,options) {
+
+	let FIELDNAME="income";
 
 	let nested_data=nestDataByAgeGroup(data,options.group_years);
 	console.log(nested_data)
@@ -120,7 +137,7 @@ export function Ages(data,options) {
 				d.range=range.values.map(v=>{
 						return {
 							year:v.key,
-							value:v.values.family
+							value:v.values[FIELDNAME]
 						}
 					}
 				)		
@@ -148,7 +165,7 @@ export function Ages(data,options) {
 
 
 	description.append("p")
-			.html("Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur alias quaerat ad dolores cumque corporis sapiente maiores! Maxime quisquam fugiat facere optio, veritatis, fugit dicta.")
+			.html("We serve freshly brewed coffee and a section of tasty treats and snacks. We are open for breakfast, lunch and afternoon tea. And unlike any other cafe in the town, we are open 7 days per week.")
 
 	let ages=row.append("div")
 						.attr("class","ages")
@@ -179,7 +196,7 @@ export function Ages(data,options) {
 
 						new AgeChart([{
 								key:d.country,
-								values:d.values.filter(c=>c.key===d.country)[0].values.map(c=>{return{key:d.key,country:d.country,family:c.values.family,single:c.values.single,year:+c.key}})
+								values:d.values.filter(c=>c.key===d.country)[0].values.map(c=>{return{key:d.key,country:d.country,income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}})
 							}]
 							,{
 							deviation:d.values.filter(c=>c.key===d.country)[0].range,
@@ -211,17 +228,7 @@ export function Ages(data,options) {
 			.html(d=>getShortAgeGroup(d.key))
 
 }
-/*function updateExtents(data) {	
-		
-	let extents={
-		years:d3.extent(data,d=>d.year),
-		family:d3.extent(data.filter(d=>d.family>0),d=>d.family),
-		single:d3.extent(data.filter(d=>d.single>0),d=>d.single),
-		age:d3.set(data.map(d=>d.Age)).values()
-	}
 
-	return extents;
-} */
 d3.selection.prototype.moveToFront = function() {
     return this.each(function(){
         this.parentNode.appendChild(this);

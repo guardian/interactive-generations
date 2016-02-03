@@ -15,7 +15,8 @@ export const AGES=([
     "65 to 69 years",
     "70 to 74 years",
     "75 to 79 years",
-    "80 years and over"
+    "80 years and over",
+    "TOTAL"
 ]);
 export const AGES_GENERATIONS={
     //"14 and Under",
@@ -32,7 +33,8 @@ export const AGES_GENERATIONS={
     "65 to 69 years":"Baby boomers",
     "70 to 74 years":"Over 70s",
     "75 to 79 years":"Over 70s",
-    "80 years and over":"Over 70s"
+    "80 years and over":"Over 70s",
+    "TOTAL":"average"
 };
 export const GENERATIONS={
     "Gen Y":{
@@ -68,6 +70,11 @@ export const GENERATIONS={
                 "75 to 79 years",
                 "80 years and over"
             ]
+    },
+    "average":{
+        name:"National Average",
+        short_name:"average",
+        ages:[  "TOTAL" ]  
     }
 };
 const country_fix={
@@ -75,7 +82,7 @@ const country_fix={
     "United States":"US"
 }
 
-export const COUNTRIES=["Australia","UK","Italy","US","Spain","France","Germany","Canada","Norway","Sweden"];
+export const COUNTRIES=["AU","UK","IT","US","ES","FR","DE","CA","NO","SE"];
 
 export const age_fix={
     "80 years and over":"80+",
@@ -85,12 +92,14 @@ export function loadData(callback,options) {
 
     let data=[];
     
-    let dataSrc = options.assetPath+"/assets/data/data.csv";
+    let dataSrc = options.assetPath+"/assets/data/data2.csv";
 
     d3.csv(dataSrc,
             (d)=>{
                 d.Country=(country_fix[d.Country] || d.Country);
                 d.year=+d.Year;
+                d.income=+d["EDHIW"];
+                d.perc=+d["perc"]
                 d.family=+d["Head.or.Spouse_EDHIW"];
                 d.single=+d["Single.Person_EDHIW"];
                 return d;
@@ -113,6 +122,7 @@ export function updateExtents(data) {
     let extents={
         born:[1900,2015],
         years:[1978,2013],///d3.extent(data,d=>d.year),
+        income:[d3.extent(data.filter(d=>d.income>0),d=>d.income)[0],60000],
         family:d3.extent(data.filter(d=>d.family>0),d=>d.family),
         single:d3.extent(data.filter(d=>d.single>0),d=>d.single),
         age:d3.set(data.map(d=>d.Age)).values()
@@ -130,6 +140,7 @@ export function nestData(data) {
             return leaves.map(d=>{
                 //console.log(d)
                 return {
+                    income:d.income,
                     family:d.family,
                     single:d.single,
                     age:d.Age,
@@ -142,6 +153,9 @@ export function nestData(data) {
     return nested;
 }
 export function getShortAgeGroup(age) {
+    if(age==="TOTAL") {
+        return age;
+    }
     if(age_fix[age]) {
         return age_fix[age];
     }
@@ -217,13 +231,14 @@ export function nestDataByYear(data,ages,countries) {
         .key(d => d.year)
         .rollup(leaves => {
             return {
+                income:d3.extent(leaves,d=>d.income),
                 family:d3.extent(leaves,d=>d.family),
                 single:d3.extent(leaves,d=>d.single)
             }
         })
         .entries(
             data
-            .filter(d=>d.family>0)
+            .filter(d=>d.income>0)
             .filter(d=>{
                 if(!countries) {
                     return 1;
@@ -259,6 +274,7 @@ export function nestDataByCountry(data,years,ages,countries) {
         .key(d => d.year)
         .rollup(leaves => {
             return {
+                income:d3.mean(leaves,d=>d.income),
                 family:d3.mean(leaves,d=>d.family),
                 single:d3.mean(leaves,d=>d.single)
             }
@@ -290,6 +306,7 @@ export function nestData2(data) {
             return leaves.map(d=>{
                 //console.log(d)
                 return {
+                    income:d.income,
                     family:d.family,
                     single:d.single,
                     age:d.Age
@@ -316,6 +333,7 @@ export function createPeople(data) {
             born:born,
             age_group:age_group,
             year:d.year,
+            income:d.income,
             family:d.family,
             single:d.single,
             country:d.Country
@@ -338,6 +356,7 @@ export function createPeople(data) {
                         return leaves.map(d=>{
                             //console.log(d)
                             return {
+                                income:d.income,
                                 family:d.family,
                                 single:d.single,
                                 born:d.born,

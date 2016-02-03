@@ -121,20 +121,20 @@ export function init(el, context, config, mediator) {
                     container:"#myAge",
                     countries:[status.country],
                     ages:[status.age],
-                    incomes:["family"],
+                    incomes:["income"],
                     markers:true,
                     group_years:group_years
                 })
                 myAge.addAnnotations();
                 
-                //return;
+                
                 let bubbleBuckets=new BubbleBuckets(data,{
                     container:"#buckets",
                     filter:{
                         ages:[status.age]
                     },
                     ages:[status.age],
-                    incomes:["family"],
+                    incomes:["income"],
                     group_years:group_years,
                     clickCallback:(country)=>{
                         /*status.country=country;
@@ -163,7 +163,7 @@ export function init(el, context, config, mediator) {
                 new BubbleBuckets(data,{
                     container:"#buckets",
                     ages:[selected_age+" to "+(selected_age+group_years)],
-                    incomes:["family"],
+                    incomes:["income"],
                     group_years:group_years
                 })
                 */
@@ -173,10 +173,10 @@ export function init(el, context, config, mediator) {
                 
                 
                 
-                new Ages(data,{
+                new Ages(data.filter(d=>(d.Age!=="TOTAL")),{
                     container:"#ages",
                     countries:COUNTRIES,
-                    incomes:["family"],//,"single"],
+                    incomes:["income"],//,"single"],
                     selected:"Australia",
                     group_years:10
                 })

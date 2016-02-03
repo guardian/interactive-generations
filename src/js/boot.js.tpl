@@ -1,12 +1,18 @@
 'use strict';
 define([], function() {
-    function addCSS(url) {
+    function addCSS(url,callback) {
         var head = document.querySelector('head');
         var link = document.createElement('link');
         link.setAttribute('rel', 'stylesheet');
         link.setAttribute('type', 'text/css');
         link.setAttribute('href', url);
         head.appendChild(link);
+
+        link.onload=function() {
+            if(callback) {
+                callback();
+            }
+        }
     }
 
     return {
@@ -21,13 +27,15 @@ define([], function() {
 
             // Load CSS asynchronously
             window.setTimeout(function() {
-                addCSS('<%= assetPath %>/main.css');
+                addCSS('<%= assetPath %>/main.css',function(){
+                    // Load JS and init
+                    require(['<%= assetPath %>/main.js'], function(main) {
+                        main.init(el, context, config, mediator);
+                    }, function(err) { console.error('Error loading boot.', err); });
+                });
             }, 10);
 
-            // Load JS and init
-            require(['<%= assetPath %>/main.js'], function(main) {
-                main.init(el, context, config, mediator);
-            }, function(err) { console.error('Error loading boot.', err); });
+            
         }
     };
 });
