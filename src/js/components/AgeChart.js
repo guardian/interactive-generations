@@ -14,7 +14,7 @@ export default function AgeChart(data,options) {
 		svg.attr("height",options.height)
 	}
 
-	let defs=svg.append("defs");
+	/*let defs=svg.append("defs");
 
 	defs.append("pattern")
 			.attr({
@@ -33,7 +33,7 @@ export default function AgeChart(data,options) {
 				.style({
 					fill:"#000",
 					"fill-opacity":0.1
-				})
+				})*/
 
 	let box=svg.node().getBoundingClientRect();
 	let WIDTH = options.width || box.width,

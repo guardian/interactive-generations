@@ -123,6 +123,7 @@ export function updateExtents(data) {
         born:[1900,2015],
         years:[1978,2013],///d3.extent(data,d=>d.year),
         income:[d3.extent(data.filter(d=>d.income>0),d=>d.income)[0],60000],
+        perc:d3.extent(data.filter(d=>d.perc>0),d=>d.perc),
         family:d3.extent(data.filter(d=>d.family>0),d=>d.family),
         single:d3.extent(data.filter(d=>d.single>0),d=>d.single),
         age:d3.set(data.map(d=>d.Age)).values()

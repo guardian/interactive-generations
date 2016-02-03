@@ -6,6 +6,7 @@ import {BubbleBuckets} from './components/BubbleBuckets';
 import { requestAnimationFrame, cancelAnimationFrame } from './lib/request-animation-frame-shim';
 import AgeSelector from './components/AgeSelector';
 import InlineSelector from './components/InlineSelector';
+import ConnectedScatterplot from './components/ConnectedScatterplot';
 //import annotations from '../assets/data/annotations.json!json';
 
 export function init(el, context, config, mediator) {
@@ -67,6 +68,17 @@ export function init(el, context, config, mediator) {
                 
                 console.log("--->",data)
                 
+                new ConnectedScatterplot(data,{
+                        container:"#scatter",
+                        countries:["US"],
+                        ages:AGES.filter(d=>(d!=="TOTAL")),
+                        incomes:["income"],
+                        group_years:group_years,
+                        selected_ages:["20 to 24 years","40 to 44 years","75 to 79 years","50 to 54 years"]
+                })
+
+                return;
+
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup",
                     selected:status.age,

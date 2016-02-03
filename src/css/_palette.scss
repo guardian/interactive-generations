@@ -55,6 +55,14 @@ $generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s, $
             color: $current-color;
         }
     }
+    .age-timeline.#{nth($generation-list, $i)} {
+        path {
+            stroke: $current-color;
+        }
+        circle,rect {
+            fill: $current-color;
+        }
+    }
 }
 
 $countries-list: australia, canada, germany, italy, spain, france, norway, sweden, us, uk;
