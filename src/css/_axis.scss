@@ -77,6 +77,8 @@
 			.tick {
 				line {
 					display: none;
+					stroke:#ddd;
+					stroke-dasharray: 1,1;
 				}
 			}
 		}

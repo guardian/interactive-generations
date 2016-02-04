@@ -1,12 +1,13 @@
 import mainHTML from './text/main.html!text'
-import { getAgeGroups,loadData,AGES,COUNTRIES,age_fix,AGES_GENERATIONS,GENERATIONS } from './lib/utils';
+import medians from '../assets/data/medians.json!json'
+import { getAgeGroups,loadData,AGES,COUNTRIES,age_fix,AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from './lib/utils';
 import Generations from './components/Generations';
 import {Ages,Age} from './components/Ages';
 import {BubbleBuckets} from './components/BubbleBuckets';
 import { requestAnimationFrame, cancelAnimationFrame } from './lib/request-animation-frame-shim';
 import AgeSelector from './components/AgeSelector';
 import InlineSelector from './components/InlineSelector';
-import ConnectedScatterplot from './components/ConnectedScatterplot';
+import BubbleChart from './components/BubbleChart';
 //import annotations from '../assets/data/annotations.json!json';
 
 export function init(el, context, config, mediator) {
@@ -40,7 +41,7 @@ export function init(el, context, config, mediator) {
 
     let frameRequest = requestAnimationFrame(function checkInnerHTML(time) {
         //console.log(time)
-        var b=document.querySelector("#ages");
+        var b=document.querySelector("#myAge");
         if(b && b.getBoundingClientRect().height) {
             cancelAnimationFrame(checkInnerHTML);
 
@@ -66,18 +67,12 @@ export function init(el, context, config, mediator) {
                     d.age=d.Age;//(age_fix[d.Age] || d.Age).replace(/years/gi,""); 
                 });
                 
-                console.log("--->",data)
-                
-                new ConnectedScatterplot(data,{
-                        container:"#scatter",
-                        countries:["US"],
-                        ages:AGES.filter(d=>(d!=="TOTAL")),
-                        incomes:["income"],
-                        group_years:group_years,
-                        selected_ages:["20 to 24 years","40 to 44 years","75 to 79 years","50 to 54 years"]
-                })
+                console.log("--->",data);
 
-                return;
+                
+                
+
+               
 
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup",
@@ -98,13 +93,15 @@ export function init(el, context, config, mediator) {
                     }
                 })
 
-                let country_selector=new InlineSelector(COUNTRIES.map(d=>({name:d,shortname:d})),{
+                let country_selector=new InlineSelector(COUNTRIES.map(d=>({name:COUNTRY_NAMES[d],shortname:d})),{
                     container:"#myCountry",
                     selected:status.country,
                     changeCallback:(country)=>{
                         status.country=country;
                         myAge.update(status);
-                        //d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+                        
+                        bubbleBuckets.selectCountry(country);
+                        
                         myAge.removeAnnotations();
                         myAge.addAnnotations();
                     }
@@ -142,6 +139,7 @@ export function init(el, context, config, mediator) {
                 
                 let bubbleBuckets=new BubbleBuckets(data,{
                     container:"#buckets",
+                    countries:[status.country],
                     filter:{
                         ages:[status.age]
                     },
@@ -153,7 +151,7 @@ export function init(el, context, config, mediator) {
                         myAge.update(status);
                         myAge.removeAnnotations();
                         myAge.addAnnotations();*/
-
+                        bubbleBuckets.selectCountry(country);
                         country_selector.selectOption(country);
                     }
                     //,
@@ -181,7 +179,16 @@ export function init(el, context, config, mediator) {
                 */
 
                 
-                
+                COUNTRIES.forEach(d=>{
+                    new BubbleChart(data.filter(d=>(d.Age!=="TOTAL")),{
+                            container:"#bubbles",
+                            countries:[d],
+                            ages:AGES.filter(d=>(d!=="TOTAL")),
+                            incomes:["income"],
+                            group_years:group_years,
+                            selected_ages:["20 to 24 years","40 to 44 years","75 to 79 years","50 to 54 years"]
+                    })    
+                })
                 
                 
                 
@@ -192,7 +199,7 @@ export function init(el, context, config, mediator) {
                     selected:"Australia",
                     group_years:10
                 })
-            },{assetPath:config.assetPath});
+            },{assetPath:config.assetPath,medians:medians});
 
             return; 
         }

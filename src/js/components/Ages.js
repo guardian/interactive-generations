@@ -1,4 +1,4 @@
-import { nestDataByAgeGroup,updateExtents,nestDataByYear,getShortAgeGroup,AGES } from '../lib/utils';
+import { nestDataByAgeGroup,updateExtents,nestDataByYear,getShortAgeGroup,AGES,COUNTRY_NAMES } from '../lib/utils';
 import AgeChart from './AgeChart';
 
 export function Age(data,options) {
@@ -160,7 +160,7 @@ export function Ages(data,options) {
 
 
 	description.append("h2")
-			.html(d=>d)
+			.html(d=>COUNTRY_NAMES[d])
 
 
 

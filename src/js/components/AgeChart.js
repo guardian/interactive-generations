@@ -1,4 +1,4 @@
-import { AGES_GENERATIONS,GENERATIONS } from '../lib/utils';
+import { AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from '../lib/utils';
 export default function AgeChart(data,options) {
 	
 	//console.log("AgeChart",data)
@@ -540,7 +540,7 @@ export default function AgeChart(data,options) {
 			by=d3.format(",.2%")(Math.abs(perc))+" "
 		}
 
-		let text=`In ${data[0].values[0].country}, in ${year} in the <b>${options.age}</b> years range had a ${by}${how} disposable income`;
+		let text=`In ${COUNTRY_NAMES[data[0].values[0].country]}, in ${year} the <b>${options.age}</b> years range had a ${by}${how} disposable income`;
 
 
 		console.log(text)

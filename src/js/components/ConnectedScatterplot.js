@@ -41,7 +41,7 @@ export default function ConnectedScatterplot(data,options) {
 	console.log(extents)
 	let family_path,single_path;
 
-	let xscale=d3.scale.linear().domain([15000,45000]).range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
+	let xscale=d3.scale.linear().domain([extents.income[0],35000]).range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
 		yscale=d3.scale.linear().domain(extents.perc).range([HEIGHT-(margins.top+margins.bottom),0]);
 
 

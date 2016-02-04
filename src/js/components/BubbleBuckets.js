@@ -1,4 +1,4 @@
-import { nestDataByCountry,updateExtents,nestDataByYear,AGES_GENERATIONS,GENERATIONS } from '../lib/utils';
+import { nestDataByCountry,updateExtents,nestDataByYear,AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from '../lib/utils';
 
 export function BubbleBuckets(data,options) {
 
@@ -46,6 +46,7 @@ export function BubbleBuckets(data,options) {
 						.enter()
 						.append("div")
 							.attr("class","bucket")
+							.classed("selected",d=>options.countries.indexOf(d.key)>-1)
 							.on("click",(d)=>{
 								console.log(d)
 								if(options.clickCallback) {
@@ -102,7 +103,7 @@ export function BubbleBuckets(data,options) {
 					})
 
 	buckets.append("h3")
-				.html(d=>d.key)
+				.html(d=>COUNTRY_NAMES[d.key])
 
 	
 
@@ -137,6 +138,10 @@ export function BubbleBuckets(data,options) {
 				})
 
 		//bubble_buckets.forEach(d=>{d.updateAge(age)})
+	}
+
+	this.selectCountry=(country)=>{
+		buckets.classed("selected",d=>(d.key===country));
 	}
 
 	new Slider(data,{

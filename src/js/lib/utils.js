@@ -18,6 +18,18 @@ export const AGES=([
     "80 years and over",
     "TOTAL"
 ]);
+export const AGES10=([
+    //"14 and Under",
+    //"15 to 19 years",
+    "20 to 29 years",
+    "30 to 39 years",
+    "40 to 49 years",
+    "50 to 59 years",
+    "60 to 69 years",
+    "70 to 79 years",
+    "80 years and over"//,
+    //"TOTAL"
+]);
 export const AGES_GENERATIONS={
     //"14 and Under",
     //"15 to 19 years",
@@ -36,13 +48,26 @@ export const AGES_GENERATIONS={
     "80 years and over":"Over 70s",
     "TOTAL":"average"
 };
+export const AGES_GENERATIONS10={
+    //"14 and Under",
+    //"15 to 19 years",
+    "20 to 29 years":"Gen Y",
+    "30 to 39 years":"Gen X",
+    "40 to 49 years":"Gen X",
+    "50 to 59 years":"Baby boomers",
+    "60 to 69 years":"Baby boomers",
+    "70 to 79 years":"Over 70s",
+    "80 years and over":"Over 70s",
+    "TOTAL":"average"
+};
 export const GENERATIONS={
     "Gen Y":{
         name:"Gen Y",
         short_name:"gen-y",
         ages:[  "20 to 24 years",
                 "25 to 29 years",
-                "30 to 34 years"
+                "30 to 34 years",
+                "20 to 29 years"
             ]
     },
     "Gen X":{
@@ -51,7 +76,9 @@ export const GENERATIONS={
         ages:[  ,
                 "35 to 39 years",
                 "40 to 44 years",
-                "45 to 49 years"
+                "45 to 49 years",
+                "30 to 39 years",
+                "40 to 49 years"
             ]
     },
     "Baby boomers":{
@@ -60,7 +87,9 @@ export const GENERATIONS={
         ages:[  "50 to 54 years",
                 "55 to 59 years",
                 "60 to 64 years",
-                "65 to 69 years"
+                "65 to 69 years",
+                "50 to 59 years",
+                "60 to 69 years"
             ]
     },
     "Over 70s":{
@@ -68,7 +97,8 @@ export const GENERATIONS={
         short_name:"over-70s",
         ages:[  "70 to 74 years",
                 "75 to 79 years",
-                "80 years and over"
+                "80 years and over",
+                "70 to 79 years"
             ]
     },
     "average":{
@@ -82,7 +112,19 @@ const country_fix={
     "United States":"US"
 }
 
-export const COUNTRIES=["AU","UK","IT","US","ES","FR","DE","CA","NO","SE"];
+export const COUNTRY_NAMES={
+    "AU":"Australia",
+    "UK":"UK",
+    "IT":"Italy",
+    "US":"US",
+    "ES":"Spain",
+    "FR":"France",
+    "DE":"Germany",
+    "CA":"Canada",
+    "NO":"Norway",
+    "SE":"Sweden"
+}
+export const COUNTRIES=(["AU","UK","IT","US","ES","FR","DE","CA","NO","SE"]);
 
 export const age_fix={
     "80 years and over":"80+",
@@ -96,18 +138,23 @@ export function loadData(callback,options) {
 
     d3.csv(dataSrc,
             (d)=>{
-                d.Country=(country_fix[d.Country] || d.Country);
+
+
+
+                d.Country=(country_fix[d.Country] || d.Country).toUpperCase();
                 d.year=+d.Year;
                 d.income=+d["EDHIW"];
-                d.perc=+d["perc"]
+                d.perc_csv=+d["perc"];
                 d.family=+d["Head.or.Spouse_EDHIW"];
                 d.single=+d["Single.Person_EDHIW"];
+
+                if(options.medians && d.Age!=="TOTAL") {
+                    d.median=options.medians[d.Country.toUpperCase()][d.Year];
+                    d.perc=(d.income-d.median)/d.median;
+                }
                 return d;
             }, 
             (csv) => {
-    
-                //console.log(csv)
-
                 if(callback) {
                     callback(csv.filter(d=>AGES.indexOf(d.Age)>-1)) 
                 }
@@ -123,7 +170,9 @@ export function updateExtents(data) {
         born:[1900,2015],
         years:[1978,2013],///d3.extent(data,d=>d.year),
         income:[d3.extent(data.filter(d=>d.income>0),d=>d.income)[0],60000],
-        perc:d3.extent(data.filter(d=>d.perc>0),d=>d.perc),
+        perc:d3.extent(data.filter(d=>(typeof d.perc!=='undefined' && d.income>0)),d=>{
+            return d.perc
+        }),
         family:d3.extent(data.filter(d=>d.family>0),d=>d.family),
         single:d3.extent(data.filter(d=>d.single>0),d=>d.single),
         age:d3.set(data.map(d=>d.Age)).values()
@@ -208,20 +257,23 @@ export function nestDataByAgeGroup(data,years,ages,countries) {
             }
         })*/
         .entries(
-            data.filter(d=>{
-                if(!countries) {
-                    return 1;
-                }
-                return countries.indexOf(d.Country)>-1;
-            })
-            .filter(d=>{
-                //console.log(d,ages)
-                if(!ages) {
-                    return 1;
-                }
-                return ages.indexOf(d.age)>-1;
-            })
-            .sort((a,b)=>(a.year-b.year))
+            data
+                .filter(d=>d.income>0)
+                .filter(d=>{
+                    if(!countries) {
+                        return 1;
+                    }
+                    return countries.indexOf(d.Country)>-1;
+                })
+                .filter(d=>{
+                    //console.log(ages,d)
+                    if(!ages) {
+                        return 1;
+                    }
+                    
+                    return ages.indexOf(d.age)>-1;
+                })
+                .sort((a,b)=>(a.year-b.year))
         );
 
     return nested;
