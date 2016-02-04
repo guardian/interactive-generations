@@ -9,17 +9,19 @@
 			float:left;
 		}
 		.description {
-			width:200px;
+			width:260px;
 			padding-right:20px;
 			h2 {
 				@include fs-header(3);
                 color:#333;
 				margin:0;
 			}	
-			
+			p {
+				padding-right:20px;
+			}
 		}
 		.ages {
-			width:calc(100% - 200px);
+			width:calc(100% - 260px);
 			padding-top:20px;
 		}
 		
