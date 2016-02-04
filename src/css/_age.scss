@@ -30,8 +30,8 @@
 			.labels {
 				.label {
 					circle {
-						stroke:#fff;
-						stroke-width:2;
+						stroke:#333;
+						stroke-width:0;
 						&.bg {
 							fill-opacity:0;
 							stroke:none;
@@ -72,8 +72,8 @@
 			.marker {
 				
 				circle {
-					stroke:#fff;
-					stroke-width:3;
+					stroke:#333;
+					stroke-width:0;
 				}
 				&.family {
 					circle {
