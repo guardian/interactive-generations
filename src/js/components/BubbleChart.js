@@ -1,5 +1,5 @@
 import { updateExtents,nestDataByAgeGroup,getShortAgeGroup,AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from '../lib/utils';
-import { appendShadow } from '../lib/CSSUtils';
+import LineChart from "./LineChart";
 
 export default function BubbleChart(data,options) {
 
@@ -7,6 +7,8 @@ export default function BubbleChart(data,options) {
 
 	let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
 	console.log("NESTED_DATA",nested_data)
+
+	console.log(options.medians)
 
 	let row=d3.select(options.container)
 				.append("div")
@@ -19,6 +21,28 @@ export default function BubbleChart(data,options) {
 	description
 		.append("p")
 			.text("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.")
+
+	let medianChart=new LineChart([{key:"median",values:options.medians}],{
+		container:description
+						.append("div")
+						.attr("class","median-chart"),
+		extents:{
+			y:[10000,35000],
+			x:[new Date(1978,0,1),new Date(2013,0,1)]
+		},
+		ticks:3,
+		margins:{
+			top:15,
+			bottom:10,
+			left:0,
+			right:10
+		},
+		mouseOverCallback:(d)=>{
+			highlightBubbles(d.date.getFullYear());
+		}
+	});
+	
+
 
 	let chart=row
 					.append("div")
@@ -150,8 +174,9 @@ export default function BubbleChart(data,options) {
 					.attr("y",d=>rscale(d.income)+13)
 					.text(d=>d.year)
 
-		addYAxis();
 		addXAxis();
+		addYAxis();
+		
 
 		voronoi = d3.geom.voronoi()
 						.x(function(d) { return d.x; })
@@ -263,6 +288,7 @@ export default function BubbleChart(data,options) {
 		cellEnter
 			.on("mouseenter",function(d){
 				highlightBubbles(d.point.year);
+				medianChart.highlight(new Date(d.point.year,0,1))
 			})
 		
 			

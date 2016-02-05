@@ -1,0 +1,67 @@
+.median-chart {
+	width:100%;
+	height:150px;
+	svg {
+		width:100%;
+		height: 100%;
+		.plot {
+			path {
+				fill:none;
+				
+
+				stroke:#999;
+				stroke-width:2;
+				stroke-dasharray:2,2;
+				stroke-linecap:butt;
+			}
+			circle {
+				fill:none;
+			}
+			.marker.highlight {
+				circle {
+					fill:#999;
+				}
+			}
+		}
+		.axis {
+			&.x {
+				.tick {
+					text {
+						text-anchor:middle !important;
+					}
+					line {
+						display: block;
+					}
+				}
+
+			}
+			&.y {
+				.tick {
+					&.zero {
+						text {
+							fill:#666;
+						}
+						line {
+							stroke-dasharray:none;
+							stroke:#aaa;
+						}
+					}
+					text {
+						text-anchor:start !important;
+					}
+				}
+			}
+		}
+		.voronoi {
+			path {
+				fill:#fff;
+				fill-opacity:0;
+				stroke:none;
+				stroke-width:1;
+			}
+			circle {
+				fill:#ddd;
+			}
+		}
+	}
+}

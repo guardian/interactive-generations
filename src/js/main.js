@@ -72,7 +72,7 @@ export function init(el, context, config, mediator) {
                 
                 
 
-               
+                
 
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup",
@@ -101,30 +101,11 @@ export function init(el, context, config, mediator) {
                         myAge.update(status);
                         
                         bubbleBuckets.selectCountry(country);
-                        
+
                         myAge.removeAnnotations();
                         myAge.addAnnotations();
                     }
                 })
-
-                /*new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
-                    container:"#myAgeGroup2",
-                    selected:status.age,
-                    changeCallback:(age)=>{
-
-                        bubbleBuckets.updateAge(age);
-                        return;
-
-                        status.age=age;
-                        myAge.update(status);
-                        d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
-
-                        myAge.removeAnnotations();
-                        myAge.addAnnotations();
-
-
-                    }
-                })*/
 
                 let myAge=new Age(data,{
                     container:"#myAge",
@@ -147,17 +128,14 @@ export function init(el, context, config, mediator) {
                     incomes:["income"],
                     group_years:group_years,
                     clickCallback:(country)=>{
-                        /*status.country=country;
-                        myAge.update(status);
-                        myAge.removeAnnotations();
-                        myAge.addAnnotations();*/
+                        
                         bubbleBuckets.selectCountry(country);
                         country_selector.selectOption(country);
                     }
                     //,
                     //annotations:annotations
                 })
-
+                
                 
                 /*
                 AgeSelector(getAgeGroups(group_years),{
@@ -186,7 +164,8 @@ export function init(el, context, config, mediator) {
                             ages:AGES.filter(d=>(d!=="TOTAL")),
                             incomes:["income"],
                             group_years:group_years,
-                            selected_ages:["20 to 24 years","40 to 44 years","75 to 79 years","50 to 54 years"]
+                            selected_ages:["20 to 24 years","40 to 44 years","75 to 79 years","50 to 54 years"],
+                            medians:d3.entries(medians[d]).map(d=>({date:new Date(+d.key,0,1),value:d.value}))
                     })    
                 })
                 
@@ -199,6 +178,7 @@ export function init(el, context, config, mediator) {
                     selected:"Australia",
                     group_years:10
                 })
+                
             },{assetPath:config.assetPath,medians:medians});
 
             return; 
