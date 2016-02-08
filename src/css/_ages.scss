@@ -26,7 +26,11 @@
 		}
 		
 		.age {
-			width:calc(100% / 8); // /14
+			width:calc(100% / 2); // /14
+			@include mq(tablet) {
+				width:calc(100% / 10); // /14
+			}
+			
 			float:left;
 			h4 {
 				@include fs-textSans(1);

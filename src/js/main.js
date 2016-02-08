@@ -13,6 +13,7 @@ import BubbleChart from './components/BubbleChart';
 export function init(el, context, config, mediator) {
     
 
+
     let queries=window.location.search.replace("?","").split("&"),
         selected_age=25,
         selected_country="UK";
@@ -39,11 +40,11 @@ export function init(el, context, config, mediator) {
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
     //document.querySelector(".country-text h2").innerHTML=selected_age+" to "+(selected_age+group_years)+" years old in "+selected_country;
 
-    let frameRequest = requestAnimationFrame(function checkInnerHTML(time) {
-        //console.log(time)
+    //let frameRequest = requestAnimationFrame(function checkInnerHTML(time) {
+        
         var b=document.querySelector("#myAge");
         if(b && b.getBoundingClientRect().height) {
-            cancelAnimationFrame(checkInnerHTML);
+           // cancelAnimationFrame(checkInnerHTML);
 
             
             
@@ -73,19 +74,22 @@ export function init(el, context, config, mediator) {
                 
 
                 
-
+                /*
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup",
                     selected:status.age,
                     changeCallback:(age)=>{
 
-                        bubbleBuckets.updateAge(age);
-                        //return;
-
                         status.age=age;
                         myAge.update(status);
-                        d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+                        
 
+                        bubbleBuckets.updateAge(age);
+                        
+
+                        
+                        d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+                        return;
                         myAge.removeAnnotations();
                         myAge.addAnnotations();
 
@@ -102,10 +106,11 @@ export function init(el, context, config, mediator) {
                         
                         bubbleBuckets.selectCountry(country);
 
-                        myAge.removeAnnotations();
-                        myAge.addAnnotations();
+                        //myAge.removeAnnotations();
+                        //myAge.addAnnotations();
                     }
                 })
+                
 
                 let myAge=new Age(data,{
                     container:"#myAge",
@@ -115,7 +120,10 @@ export function init(el, context, config, mediator) {
                     markers:true,
                     group_years:group_years
                 })
-                myAge.addAnnotations();
+
+                
+
+                //myAge.addAnnotations();
                 
                 
                 let bubbleBuckets=new BubbleBuckets(data,{
@@ -135,7 +143,7 @@ export function init(el, context, config, mediator) {
                     //,
                     //annotations:annotations
                 })
-                
+                */
                 
                 /*
                 AgeSelector(getAgeGroups(group_years),{
@@ -157,7 +165,7 @@ export function init(el, context, config, mediator) {
                 */
 
                 
-                COUNTRIES.forEach(d=>{
+                (["IT"]).forEach(d=>{
                     new BubbleChart(data.filter(d=>(d.Age!=="TOTAL")),{
                             container:"#bubbles",
                             countries:[d],
@@ -169,6 +177,7 @@ export function init(el, context, config, mediator) {
                     })    
                 })
                 
+                return;
                 
                 
                 new Ages(data.filter(d=>(d.Age!=="TOTAL")),{
@@ -183,8 +192,8 @@ export function init(el, context, config, mediator) {
 
             return; 
         }
-        frameRequest = requestAnimationFrame(checkInnerHTML);
-    });
+        //frameRequest = requestAnimationFrame(checkInnerHTML);
+    //});
 
 
 }

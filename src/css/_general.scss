@@ -16,7 +16,7 @@ figure.interactive {
 
     background-color: white;
 
-    padding: 10px;
+    padding: 5px;
     @include mq(mobileLandscape) {
         padding: 0px;
     }
@@ -43,22 +43,31 @@ figure.interactive {
     
 
     .section {
-            
-        margin:10px 5rem 100px;
-
+        
+        margin:10px 0 30px;
+        
         &.main-column {
-            margin-left:15rem;
+            margin-left:0;
         }
+
+        @include mq(tablet) {
+            margin:10px 5rem 100px;
+        
+            &.main-column {
+                margin-left:15rem;
+            }
+        }
+        
 
         &.top-border {
             border-top:1px solid #ddd;
         }
-
+        
         h2 {
             @include fs-header(5);
             color:#333;
             overflow:hidden;
-            line-height: 42px;
+            //line-height: 42px;
             margin-bottom: 0;
             span,form {
                 display: inline-block;
@@ -68,8 +77,14 @@ figure.interactive {
                 margin-bottom:3px;
             }
         }
+        &:first-child {
+            h2 {
+                margin:0;
+            }
+        }
         h4 {
             @include fs-header(3);
+            font-weight: normal;
             color:#333;
             overflow:hidden;
             margin-top:0;
@@ -87,22 +102,34 @@ figure.interactive {
         overflow:hidden;
         //margin-bottom:30px;
         position:relative;
+        
 
         >div{
-            float: left;
+            @include mq(tablet) {
+                float: left;
+            }
         }
         .person-profile {
+
             position: absolute;
             width:100%;
             z-index: 9999;
-            top:30px;
+            top:0;
+
+            @include mq(tablet) {
+                top:30px;
+            }
             
             p {
                
-                //text-shadow: 0 0 3px #fff;
-                width:500px;
-                background-color: rgba(255,255,255,0.5);
                 pointer-events:none;
+
+                @include mq(tablet) {
+                    width:500px;
+                    background-color: rgba(255,255,255,0.5);
+                }
+                
+                
             }
         }
     }

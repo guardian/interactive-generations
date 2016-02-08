@@ -8,21 +8,30 @@
 			float:left;
 		}
 		.description {
-			width:260px;
-			padding-right:20px;
+			width:100%;
+			
 			h2 {
 				@include fs-header(3);
                 color:#333;
 				margin:0;
 			}
-			p {
+			
+			@include mq(tablet) {
+				width:260px;
 				padding-right:20px;
+
+				p {
+					padding-right:20px;
+				}
 			}
 			
 		}
 	}
 	div.bubbleChart {
-		width:calc(100% - 260px);
+		width:100%;
+		@include mq(tablet) {
+			width:calc(100% - 260px);
+		}
 		float:left;
 		svg {
 			width:100%;
@@ -93,6 +102,15 @@
 						line {
 							display: block;
 						}
+						/*&:nth-last-child(2) {
+							text {
+								text-anchor:start !important;
+								@include mq(tablet) {
+									text-anchor:middle !important;
+								}
+							}
+							
+						}*/
 					}
 
 				}

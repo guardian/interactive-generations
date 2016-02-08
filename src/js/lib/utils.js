@@ -169,7 +169,7 @@ export function updateExtents(data) {
     let extents={
         born:[1900,2015],
         years:[1978,2013],///d3.extent(data,d=>d.year),
-        income:[d3.extent(data.filter(d=>d.income>0),d=>d.income)[0],60000],
+        income:[d3.extent(data.filter(d=>d.income>0),d=>d.income)[0],50000],
         perc:d3.extent(data.filter(d=>(typeof d.perc!=='undefined' && d.income>0)),d=>{
             return d.perc
         }),
@@ -423,4 +423,27 @@ export function createPeople(data) {
 
     //console.log(nested)
     return nested;
+}
+
+if (!Array.prototype.find) {
+  Array.prototype.find = function(predicate) {
+    if (this === null) {
+      throw new TypeError('Array.prototype.find called on null or undefined');
+    }
+    if (typeof predicate !== 'function') {
+      throw new TypeError('predicate must be a function');
+    }
+    var list = Object(this);
+    var length = list.length >>> 0;
+    var thisArg = arguments[1];
+    var value;
+
+    for (var i = 0; i < length; i++) {
+      value = list[i];
+      if (predicate.call(thisArg, value, i, list)) {
+        return value;
+      }
+    }
+    return undefined;
+  };
 }

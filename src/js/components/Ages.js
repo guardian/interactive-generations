@@ -49,16 +49,16 @@ export function Age(data,options) {
 			//width:580,
 			height:450,
 			margins:{
-				top:50,
+				top:60,
 				bottom:30,
 				left:10,
-				right:10
+				right:20
 			},
 			padding:{
 				top:0,
 				bottom:0,
 				left:0,
-				right:40
+				right:35
 			},
 			axis:{
 				x:true,
@@ -184,7 +184,7 @@ export function Ages(data,options) {
 				.enter()
 				.append("div")
 					.attr("class","age")
-					.style("width",d => "calc(100% / "+nested_data.length+")")
+					//.style("width",d => "calc(100% / "+nested_data.length+")")
 					.attr("rel",d=>d.key);
 	
 

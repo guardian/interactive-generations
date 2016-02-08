@@ -8,6 +8,8 @@ form.fancy-selector {
     position: relative;
     //width:100px;
     //height: 30px;
+    background-color: #f7f7f7; 
+    border-bottom:1px solid #f37021;
 
     @include mq(tablet) {
         
@@ -18,55 +20,57 @@ form.fancy-selector {
         border-bottom:1px solid #f37021;
 
         margin:0 5px;
-        padding:0 10px;
+        padding:0;// 10px;
     }
+    .select-wrapper {
+        display: inline-block;
+        position:relative;
+        overflow:hidden;
+        width:auto;
 
+        &::after {
+            content: "\25BE";
+            color:#f37021;
+            background-color: #f7f7f7; 
+            padding-right:5px;
+            position:absolute;
+            right:0;
+            top:0;
+            //background-color: #ff0000;
+        }
+    }
     select {
-        
-        width:100%;
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+
+        width:calc(100% + 40px);
 
         @include fs-header(5);
         color:#f37021;
         font-size:24px;
 
-        //position: absolute;
-
+        margin:0;// 5px;
+        padding:0 25px 0 10px;
         
-        margin:5px;
-        //width: calc(100% - 10px);
-        //height:50px;
-        //line-height: 50px;
-        text-align:center;
-        padding: 0;
-        //padding-left:30px;
+        text-align:left;
+        //padding: 0;
         
-        -webkit-box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);
-        box-shadow: 0 0 2px 2px rgba(0,0,0,0.1);
+        
+        -webkit-box-shadow: none;
+        box-shadow: none;
 
         @include mq(tablet) {
-            text-align:center;
-            
-            //width: calc(100% - 220px);
-            //line-height: 78px;
-            //height:78px;
-            //padding: 0 0 0 30px;
-            //padding-left:30px;
+            text-align:left;
             background-color: transparent;
-            margin: 0 0 0 3px;
+           // margin: 0;//0 0 0 3px;
 
             -webkit-box-shadow: none;
             box-shadow: none;    
         }
-        //font-weight: 500;
         outline: 0;
         
-        
         border:none;
-
-        
-        
-        
-        
 
         transition: background-color 0.1s ease-out;
         transition: color 0.1s ease-out;
@@ -75,17 +79,25 @@ form.fancy-selector {
         -moz-appearance:    none;
         appearance:         none;
 
+        &::-ms-expand {
+            display: none;
+        }
+
         option {
           
-            //text-align: center;
             @include mq(tablet) {
-                //@include fs-textSans(1);
+                @include fs-textSans(3);
+                font-size:20px;
+                line-height: 24px;
                 font-weight: normal;
                 color:#333;
-                text-align:right;
-                //display: inline-block;
-                //width:auto;
+                text-align:left;
+                padding-right:30px;
+                
             }
         }
+
+        
     }
+    
 }

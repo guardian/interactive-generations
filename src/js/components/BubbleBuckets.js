@@ -91,7 +91,7 @@ export function BubbleBuckets(data,options) {
 								container:this,
 								extents:extents,
 								margins:margins,
-								width:WIDTH/10,
+								//width:WIDTH/10,
 								first:!i,
 								ages:options.ages,
 								mouseMoveCallback:(year,value)=>{
@@ -293,7 +293,7 @@ function BubbleBucket(data,options) {
 			.attr("cx",0)
 			.attr("cy",0)
 			.attr("r",d=>{
-				return options.ages.indexOf(d.key)>-1?5:3
+				return options.ages.indexOf(d.key)>-1?3:2
 			})
 
 	bucket_year

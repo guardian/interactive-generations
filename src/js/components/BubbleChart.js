@@ -65,9 +65,9 @@ export default function BubbleChart(data,options) {
 	
 	let margins=options.margins || {
 		top:30,
-		bottom:30,
-		left:20,
-		right:30
+		bottom:35,
+		left:10,
+		right:25
 	};
 
 	let padding=options.padding || {
@@ -202,7 +202,11 @@ export default function BubbleChart(data,options) {
 						return xscale.ticks();
 					})*/
 				    .tickFormat((d)=>{
-				    	return getShortAgeGroup(d);
+				    	return "";
+				    	let age=getShortAgeGroup(d),
+				    		split_age=age.split("-");
+
+				    	return split_age.map(a=>"<tspan>"+a+"</tspan>").join();
 				    	//if(!d) return "";
 				    	//return "$"+d3.format(",.0")(d/1000)+"k";
 				    })
@@ -225,6 +229,31 @@ export default function BubbleChart(data,options) {
 						//return WIDTH;
 						return -yscale.range()[0]
 					})
+		xaxis.selectAll(".tick")
+				.select("text")
+					.attr("transform","translate(0,4)")
+					.selectAll("tspan")
+					.data(d=>{
+						let age=getShortAgeGroup(d),
+				    		split_age=age.split("-");
+				    	if(split_age.length===1) {
+				    		return split_age;
+				    	}
+				    	return [split_age[0],"\u25BE",split_age[1]];
+					})
+					.enter()
+					.append("tspan")
+						.attr("x",0)
+						.attr("y",(d,i)=>{
+							if(!i) {
+								return 0;
+							}
+							if(i===1) {
+								return 17;
+							}
+							return 28;
+						})
+						.text(d=>d)
 	}
 	function addYAxis() {
 		let yAxis = d3.svg.axis()

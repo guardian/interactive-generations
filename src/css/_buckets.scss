@@ -6,7 +6,11 @@
 	margin-top:30px;
 	overflow:hidden;
 	div.bucket {
-		width:calc(100% / 10);
+		width:calc(100% / 2); // /14
+		@include mq(tablet) {
+			width:calc(100% / 10); // /14
+		}
+		//width:calc(100% / 10);
 		//min-width:98px;
 		height:100px;
 		float:left;

@@ -48,7 +48,7 @@ export default function InlineSelector(list,__options) {
 				return (d.shortname===options.selected);
 			})
 			.attr("selected","selected")
-			.html(d=>(d.name+" &dtrif;"))
+			.html(d=>(d.name))
 	}
 
 	this.selectOption=(value)=>{

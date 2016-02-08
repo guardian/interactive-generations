@@ -51,9 +51,16 @@ $generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s, $
     }
     form.fancy-selector.#{nth($generation-list, $i)} {
         border-bottom-color: $current-color;
-        select {
+        .select-wrapper {
             color: $current-color;
+            &::after {
+                color: $current-color;
+            }
+            select {
+                color: inherit;
+            }
         }
+        
     }
     .age-timeline.#{nth($generation-list, $i)} {
         path {
