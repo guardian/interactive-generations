@@ -124,7 +124,7 @@ export const COUNTRY_NAMES={
     "NO":"Norway",
     "SE":"Sweden"
 }
-export const COUNTRIES=(["AU","UK","IT","US","ES","FR","DE","CA","NO","SE"]);
+export const COUNTRIES=(["UK","FR","DE","IT","ES","NO","SE","US","CA","AU"]);
 
 export const age_fix={
     "80 years and over":"80+",

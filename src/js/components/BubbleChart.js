@@ -38,7 +38,7 @@ export default function BubbleChart(data,options) {
 			right:10
 		},
 		mouseOverCallback:(d)=>{
-			highlightBubbles(d.date.getFullYear());
+			highlightBubbles(null,d.date.getFullYear());
 		}
 	});
 	
@@ -57,6 +57,23 @@ export default function BubbleChart(data,options) {
 	if(options.height) {
 		svg.attr("height",options.height)
 	}
+	let defs=svg.append("defs");
+	defs.append("marker")
+			.attr({
+				id:"markerArrow",
+				markerWidth:13,
+				markerHeight:13,
+				refX:8,
+				refY:6,
+				orient:"auto",
+				markerUnits:"userSpaceOnUse"
+			})
+			.append("path")
+				.attr("d","M2,1 L2,11 L10,6z")
+				.style({
+					fill:"#bbb",
+					stroke:"none"
+				})
 
 	let box=svg.node().getBoundingClientRect();
 	let WIDTH = options.width || box.width,
@@ -66,15 +83,15 @@ export default function BubbleChart(data,options) {
 	let margins=options.margins || {
 		top:30,
 		bottom:35,
-		left:10,
-		right:25
+		left:15,
+		right:20
 	};
 
 	let padding=options.padding || {
 		top:0,
 		bottom:0,
-		left:40,
-		right:0
+		left:10,
+		right:35
 	};
 
 	let samples=[],
@@ -97,7 +114,7 @@ export default function BubbleChart(data,options) {
 	//let xscale=d3.scale.linear().domain([extents.income[0],35000]).range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
 	let xscale=d3.scale.ordinal().domain(options.ages).rangePoints([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
 		yscale=d3.scale.linear().domain(extents.perc).range([HEIGHT-(margins.top+margins.bottom),0]),
-		rscale=d3.scale.sqrt().domain(extents.local_income).range([2,(WIDTH-(margins.left+margins.right+padding.left+padding.right))/options.ages.length/2]);
+		rscale=d3.scale.sqrt().domain(extents.local_income).range([2,(WIDTH-(margins.left+margins.right+padding.left+padding.right))/options.ages.length*0.5]);
 
 
 	let line = d3.svg.line()
@@ -160,15 +177,20 @@ export default function BubbleChart(data,options) {
 								samples.push({
 									x:xscale(d.age),
 									y:yscale(d.perc),
-									year:d.year}
-								);
+									year:d.year,
+									age:d.age
+								});
 								return (`translate(0,${yscale(d.perc)})`)
 							})
 		bubble.append("circle")
 					.attr("cx",0)
 					.attr("cy",0)
 					.attr("r",d=>rscale(d.income))
-
+		bubble.append("text")
+					.attr("class","bg")
+					.attr("x",0)
+					.attr("y",d=>rscale(d.income)+13)
+					.text(d=>d.year)
 		bubble.append("text")
 					.attr("x",0)
 					.attr("y",d=>rscale(d.income)+13)
@@ -264,6 +286,9 @@ export default function BubbleChart(data,options) {
 					})*/
 					.ticks(4)
 				    .tickFormat((d)=>{
+				    	if(d===0) {
+				    		return "AVG"
+				    	}
 				    	return d3.format("+%")(d);//"$"+d3.format(",.0")(d/1000)+"k";
 				    })
 				    
@@ -287,16 +312,59 @@ export default function BubbleChart(data,options) {
 					})
 		yaxis.selectAll(".tick")
 				.select("text")
-					//.attr("x",padding.right)
+					.attr("x", WIDTH-(margins.right))
 					.attr("y","-7")
-	}
-	function highlightBubbles(__year) {
-		
-		let year=__year || extents.local_years[extents.local_years.length-1];
 
+
+		let better_text="Better than average",
+			worse_text="Worse than average";
+		yaxis.append("text")
+				.attr("class","bg yaxis-note")
+				.attr("x",-margins.left)
+				.attr("y",padding.top)
+				.text(better_text)
+		yaxis.append("text")
+				.attr("class","bg yaxis-note")
+				.attr("x",-margins.left)
+				.attr("y",yscale.range()[0]-18)
+				.text(worse_text)
+
+		yaxis.append("text")
+				.attr("class","yaxis-note")
+				.attr("x",-margins.left)
+				.attr("y",padding.top)
+				.text(better_text)
+		yaxis.append("text")
+				.attr("class","yaxis-note")
+				.attr("x",-margins.left)
+				.attr("y",yscale.range()[0]-18)
+				.text(worse_text)
+		
+		yaxis.append("line")
+				.attr("class","yaxis-arrow")
+				.attr("x1",xscale("20 to 24 years")+padding.left)
+				.attr("x2",xscale("20 to 24 years")+padding.left)
+				.attr("y1",yscale(0.18))
+				.attr("y2",yscale(0.36))
+				.style("marker-end","url(#markerArrow)");
+
+		yaxis.append("line")
+				.attr("class","yaxis-arrow")
+				.attr("x1",xscale("20 to 24 years")+padding.left)
+				.attr("x2",xscale("20 to 24 years")+padding.left)
+				.attr("y1",yscale(-0.18))
+				.attr("y2",yscale(-0.36))
+				.style("marker-end","url(#markerArrow)");
+	}
+	function highlightBubbles(__age,__year) {
+		
+		let year=__year || extents.local_years[extents.local_years.length-1],
+			age=__age || options.ages[0];
+		//console.log(year,age)
 		bubble
 			.classed("hidden",d=>(d.year!==year))
 			.classed("highlight",d=>(d.year===year))
+			.classed("highlight-text",d=>(d.year===year && d.age===age))
 			.filter(d=>(d.year===year))
 				.moveToFront();
 	}
@@ -316,7 +384,7 @@ export default function BubbleChart(data,options) {
 		
 		cellEnter
 			.on("mouseenter",function(d){
-				highlightBubbles(d.point.year);
+				highlightBubbles(d.point.age,d.point.year);
 				medianChart.highlight(new Date(d.point.year,0,1))
 			})
 		

@@ -66,12 +66,20 @@
 					}
 					text {
 						text-anchor:middle;
-						fill:#999;
-					}
-					&.hidden {
-						text {
-							visibility: hidden;
+						fill:#666;
+						visibility: hidden;
+						&.bg {
+							stroke:#fff;
+							stroke-width:2px;
+							stroke-linecap:butt;
+							stroke-linejoin:miter;
+							stroke-opacity:1;
+							fill:#fff;
 						}
+					}
+					
+					&.hidden {
+						
 						circle {
 							stroke:#767676;
 							fill:#ddd;
@@ -87,8 +95,22 @@
 						}
 					
 					}	
+					&.highlight-text {
+
+						text {
+							visibility: visible;
+						}
+					
+					}	
 				}
 				
+				/*&:not(:first-child) {
+					.bubble {
+						text {
+							visibility: hidden
+						}
+					}
+				}*/
 
 				
 			}
@@ -115,23 +137,40 @@
 
 				}
 				&.y {
+					text.yaxis-note {
+						text-anchor:start !important;
+						fill:#767676;
+						&.bg {
+							stroke:#fff;
+							stroke-width:2px;
+							stroke-linecap:butt;
+							stroke-linejoin:miter;
+							stroke-opacity:1;
+							fill:#fff;
+						}
+					}
+					line.yaxis-arrow {
+						stroke-width:2;
+						stroke:#bbb;
+						shape-rendering: crispEdges;
+					}
 					.tick {
 						&.zero {
 							text {
-								fill:#666;
+								fill:#767676;
 							}
 							line {
 								//stroke-dasharray:none;
 								//stroke:#aaa;
 
-								stroke:#999;
+								stroke:#767676;
 								stroke-width:2;
 								stroke-dasharray:2,2;
 								stroke-linecap:butt;
 							}
 						}
 						text {
-							text-anchor:start !important;
+							text-anchor:end !important;
 						}
 					}
 				}

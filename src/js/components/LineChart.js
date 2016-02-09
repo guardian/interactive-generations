@@ -4,9 +4,20 @@ export default function LineChart(data,options) {
 
 	let svg=options.container
 						.append("svg")
+							.on("touchstart", function(){
+								let coord = d3.touches(this)[0];
+								touch(coord);
+							})
+	        				.on("touchmove", function(){
+	        					let coord = d3.touches(this)[0];
+								touch(coord);
+							});
+
 	if(options.height) {
 		svg.attr("height",options.height)
 	}
+
+
 
 	let box=svg.node().getBoundingClientRect();
 	let WIDTH = options.width || box.width,
@@ -42,7 +53,9 @@ export default function LineChart(data,options) {
 	let samples=[],
 		voronoi,
 		cell,
-		voronoi_centers;
+		voronoi_data,
+		voronoi_centers,
+		quadtree = d3.geom.quadtree().extent([[0, 0], [WIDTH, HEIGHT]])([]);
 
 	var buildVisual = () => {
 
@@ -66,7 +79,8 @@ export default function LineChart(data,options) {
 												y:yscale(v.value),
 												date:v.date
 											}
-										);	
+										);
+										quadtree.add([xscale(v.date),yscale(v.value)])
 									})
 								})
 
@@ -82,9 +96,13 @@ export default function LineChart(data,options) {
 						.attr("class","marker")
 						.attr("transform",d=>`translate(${xscale(d.date)},${yscale(d.value)})`)
 		marker.append("circle")
-				.attr("x",0)
-				.attr("y",0)
+				.attr("cx",0)
+				.attr("cy",0)
 				.attr("r",2)
+		marker.append("text")
+				.attr("x",0)
+				.attr("y",16)
+				.text(d=>d.date.getFullYear())
 
 		let yAxis = d3.svg.axis()
 				    .scale(yscale)
@@ -132,6 +150,8 @@ export default function LineChart(data,options) {
 					    .attr("class", "voronoi")
 					    .attr("transform","translate("+(margins.left+padding.left)+","+margins.top+")")
 					  	.selectAll("g");
+		
+		
 
 		resample();
 	}
@@ -140,8 +160,8 @@ export default function LineChart(data,options) {
 
 	function resample() {
 			
-		console.log(samples)
-		var voronoi_data=voronoi(samples.filter(function(d){return typeof d !== 'undefined'}));
+		//console.log(samples)
+		voronoi_data=voronoi(samples.filter(function(d){return typeof d !== 'undefined'}));
 		voronoi_centers=voronoi_data.map(function(d){return d.point});
 
 		
@@ -149,11 +169,17 @@ export default function LineChart(data,options) {
 		cell = cell.data(voronoi_data.filter(function(d){return typeof d !== 'undefined'}));
 		cell.exit().remove();
 		
+
+
 		var cellEnter = cell.enter().append("g");
 
 		
 		cellEnter
 			.on("mouseenter",d=>{
+				if(d3.touches(this).length>0) {
+					return;
+				}
+
 				highlightMarker(d.point.date);
 				if(options.mouseOverCallback) {
 					options.mouseOverCallback(d.point);
@@ -168,7 +194,47 @@ export default function LineChart(data,options) {
 		//cell.select("circle").attr("transform", function(d) { return "translate(" + d.point.x + "," + d.point.y + ")"; });
 		cell.select("path").attr("d", function(d) { return "M" + d.join("L") + "Z"; });
 	}
+	function touch(coord) {
+      	//console.log(coord)
+      	let point=findClosestCell(coord);
+      	highlightMarker(point.date);
+      	
+		if(options.mouseOverCallback) {
+      		options.mouseOverCallback(point);
+      	}
+    }
+    function findClosestCell(pos) {
+    	//var pos = d3.mouse(this);
+		var closestPoint = [Infinity, Infinity];
+		var minDistance = Infinity;
 
+		// search for closest point
+		quadtree.visit(function(quad, x1, y1, x2, y2) {
+
+			
+
+			var rx1 = pos[0] - minDistance,
+			    rx2 = pos[0] + minDistance,
+			    ry1 = pos[1] - minDistance,
+			    ry2 = pos[1] + minDistance;
+			
+			if (p = quad.point) {
+				var p,
+					dx = pos[0] - p[0],
+					dy = pos[1] - p[1],
+					d2 = dx * dx + dy * dy,
+					d = Math.sqrt(d2);
+				if (d < minDistance) {
+					closestPoint = p;
+					minDistance = d;
+				}
+			}
+			return x1 > rx2 || x2 < rx1 || y1 > ry2 || y2 < ry1; // bounding box outside closest point
+		});
+
+		//console.log("CLOSEST POINT",closestPoint,voronoi_centers)
+		return voronoi_centers.filter(d=>(d.x===closestPoint[0] && d.y===closestPoint[1]))[0];
+    }
 	function highlightMarker(date) {
 		marker.select("circle").attr("r",1)
 		marker.classed("highlight",d=>(+d.date === +date)).filter(d=>(+d.date === +date)).select("circle").attr("r",3)

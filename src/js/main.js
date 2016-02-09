@@ -74,7 +74,7 @@ export function init(el, context, config, mediator) {
                 
 
                 
-                /*
+                
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup",
                     selected:status.age,
@@ -125,7 +125,7 @@ export function init(el, context, config, mediator) {
 
                 //myAge.addAnnotations();
                 
-                
+                /*
                 let bubbleBuckets=new BubbleBuckets(data,{
                     container:"#buckets",
                     countries:[status.country],
@@ -165,7 +165,7 @@ export function init(el, context, config, mediator) {
                 */
 
                 
-                (["IT"]).forEach(d=>{
+                COUNTRIES.forEach(d=>{
                     new BubbleChart(data.filter(d=>(d.Age!=="TOTAL")),{
                             container:"#bubbles",
                             countries:[d],
