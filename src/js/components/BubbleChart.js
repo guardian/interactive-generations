@@ -22,7 +22,7 @@ export default function BubbleChart(data,options) {
 		.append("p")
 			.text("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.")
 
-	let medianChart=new LineChart([{key:"median",values:options.medians}],{
+	let medianChart=new LineChart([{key:"median",name:"Average income",values:options.medians}],{
 		container:description
 						.append("div")
 						.attr("class","median-chart"),
@@ -34,8 +34,8 @@ export default function BubbleChart(data,options) {
 		margins:{
 			top:15,
 			bottom:10,
-			left:0,
-			right:10
+			left:5,
+			right:15
 		},
 		mouseOverCallback:(d)=>{
 			highlightBubbles(null,d.date.getFullYear());
@@ -186,6 +186,19 @@ export default function BubbleChart(data,options) {
 					.attr("cx",0)
 					.attr("cy",0)
 					.attr("r",d=>rscale(d.income))
+
+		bubble.append("text")
+					.attr("class","bg")
+					.attr("x",0)
+					.attr("y",d => -rscale(d.income)-3)
+					.text(d=>d3.format("+%")(d.perc))
+
+		bubble.append("text")
+					.attr("class","perc")
+					.attr("x",0)
+					.attr("y",d => -rscale(d.income)-3)
+					.text(d=>d3.format("+%")(d.perc))
+
 		bubble.append("text")
 					.attr("class","bg")
 					.attr("x",0)
@@ -287,7 +300,7 @@ export default function BubbleChart(data,options) {
 					.ticks(4)
 				    .tickFormat((d)=>{
 				    	if(d===0) {
-				    		return "AVG"
+				    		return "Average"
 				    	}
 				    	return d3.format("+%")(d);//"$"+d3.format(",.0")(d/1000)+"k";
 				    })
@@ -313,7 +326,7 @@ export default function BubbleChart(data,options) {
 		yaxis.selectAll(".tick")
 				.select("text")
 					.attr("x", WIDTH-(margins.right))
-					.attr("y","-7")
+					.attr("y","-8")
 
 
 		let better_text="Better than average",

@@ -39,6 +39,8 @@ export default function AgeChart(data,options) {
 	let WIDTH = options.width || box.width,
 		HEIGHT= options.height || box.height;
 	//console.log(HEIGHT)
+
+	SMALL=(WIDTH<=320);
 	
 	let margins=options.margins || {
 		top:20,
@@ -53,6 +55,13 @@ export default function AgeChart(data,options) {
 		left:0,
 		right:0
 	};
+
+	let labels=options.labels || {
+		y:{
+			format:d3.format(",.2"),
+			align:"right"
+		}
+	}
 
 	let country,marker,deviation,axes,label;
 
@@ -127,8 +136,9 @@ export default function AgeChart(data,options) {
 			country
 				.append("path")
 				.attr("class","avg")
-				.attr("d",d => {
+				.attr("d",() => {
 						//console.log("AVERAGE",options.average)
+						console.log("AAAAAARGHHHH",options)
 						let values=options.average.map(v => {
 							return {
 								x:v.year,
@@ -139,6 +149,11 @@ export default function AgeChart(data,options) {
 						return line(values)
 					}
 				)
+			country.append("text")
+				.attr("class","avg")
+				.attr("x",d=>xscale(options.average[d.key==="DE"?3:0].year))
+				.attr("y",d=>yscale(options.average[d.key==="DE"?3:0][FIELDNAME])+15)
+				.text("Average income")
 		}
 
 		if(options.incomes.indexOf("income")>-1) {
@@ -172,6 +187,22 @@ export default function AgeChart(data,options) {
 						return line(values)
 					}
 				)
+
+			country
+				.filter(d=>typeof(d.name)!=='undefined')
+					.append("text")
+					.attr("class","line-name bg")
+					.attr("x",d=>xscale(d.values[d.values.length-4].year))
+					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
+					.text("Disposable income")
+
+			country
+				.filter(d=>typeof(d.name)!=='undefined')
+					.append("text")
+					.attr("class","line-name")
+					.attr("x",d=>xscale(d.values[d.values.length-4].year))
+					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
+					.text("Disposable income")
 				
 		}
 
@@ -181,7 +212,11 @@ export default function AgeChart(data,options) {
 					.attr("class","labels")
 					.classed("family",true)
 					.selectAll("g.label")
-					.data(d=>d.values)
+					.data((d,i)=>d.values.map(v=>{
+						v.index=i;
+						v.length=d.values.length;
+						return v;
+					}))
 					.enter()
 					.append("g")
 						.attr("class","label")
@@ -200,10 +235,24 @@ export default function AgeChart(data,options) {
 				.attr("cy",0)
 				.attr("r",4)
 		label.append("text")
+				.attr("class","income bg")
+				.attr("x",0)
+				.attr("y",-10)
+				.text((d,i)=>{
+					return labels.y.format(d)
+				})
+		label.append("text")
 				.attr("class","income")
 				.attr("x",0)
 				.attr("y",-10)
-				.text(d=>"$"+d3.format(",.0f")(d.family))
+				.text((d,i)=>{
+					return labels.y.format(d)
+				})
+		label.append("text")
+				.attr("class","year bg")
+				.attr("x",0)
+				.attr("y",-24)
+				.text(d=>d.year)
 		label.append("text")
 				.attr("class","year")
 				.attr("x",0)
@@ -220,9 +269,11 @@ export default function AgeChart(data,options) {
 					.tickValues(()=>{
 						return ([0]).concat(yscale.ticks(2))
 					})
-				    .tickFormat((d)=>{
-				    	//if(!d) return "";
-				    	return "$"+d3.format(",.0")(d/1000)+"k";
+				    .tickFormat((d,i)=>{
+				    	let length=([0]).concat(yscale.ticks(2)).length;
+				    	let value={index:i,length:length};
+				    	value[FIELDNAME]=d;
+				    	return labels.y.format(value)
 				    })
 				    
 
@@ -245,8 +296,10 @@ export default function AgeChart(data,options) {
 						return xscale.range()[1]
 					})
 		yaxis.selectAll(".tick")
+				.classed("left",labels.y.align==="left")
+				.classed("right",labels.y.align==="right")
 				.select("text")
-					.attr("x",padding.right)
+					.attr("x",labels.y.align==="left"?(-xscale.range()[1]-margins.left):padding.right)
 					.attr("y","-7")
 
 		let xAxis = d3.svg.axis()
@@ -254,13 +307,16 @@ export default function AgeChart(data,options) {
 				    .orient("bottom")
 				    //.ticks(2)
 				    .tickValues(()=>{
-				    	if(SMALL) {
-				    		return extents.years;	
-				    	}
+				    	//if(SMALL) {
+				    		//return extents.years;	
+				    	//}
 						return xscale.ticks();
 					})
 				    .tickFormat((d)=>{
 				    	let year=d3.format("0d")(d);
+				    	if(!SMALL) {
+				    		return year;	
+				    	}
 				    	if(year%1000===0) {
 				    		return year;
 				    	}
@@ -423,6 +479,21 @@ export default function AgeChart(data,options) {
 						return line(values)
 					}
 				)
+
+			
+			country
+				.select("text.line-name.bg")
+					.attr("x",d=>{
+						//console.log("LINE-NAME",d,d.values[d.values.length-4])
+						return xscale(d.values[d.values.length-4].year)
+					})
+					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
+			country
+				.select("text.line-name:not(.bg)")
+					.attr("x",d=>{
+						return xscale(d.values[d.values.length-4].year)
+					})
+					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
 			
 			label=label
 				.data(data[0].values)
@@ -509,6 +580,9 @@ export default function AgeChart(data,options) {
 						return line(values)
 					}
 				)
+			country.select("text.avg")
+				.attr("x",d=>xscale(options.average[d.key==="DE"?3:0].year))
+				.attr("y",d=>yscale(options.average[d.key==="DE"?3:0][FIELDNAME])+15)
 		}
 	}
 
@@ -540,10 +614,12 @@ export default function AgeChart(data,options) {
 			by=d3.format(",.2%")(Math.abs(perc))+" "
 		}
 
-		let text=`In ${COUNTRY_NAMES[data[0].values[0].country]}, in ${year} the <b>${options.age}</b> years range had a ${by}${how} disposable income`;
+		let country=data[0].values[0].country,
+			the=(country==="UK" || country==="US")?"the ":"",
+			text=`In ${the}<b>${COUNTRY_NAMES[country]}</b>, in <b>${year}</b> the ${options.age} age group had a <b>${by}${how}</b> disposable income`;
 
 
-		console.log(text)
+		//console.log(text)
 
 		let annotation=d3.select(options.container)
 							.append("div")

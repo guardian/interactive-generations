@@ -34,6 +34,12 @@
 		}
 		float:left;
 		svg {
+
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+
+
 			width:100%;
 			height:300px;
 
@@ -57,16 +63,17 @@
 				.bubble {
 					circle {
 						stroke:none;
-
-						-webkit-transition: fill 750ms ease-in-out;
-						-moz-transition: fill 750ms ease-in-out;
-						-ms-transition: fill 750ms ease-in-out;
-						-o-transition: fill 750ms ease-in-out;
-						transition: fill 750ms ease-in-out;
+						@include mq(tablet) {
+							-webkit-transition: fill 750ms ease-in-out;
+							-moz-transition: fill 750ms ease-in-out;
+							-ms-transition: fill 750ms ease-in-out;
+							-o-transition: fill 750ms ease-in-out;
+							transition: fill 750ms ease-in-out;
+						}
 					}
 					text {
 						text-anchor:middle;
-						fill:#666;
+						fill:#333;
 						visibility: hidden;
 						&.bg {
 							stroke:#fff;
@@ -75,6 +82,10 @@
 							stroke-linejoin:miter;
 							stroke-opacity:1;
 							fill:#fff;
+						}
+						&.perc {
+							fill:#333;
+							//font-weight: bold;
 						}
 					}
 					

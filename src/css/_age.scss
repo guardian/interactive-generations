@@ -29,6 +29,25 @@
 					stroke:#dadada;
 				}
 			}
+			text.line-name {
+				@include fs-textSans(1);
+				font-weight: bold;
+				text-anchor:middle;
+				&.bg {
+					stroke:#fff;
+					stroke-width:2px;
+					stroke-linecap:butt;
+					stroke-linejoin:miter;
+					stroke-opacity:1;
+					fill:#fff;
+				}
+			}
+			text.avg {
+				@include fs-textSans(1);
+				font-weight: normal;
+				fill:#999;
+				text-anchor:start;
+			}
 			.labels {
 				.label {
 					circle {
@@ -50,6 +69,18 @@
 
 						display: none;
 						text-anchor:start;
+
+						&.year {
+							font-weight: normal;
+						}
+
+						&.bg {
+							stroke:#fff;
+							stroke-width:3px;
+							stroke-linecap:butt;
+							stroke-linejoin:miter;
+							fill:#fff;
+						}
 					}
 					&:hover:not(:last-child) {
 						text {
@@ -92,8 +123,10 @@
 					@include fs-textSans(3);
 					font-weight: bold;
 					fill:#808080;
-					//@include fs-header(1);	
-					//fill:#f37021;
+					
+					&.year {
+						font-weight: normal;
+					}
 				}
 			}
 		}
@@ -113,7 +146,7 @@
 		width:190px;
 		padding-top:40px;
 		
-		border-left:1px solid #dadada;
+		border-left:1px solid #aaa;
 		p {
 			@include fs-textSans(1);
 			font-size:12px;
@@ -127,7 +160,7 @@
 			margin-top:-105px;
 			margin-left:-190px;
 			text-align: right;
-			border-right:1px solid #dadada;
+			border-right:1px solid #aaa;
 			border-left:none;
 			padding-top:0px;
 			padding-bottom:40px;

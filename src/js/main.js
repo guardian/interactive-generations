@@ -89,7 +89,7 @@ export function init(el, context, config, mediator) {
 
                         
                         d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
-                        return;
+                        
                         myAge.removeAnnotations();
                         myAge.addAnnotations();
 
@@ -106,8 +106,8 @@ export function init(el, context, config, mediator) {
                         
                         bubbleBuckets.selectCountry(country);
 
-                        //myAge.removeAnnotations();
-                        //myAge.addAnnotations();
+                        myAge.removeAnnotations();
+                        myAge.addAnnotations();
                     }
                 })
                 
@@ -122,10 +122,10 @@ export function init(el, context, config, mediator) {
                 })
 
                 
-
-                //myAge.addAnnotations();
                 
-                /*
+                myAge.addAnnotations();
+                
+                
                 let bubbleBuckets=new BubbleBuckets(data,{
                     container:"#buckets",
                     countries:[status.country],
@@ -143,7 +143,8 @@ export function init(el, context, config, mediator) {
                     //,
                     //annotations:annotations
                 })
-                */
+                
+                //return;
                 
                 /*
                 AgeSelector(getAgeGroups(group_years),{
@@ -177,7 +178,7 @@ export function init(el, context, config, mediator) {
                     })    
                 })
                 
-                return;
+                //return;
                 
                 
                 new Ages(data.filter(d=>(d.Age!=="TOTAL")),{

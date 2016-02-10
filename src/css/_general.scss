@@ -51,7 +51,7 @@ figure.interactive {
         }
 
         @include mq(tablet) {
-            margin:10px 5rem 100px;
+            margin:10px 5rem 50px;
         
             &.main-column {
                 margin-left:15rem;
@@ -132,5 +132,10 @@ figure.interactive {
                 
             }
         }
+    }
+    .notes {
+        margin-top:30px;
+        @include fs-textSans(1);
+        color:#767676;
     }
 }

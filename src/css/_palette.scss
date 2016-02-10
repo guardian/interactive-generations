@@ -33,6 +33,9 @@ $generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s, $
         circle {
             fill: $current-color;
         }
+        text.line-name {
+            fill: $current-color;   
+        }
     }
     .marker.#{nth($generation-list, $i)} {
         circle,text {

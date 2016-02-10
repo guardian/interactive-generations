@@ -87,6 +87,21 @@ export default function LineChart(data,options) {
 		plot.append("path")
 				.attr("d",d=>line(d.values.map(v=>({x:v.date,y:v.value}))))
 
+		plot
+			.filter(d=>typeof(d.name)!=='undefined')
+			.append("text")
+				.attr("class","plot-name bg")
+				.attr("x",d=>xscale(d.values[0].date))
+				.attr("y",d=>yscale(d.values[0].value)+14)
+				.text(d=>d.name)
+		plot
+			.filter(d=>typeof(d.name)!=='undefined')
+			.append("text")
+				.attr("class","plot-name")
+				.attr("x",d=>xscale(d.values[0].date))
+				.attr("y",d=>yscale(d.values[0].value)+14)
+				.text(d=>d.name)
+
 		marker=plot.append("g")
 				.attr("class","markers")
 				.selectAll("g.marker")
@@ -99,10 +114,18 @@ export default function LineChart(data,options) {
 				.attr("cx",0)
 				.attr("cy",0)
 				.attr("r",2)
+
+		marker.append("text")
+				.attr("class","bg")
+				.attr("x",0)
+				.attr("y",-6)
+				.text(d=>d.date.getFullYear())
 		marker.append("text")
 				.attr("x",0)
-				.attr("y",16)
+				.attr("y",-6)
 				.text(d=>d.date.getFullYear())
+
+		highlightMarker(data[0].values[data[0].values.length-1].date);
 
 		let yAxis = d3.svg.axis()
 				    .scale(yscale)
@@ -198,7 +221,7 @@ export default function LineChart(data,options) {
       	//console.log(coord)
       	let point=findClosestCell(coord);
       	highlightMarker(point.date);
-      	
+
 		if(options.mouseOverCallback) {
       		options.mouseOverCallback(point);
       	}
@@ -233,7 +256,7 @@ export default function LineChart(data,options) {
 		});
 
 		//console.log("CLOSEST POINT",closestPoint,voronoi_centers)
-		return voronoi_centers.filter(d=>(d.x===closestPoint[0] && d.y===closestPoint[1]))[0];
+		return voronoi_centers.filter(d=>(Math.abs(d.x-closestPoint[0])<1))[0];
     }
 	function highlightMarker(date) {
 		marker.select("circle").attr("r",1)

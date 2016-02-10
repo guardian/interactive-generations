@@ -52,9 +52,19 @@
 					}
 				}
 				text {
-					//text-anchor:start !important;
 					text-anchor:end !important;
 				}
+				&.left {
+					text {
+						text-anchor:start !important;
+					}
+				}
+				&.right {
+					text {
+						text-anchor:end !important;
+					}	
+				}
+				
 			}
 		}
 		&.x {

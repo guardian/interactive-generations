@@ -34,6 +34,7 @@ export function Age(data,options) {
 
 	let chart=new AgeChart([{
 			key:options.countries[0],
+			name:"Disposable income",
 			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}})
 		}]
 		,{
@@ -47,9 +48,9 @@ export function Age(data,options) {
 			incomes:options.incomes,
 			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}}),
 			//width:580,
-			height:450,
+			height:420,
 			margins:{
-				top:60,
+				top:50,
 				bottom:30,
 				left:10,
 				right:20
@@ -63,6 +64,20 @@ export function Age(data,options) {
 			axis:{
 				x:true,
 				y:true
+			},
+			labels:{
+				x:{
+					format:(d,first,last)=>{
+						return "$"+d3.format(",.0")(d)
+					}
+				},
+				y:{
+					align:"left",
+					format:(d)=>{
+						//console.log("---->",d)
+						return "$"+d3.format(",.0")(d[FIELDNAME])+((d.index===d.length-1)?" disposable income (USD)":"");
+					}
+				}
 			},
 			pattern:true
 		}

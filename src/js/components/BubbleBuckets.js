@@ -1,4 +1,4 @@
-import { nestDataByCountry,updateExtents,nestDataByYear,AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from '../lib/utils';
+import { nestDataByCountry,updateExtents,nestDataByYear,AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES,COUNTRIES } from '../lib/utils';
 
 export function BubbleBuckets(data,options) {
 
@@ -42,7 +42,7 @@ export function BubbleBuckets(data,options) {
 					.append("div")
 						.attr("class","buckets")
 						.selectAll("div.bucket")
-						.data(nested_data)
+						.data(nested_data.sort((a,b)=>(COUNTRIES.indexOf(a.key)-COUNTRIES.indexOf(b.key))))
 						.enter()
 						.append("div")
 							.attr("class","bucket")
@@ -55,7 +55,7 @@ export function BubbleBuckets(data,options) {
 							})
 	let margins={
 			top:10,
-			bottom:0,
+			bottom:30,
 			left:10,
 			right:10
 		};
@@ -81,6 +81,10 @@ export function BubbleBuckets(data,options) {
 				.html(d=>{
 					return "<p>"+d.text+"</p>";
 				})*/
+
+	buckets.append("h3")
+				.html(d=>COUNTRY_NAMES[d.key])
+
 	let WIDTH=d3.select(options.container).node().getBoundingClientRect().width;
 
 	let bucket=buckets.append("div")
@@ -102,8 +106,7 @@ export function BubbleBuckets(data,options) {
 						);
 					})
 
-	buckets.append("h3")
-				.html(d=>COUNTRY_NAMES[d.key])
+	
 
 	
 
@@ -130,7 +133,8 @@ export function BubbleBuckets(data,options) {
 		console.log(nested_data)
 
 		buckets
-			.data(nested_data)
+			//.data(nested_data)
+			.data(nested_data.sort((a,b)=>(COUNTRIES.indexOf(a.key)-COUNTRIES.indexOf(b.key))))
 				.select("div.chart")
 				.each(function(d,i){
 					console.log(i,d)
@@ -215,7 +219,7 @@ function BubbleBucket(data,options) {
 
 	let bucket_year=svg.append("g")
 					.attr("class","bucket-year")
-					.attr("transform","translate("+(WIDTH/2)+","+(HEIGHT-2)+")");
+					.attr("transform","translate("+(WIDTH/2)+","+(HEIGHT-5)+")");
 
 	let range=axes.selectAll("g.range")
 					.data(data.values)
@@ -356,7 +360,7 @@ function BubbleBucket(data,options) {
 	yaxis.selectAll(".tick")
 			//.filter((d,i) => d!==0)
 			.select("line")
-				.classed("hidden",d=>(d!==0))
+				.classed("hidden",1)//d=>(d!==0))
 				.attr("x2",(d,i) => {
 					return WIDTH
 				})
@@ -387,6 +391,10 @@ function BubbleBucket(data,options) {
 
 		console.log("---->",options.ages,data)
 
+		CURRENT_YEAR=+data.values[0].values[data.values[0].values.length-1].key
+
+		bucket_year.select("text").text(CURRENT_YEAR);
+
 		bubble.data(data.values);
 		bubble
 			.attr("class","bubble "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name)
@@ -394,13 +402,15 @@ function BubbleBucket(data,options) {
 			.duration(500)
 			.delay(250)
 			.attr("transform",d=>{
-							//console.log(CURRENT_YEAR)
+							console.log(CURRENT_YEAR,d)
 							//console.log(d.values,d.values.find(d=>{console.log(+d.key,CURRENT_YEAR);return +d.key===CURRENT_YEAR}))
+							console.log("VALUES",d.values)
 							let x=sparkline_xscale(CURRENT_YEAR),//xscale(d.key),
 								y=yscale(d.values.find(d=>{return +d.key===CURRENT_YEAR}).values[FIELDNAME]);
 							
 							return `translate(${x},${y})`;
 						})
+			
 
 		sparkline.data(data.values);
 		sparkline
