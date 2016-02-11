@@ -8,6 +8,7 @@ import { requestAnimationFrame, cancelAnimationFrame } from './lib/request-anima
 import AgeSelector from './components/AgeSelector';
 import InlineSelector from './components/InlineSelector';
 import BubbleChart from './components/BubbleChart';
+import ActiveQueue from './lib/ActiveQueue';
 //import annotations from '../assets/data/annotations.json!json';
 
 export function init(el, context, config, mediator) {
@@ -17,7 +18,7 @@ export function init(el, context, config, mediator) {
     let queries=window.location.search.replace("?","").split("&"),
         selected_age=25,
         selected_country="UK";
-    console.log(queries)
+    //console.log(queries)
     
     let group_years=5;
 
@@ -68,13 +69,14 @@ export function init(el, context, config, mediator) {
                     d.age=d.Age;//(age_fix[d.Age] || d.Age).replace(/years/gi,""); 
                 });
                 
-                console.log("--->",data);
+                //console.log("--->",data);
 
                 
                 
+                
+                
+                
 
-                
-                
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup",
                     selected:status.age,
@@ -82,7 +84,8 @@ export function init(el, context, config, mediator) {
 
                         status.age=age;
                         myAge.update(status);
-                        
+                        myAge.removeAnnotations();
+                        myAge.addAnnotations();
 
                         bubbleBuckets.updateAge(age);
                         
@@ -90,12 +93,10 @@ export function init(el, context, config, mediator) {
                         
                         d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
                         
-                        myAge.removeAnnotations();
-                        myAge.addAnnotations();
-
-
                     }
                 })
+
+
 
                 let country_selector=new InlineSelector(COUNTRIES.map(d=>({name:COUNTRY_NAMES[d],shortname:d})),{
                     container:"#myCountry",
@@ -103,48 +104,109 @@ export function init(el, context, config, mediator) {
                     changeCallback:(country)=>{
                         status.country=country;
                         myAge.update(status);
-                        
-                        bubbleBuckets.selectCountry(country);
-
                         myAge.removeAnnotations();
                         myAge.addAnnotations();
-                    }
-                })
-                
-
-                let myAge=new Age(data,{
-                    container:"#myAge",
-                    countries:[status.country],
-                    ages:[status.age],
-                    incomes:["income"],
-                    markers:true,
-                    group_years:group_years
-                })
-
-                
-                
-                myAge.addAnnotations();
-                
-                
-                let bubbleBuckets=new BubbleBuckets(data,{
-                    container:"#buckets",
-                    countries:[status.country],
-                    filter:{
-                        ages:[status.age]
-                    },
-                    ages:[status.age],
-                    incomes:["income"],
-                    group_years:group_years,
-                    clickCallback:(country)=>{
+                        myAge.updateDescription("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.");
                         
                         bubbleBuckets.selectCountry(country);
-                        country_selector.selectOption(country);
+
+                        
                     }
-                    //,
-                    //annotations:annotations
                 })
                 
-                //return;
+                let myAge,bubbleBuckets;
+
+                let queue=new ActiveQueue();
+
+                queue.add({
+                    id:"age",
+                    f: () => {
+                        myAge=new Age(data,{
+                            container:"#myAge",
+                            countries:[status.country],
+                            ages:[status.age],
+                            incomes:["income"],
+                            markers:true,
+                            group_years:group_years
+                        })
+                        
+                        myAge.addAnnotations();
+                        setTimeout(()=>{queue.setNext("bb");},500)
+                        
+                    }
+                })
+
+                queue.add({
+                    id:"bb",
+                    f: () => {
+                        bubbleBuckets=new BubbleBuckets(data,{
+                            container:"#buckets",
+                            countries:[status.country],
+                            filter:{
+                                ages:[status.age]
+                            },
+                            ages:[status.age],
+                            incomes:["income"],
+                            group_years:group_years,
+                            clickCallback:(country)=>{
+                                
+                                bubbleBuckets.selectCountry(country);
+                                country_selector.selectOption(country);
+                            }
+                            //,
+                            //annotations:annotations
+                        });
+
+                        setTimeout(()=>{queue.setNext("bubbles");},500)
+                    }
+                })
+
+                queue.add({
+                    id:"bubbles",
+                    f: () => {
+                        COUNTRIES.forEach(d=>{
+                            new BubbleChart(data.filter(d=>(d.Age!=="TOTAL")),{
+                                    container:"#bubbles",
+                                    countries:[d],
+                                    ages:AGES.filter(d=>(d!=="TOTAL")),
+                                    incomes:["income"],
+                                    group_years:group_years,
+                                    selected_ages:["20 to 24 years","40 to 44 years","75 to 79 years","50 to 54 years"],
+                                    medians:d3.entries(medians[d]).map(d=>({date:new Date(+d.key,0,1),value:d.value}))
+                            })    
+                        });
+
+                        setTimeout(()=>{queue.setNext("ages");},250)
+                    }
+                })
+                
+                queue.add({
+                    id:"ages",
+                    f: () => {
+                        new Ages(data.filter(d=>(d.Age!=="TOTAL")),{
+                            container:"#ages",
+                            countries:COUNTRIES,
+                            incomes:["income"],//,"single"],
+                            selected:"Australia",
+                            group_years:10
+                        })
+
+                        setTimeout(()=>{queue.setNext("transition");},50)
+                    }
+                })
+
+                queue.add({
+                    id:"transition",
+                    f: () => {
+                        myAge.transition();
+                    }
+                })
+
+                console.log(queue.getList())
+
+                queue.start("age");
+
+                return;
                 
                 /*
                 AgeSelector(getAgeGroups(group_years),{
@@ -164,30 +226,14 @@ export function init(el, context, config, mediator) {
                     group_years:group_years
                 })
                 */
-
+                //return;
                 
-                COUNTRIES.forEach(d=>{
-                    new BubbleChart(data.filter(d=>(d.Age!=="TOTAL")),{
-                            container:"#bubbles",
-                            countries:[d],
-                            ages:AGES.filter(d=>(d!=="TOTAL")),
-                            incomes:["income"],
-                            group_years:group_years,
-                            selected_ages:["20 to 24 years","40 to 44 years","75 to 79 years","50 to 54 years"],
-                            medians:d3.entries(medians[d]).map(d=>({date:new Date(+d.key,0,1),value:d.value}))
-                    })    
-                })
+                
                 
                 //return;
                 
                 
-                new Ages(data.filter(d=>(d.Age!=="TOTAL")),{
-                    container:"#ages",
-                    countries:COUNTRIES,
-                    incomes:["income"],//,"single"],
-                    selected:"Australia",
-                    group_years:10
-                })
+                
                 
             },{assetPath:config.assetPath,medians:medians});
 

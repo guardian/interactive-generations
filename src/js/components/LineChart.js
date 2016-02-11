@@ -1,6 +1,6 @@
 export default function LineChart(data,options) {
 
-	console.log("LineChart",data)
+	//console.log("LineChart",data)
 
 	let svg=options.container
 						.append("svg")

@@ -110,11 +110,14 @@ figure.interactive {
             }
         }
         .person-profile {
-
-            position: absolute;
             width:100%;
-            z-index: 9999;
-            top:0;
+            position: relative;
+
+            @include mq(tablet) {
+                position: absolute;
+                z-index: 9999;
+                top:0;
+            }
 
             @include mq(tablet) {
                 top:30px;
@@ -126,7 +129,6 @@ figure.interactive {
 
                 @include mq(tablet) {
                     width:500px;
-                    background-color: rgba(255,255,255,0.5);
                 }
                 
                 

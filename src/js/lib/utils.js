@@ -231,7 +231,7 @@ export function getAgeGroups(group_years) {
 export function nestDataByAgeGroup(data,years,ages,countries) {
     let group_years=years || 5;
 
-    console.log("!!!!!!",years,ages,countries)
+    //console.log("!!!!!!",years,ages,countries)
 
     let nested=d3.nest()
         /*.key(d => {

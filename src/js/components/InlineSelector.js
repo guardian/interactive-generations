@@ -4,14 +4,14 @@ export default function InlineSelector(list,__options) {
 	let container=d3.select(options.container);
 	
 
-	console.log(list)
+	//console.log(list)
 
 	let option=container
 					.on("change",function(d){
 						////console.log()
 						//self.COUNTRY=this.options[this.selectedIndex].value;
 						//self.options.country=self.COUNTRY;
-						console.log(this.options[this.selectedIndex].value)
+						//console.log(this.options[this.selectedIndex].value)
 						
 
 						updateOptions(this.options[this.selectedIndex].value);
@@ -55,7 +55,7 @@ export default function InlineSelector(list,__options) {
 		container.selectAll("option")
 				.each((d,i)=>{
 					if(d.shortname===value) {
-						console.log("selecting",i,d)
+						//console.log("selecting",i,d)
 						container.node().selectedIndex=i;
 					}
 				})

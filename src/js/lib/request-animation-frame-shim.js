@@ -4,7 +4,16 @@ export let requestAnimationFrame = 'function' === typeof window.requestAnimation
         (cb) => window.webkitRequestAnimationFrame(cb) :
     'function' === typeof window.mozRequestAnimationFrame ?
         (cb) => window.mozRequestAnimationFrame(cb) :
-    undefined;
+    (cb,element) => {
+        let currTime = new Date().getTime();
+        let timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        let id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+            timeToCall);
+
+        lastTime = currTime + timeToCall;
+        
+        return id;
+    };
 
 export let cancelAnimationFrame = 'function' === typeof window.cancelAnimationFrame ?
         (cb) => window.cancelAnimationFrame(cb) :
@@ -14,4 +23,4 @@ export let cancelAnimationFrame = 'function' === typeof window.cancelAnimationFr
         (cb) => window.webkitCancelRequestAnimationFrame(cb) :
     'function' === typeof window.mozCancelAnimationFrame ?
         (cb) => window.mozCancelAnimationFrame(cb) :
-    undefined;
+    (id) => clearTimeout(id);

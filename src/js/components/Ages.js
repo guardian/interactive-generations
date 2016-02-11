@@ -1,4 +1,5 @@
 import { nestDataByAgeGroup,updateExtents,nestDataByYear,getShortAgeGroup,AGES,COUNTRY_NAMES } from '../lib/utils';
+import { strokeShadow } from '../lib/CSSUtils';
 import AgeChart from './AgeChart';
 
 export function Age(data,options) {
@@ -7,13 +8,13 @@ export function Age(data,options) {
 	let FIELDNAME="income";
 
 	let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
-	console.log("NESTED_DATA",nested_data)
+	//console.log("NESTED_DATA",nested_data)
 
 	let avg_nested_data=nestDataByAgeGroup(data,options.group_years,["TOTAL"],options.countries);
-	console.log("AVG_NESTED_DATA",avg_nested_data)
+	//console.log("AVG_NESTED_DATA",avg_nested_data)
 
 	let nested_data_year=nestDataByYear(data,null,options.countries);
-	console.log("nested_data_year",nested_data_year)
+	//console.log("nested_data_year",nested_data_year)
 
 	nested_data.forEach(a=>{
 		a.values.forEach(d=>{
@@ -50,7 +51,7 @@ export function Age(data,options) {
 			//width:580,
 			height:420,
 			margins:{
-				top:50,
+				top:0,
 				bottom:30,
 				left:10,
 				right:20
@@ -72,10 +73,10 @@ export function Age(data,options) {
 					}
 				},
 				y:{
-					align:"left",
+					align:"right",
 					format:(d)=>{
 						//console.log("---->",d)
-						return "$"+d3.format(",.0")(d[FIELDNAME])+((d.index===d.length-1)?" disposable income (USD)":"");
+						return ((d.index===d.length-1)?"disposable income (USD) $":"$")+""+d3.format(",.0")(d[FIELDNAME]);
 					}
 				}
 			},
@@ -83,22 +84,25 @@ export function Age(data,options) {
 		}
 	);
 
-	this.addAnnotations=function(index,position) {
+	this.addAnnotations= (index,position) =>{
 		chart.addAnnotations(index,position);
 	}
-	this.removeAnnotations=function() {
+	this.removeAnnotations= () =>{
 		chart.removeAnnotations();
+	}
+	this.transition= () =>{
+		chart.transition();
 	}
 
 	function update() {
 		nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
-		console.log(nested_data)
+		//console.log(nested_data)
 
 		avg_nested_data=nestDataByAgeGroup(data,options.group_years,["TOTAL"],options.countries);
-		console.log("AVG_NESTED_DATA",avg_nested_data)
+		//console.log("AVG_NESTED_DATA",avg_nested_data)
 		
 		nested_data_year=nestDataByYear(data,null,options.countries);
-		console.log("nested_data_year",nested_data_year)
+		//console.log("nested_data_year",nested_data_year)
 
 		nested_data.forEach(a=>{
 			a.values.forEach(d=>{
@@ -115,13 +119,13 @@ export function Age(data,options) {
 
 	}
 
-	this.update=function(status){
-		console.log(status)
+	this.update=(status) => {
+		//console.log(status)
 		options.ages=[status.age];
 		options.countries=[status.country];
 		update(status)
 		
-		console.log(nested_data)
+		//console.log(nested_data)
 
 		chart.update([{
 			key:options.countries[0],
@@ -134,16 +138,22 @@ export function Age(data,options) {
 		});
 	}
 
+	this.updateDescription=(description)=> {
+		let p=document.querySelector(".person-profile p");
+		p.innerHTML=description;
+		strokeShadow(p)
+	}
+
 }
 export function Ages(data,options) {
 
 	let FIELDNAME="income";
 
 	let nested_data=nestDataByAgeGroup(data,options.group_years);
-	console.log(nested_data)
+	//console.log(nested_data)
 
 	let nested_data_year=nestDataByYear(data,null,options.countries);
-	console.log("nested_data_year",nested_data_year)
+	//console.log("nested_data_year",nested_data_year)
 
 	nested_data.forEach(a=>{
 		a.values.forEach(d=>{
@@ -162,7 +172,7 @@ export function Ages(data,options) {
 
 	let extents=updateExtents(data);
 
-	console.log(extents);
+	//console.log(extents);
 
 	let row=d3.select(options.container)
 		.selectAll("div.row")

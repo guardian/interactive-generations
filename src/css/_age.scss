@@ -1,5 +1,8 @@
 #myAge.age {
-	margin-top:80px;
+	margin-top:0;
+	@include mq(tablet) {
+		margin-top:115px;
+	}
 	position:relative;
 	$margin: 0px;
 	width:calc(100% - #{$margin});
@@ -126,6 +129,15 @@
 					
 					&.year {
 						font-weight: normal;
+					}
+
+					&.bg {
+						stroke:#fff;
+						stroke-width:2px;
+						stroke-linecap:butt;
+						stroke-linejoin:miter;
+						stroke-opacity:1;
+						fill:#fff;
 					}
 				}
 			}

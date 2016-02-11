@@ -1,4 +1,6 @@
 import { AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from '../lib/utils';
+import { strokeShadow } from '../lib/CSSUtils';
+
 export default function AgeChart(data,options) {
 	
 	//console.log("AgeChart",data)
@@ -41,6 +43,7 @@ export default function AgeChart(data,options) {
 	//console.log(HEIGHT)
 
 	SMALL=(WIDTH<=320);
+	HEIGHT=SMALL?HEIGHT*0.8:HEIGHT;
 	
 	let margins=options.margins || {
 		top:20,
@@ -70,7 +73,7 @@ export default function AgeChart(data,options) {
 	let family_path,single_path;
 
 	let xscale=d3.scale.linear().domain(extents.years).range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
-		yscale=d3.scale.linear().domain([0,extents.income[1]]).range([HEIGHT-(margins.top+margins.bottom),0]);
+		yscale=d3.scale.linear().domain([0,45000]).range([HEIGHT-(margins.top+margins.bottom),0]);
 
 	
 
@@ -94,7 +97,7 @@ export default function AgeChart(data,options) {
 	buildVisual();
 	if(options.markers) {
 		addMarkers();
-		transition();
+		//transition();
 	}
 
 	/*d3.select(options.container)
@@ -138,7 +141,7 @@ export default function AgeChart(data,options) {
 				.attr("class","avg")
 				.attr("d",() => {
 						//console.log("AVERAGE",options.average)
-						console.log("AAAAAARGHHHH",options)
+						//console.log("AAAAAARGHHHH",options)
 						let values=options.average.map(v => {
 							return {
 								x:v.year,
@@ -360,7 +363,7 @@ export default function AgeChart(data,options) {
 	function addMarkers() {
 
 		let markers_data=[data[0].values[0]];//[data[0].values[data[0].values.length-1],data[0].values[0]];
-		console.log(markers_data)
+		//console.log(markers_data)
 
 		let markers=svg.append("g")
 					.attr("class","markers")
@@ -381,6 +384,19 @@ export default function AgeChart(data,options) {
 				.attr("cx",0)
 				.attr("cy",0)
 				.attr("r",10)
+
+		marker.append("text")
+				.attr("class","income bg")
+				.attr("x",0)
+				.attr("y",-15)
+				.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
+
+		marker.append("text")
+				.attr("class","year bg")
+				.attr("x",0)
+				.attr("y",-30)
+				.text(d=>d.year)
+
 		marker.append("text")
 				.attr("class","income")
 				.attr("x",0)
@@ -395,7 +411,7 @@ export default function AgeChart(data,options) {
 
 	function updateMarkers() {
 		let markers_data=[data[0].values[0]];
-		console.log(markers_data)
+		//console.log(markers_data)
 
 		marker
 			.attr("class","marker "+GENERATIONS[AGES_GENERATIONS[options.age]].short_name)
@@ -413,15 +429,15 @@ export default function AgeChart(data,options) {
 				.text(d=>d.year)
 	}
 
-	this.update=function(__data,__options) {
-		console.log(__data,__options);
+	this.update = (__data,__options) => {
+		//console.log(__data,__options);
 
 		options.countries=__options.countries;
 		options.deviation=__options.deviation;
 		options.average=__options.average;
 		options.age=__options.age;
 
-		console.log("options.countries",options.countries)
+		//console.log("options.countries",options.countries)
 
 		data=__data;
 
@@ -437,7 +453,7 @@ export default function AgeChart(data,options) {
 			})
 		})
 
-		console.log("data",data)
+		//console.log("data",data)
 
 		update();
 		
@@ -504,7 +520,7 @@ export default function AgeChart(data,options) {
 								.attr("class","label")
 								.attr("rel",d=>d.year+" "+d[FIELDNAME])
 								.each(d=>{
-									console.log("NEW ",d)
+									//console.log("NEW ",d)
 								})
 								
 			new_label.append("circle")
@@ -569,7 +585,7 @@ export default function AgeChart(data,options) {
 			country
 				.select("path.avg")
 				.attr("d",d => {
-						console.log("AVERAGE",options.average)
+						//console.log("AVERAGE",options.average)
 						let values=options.average.map(v => {
 							return {
 								x:v.year,
@@ -586,16 +602,16 @@ export default function AgeChart(data,options) {
 		}
 	}
 
-	this.addAnnotations=function() {
+	this.addAnnotations=()=>{
 		//console.log("!!!!!!!",data[0].values.length-2)
 		addAnnotations(1,"bottom");
         addAnnotations(data[0].values.length-3,"bottom");
 	}
-	this.removeAnnotations=function() {
+	this.removeAnnotations=()=>{
 		d3.select(options.container).selectAll("div.annotation").remove();
 	}
 	function addAnnotations(index,position) {
-		console.log(index)
+		//console.log(index)
 		let __markers=d3.values(data[0].markers),
 			values=[__markers[index],__markers[__markers.length-1]],
 			year=values[0].year,
@@ -636,9 +652,14 @@ export default function AgeChart(data,options) {
 								return (margins.top+padding.top+top)+"px"
 							})
 							.append("p")
-								.html(text);
-	}
+								//.style("text-shadow","none")
+								.html(text)
 
+		strokeShadow(annotation.node())
+	}
+	this.transition = () => {
+		transition();
+	}
 	function transition() {
 	  	family_path
 	  		.transition()
@@ -657,27 +678,29 @@ export default function AgeChart(data,options) {
 			let interpolate = d3.interpolateString("0," + l, l + "," + l);
 			//console.log(interpolate)
 			//console.log(t,l)
-			var p = path.getPointAtLength(t * l);
+			let p = path.getPointAtLength(t * l);
 			//console.log(t,p,l)
             //Move the marker to that point
             marker
             	.attr("transform", "translate(" + p.x + "," + p.y + ")")
-            marker.select("text.income")
-            		.html(function(d){
-            			let year=Math.round(xscale.invert(p.x));
-            			if(data[0].markers[year]) {
-            				return "$"+d3.format(",.0f")(data[0].markers[year][FIELDNAME]);
-            			}
-            			return this.innerHTML;
-            		})
-            marker.select("text.year")
-            		.html(function(d){
-            			let year=Math.round(xscale.invert(p.x));
-            			if(data[0].markers[year]) {
-            				return year;
-            			}
-            			return this.innerHTML;
-            		})
+
+            let year=Math.round(xscale.invert(p.x));
+            if(data[0].markers[year]) {
+            	//console.log(p.x,year)
+            	marker.select("text.year:not(.bg)")
+	            		.text(year)
+	            
+	            marker.select("text.income:not(.bg)")
+	            		.text("$"+d3.format(",.0f")(data[0].markers[year][FIELDNAME]));
+
+	            marker.select("text.year.bg")
+	            		.text(year)
+	            
+	            marker.select("text.income.bg")
+	            		.text("$"+d3.format(",.0f")(data[0].markers[year][FIELDNAME]));
+            }
+            
+            
 
             //console.log(interpolate(t))
             return interpolate(t);

@@ -48,7 +48,7 @@ export function BubbleBuckets(data,options) {
 							.attr("class","bucket")
 							.classed("selected",d=>options.countries.indexOf(d.key)>-1)
 							.on("click",(d)=>{
-								console.log(d)
+								//console.log(d)
 								if(options.clickCallback) {
 									options.clickCallback(d.key);
 								}
@@ -120,7 +120,7 @@ export function BubbleBuckets(data,options) {
 
 		if(options.filter) {
 			if(options.filter.ages) {
-				console.log(options.filter.ages)
+				//console.log(options.filter.ages)
 				nested_data=nested_data.map(d=>{
 
 					d.values=d.values.filter(v=>options.filter.ages.indexOf(v.key)>-1);
@@ -130,14 +130,14 @@ export function BubbleBuckets(data,options) {
 			}
 		}
 
-		console.log(nested_data)
+		//console.log(nested_data)
 
 		buckets
 			//.data(nested_data)
 			.data(nested_data.sort((a,b)=>(COUNTRIES.indexOf(a.key)-COUNTRIES.indexOf(b.key))))
 				.select("div.chart")
 				.each(function(d,i){
-					console.log(i,d)
+					//console.log(i,d)
 					bubble_buckets[i].updateAge(d,age);
 				})
 
@@ -371,11 +371,11 @@ function BubbleBucket(data,options) {
 	
 	/*options.annotations
 		.style("left",d=>{
-			console.log("annotations",d);
+			//console.log("annotations",d);
 			return (sparkline_xscale(d.year)+margins.left+5)+"px"
 		})
 		.style("top",d=>{
-			console.log("annotations",d);
+			//console.log("annotations",d);
 			return (yscale(d.value[FIELDNAME])-margins.top)+"px"
 		})*/
 
@@ -389,7 +389,7 @@ function BubbleBucket(data,options) {
 		data=__data;
 		options.ages=[age];
 
-		console.log("---->",options.ages,data)
+		//console.log("---->",options.ages,data)
 
 		CURRENT_YEAR=+data.values[0].values[data.values[0].values.length-1].key
 
@@ -402,9 +402,9 @@ function BubbleBucket(data,options) {
 			.duration(500)
 			.delay(250)
 			.attr("transform",d=>{
-							console.log(CURRENT_YEAR,d)
-							//console.log(d.values,d.values.find(d=>{console.log(+d.key,CURRENT_YEAR);return +d.key===CURRENT_YEAR}))
-							console.log("VALUES",d.values)
+							//console.log(CURRENT_YEAR,d)
+							//console.log(d.values,d.values.find(d=>{//console.log(+d.key,CURRENT_YEAR);return +d.key===CURRENT_YEAR}))
+							//console.log("VALUES",d.values)
 							let x=sparkline_xscale(CURRENT_YEAR),//xscale(d.key),
 								y=yscale(d.values.find(d=>{return +d.key===CURRENT_YEAR}).values[FIELDNAME]);
 							

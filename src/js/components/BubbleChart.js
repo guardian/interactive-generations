@@ -6,9 +6,9 @@ export default function BubbleChart(data,options) {
 	let FIELDNAME="income";
 
 	let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
-	console.log("NESTED_DATA",nested_data)
+	//console.log("NESTED_DATA",nested_data)
 
-	console.log(options.medians)
+	//console.log(options.medians)
 
 	let row=d3.select(options.container)
 				.append("div")
@@ -108,7 +108,7 @@ export default function BubbleChart(data,options) {
 	extents.local_years=nested_data[0].values[0].values.map(d=>+d.key)
 	extents.local_income=d3.extent(data.filter(d=>(d.income>0 && options.countries.indexOf(d.Country)>-1)),d=>d.income)
 	extents.local_income=extents.income;
-	console.log(extents)
+	//console.log(extents)
 	let family_path,single_path;
 
 	//let xscale=d3.scale.linear().domain([extents.income[0],35000]).range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
