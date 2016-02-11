@@ -99,6 +99,7 @@ export default function AgeChart(data,options) {
 		addMarkers();
 		//transition();
 	}
+	
 
 	/*d3.select(options.container)
 		.on("mouseenter",()=>{

@@ -131,7 +131,7 @@ export function init(el, context, config, mediator) {
                         })
                         
                         myAge.addAnnotations();
-                        setTimeout(()=>{queue.setNext("bb");},500)
+                        setTimeout(()=>{queue.setNext("bb");},150)
                         
                     }
                 })
@@ -175,7 +175,7 @@ export function init(el, context, config, mediator) {
                                     medians:d3.entries(medians[d]).map(d=>({date:new Date(+d.key,0,1),value:d.value}))
                             })    
                         });
-
+                        
                         setTimeout(()=>{queue.setNext("ages");},250)
                     }
                 })
@@ -202,7 +202,7 @@ export function init(el, context, config, mediator) {
                     }
                 })
 
-                console.log(queue.getList())
+                //console.log(queue.getList())
 
                 queue.start("age");
 

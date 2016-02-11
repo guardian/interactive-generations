@@ -23,7 +23,15 @@ export default function ActiveQueue() {
 		//console.log("setting next",id)
 		next=id;
 	}
-
+	this.show = (id) => {
+		let f=fs.find(d=>(d.id===id));
+		if(f) {
+			console.log("drawing",id)
+			f.f();
+			console.log("filtering out",id)
+			fs=fs.filter(d=>(d.id!==id));
+		}
+	}
 	this.start = (id) => {
 		//console.log("starting with",id)
 		this.setNext(id);
@@ -34,15 +42,17 @@ export default function ActiveQueue() {
 				cancelAnimationFrame(checkNext)
 				return;
 			}
-			//console.log(time,next)
+			//console.log("checking",next,fs[0].id)
 			if(next) {
-				//console.log("drawing",next)
+				
 				let f=fs.find(d=>(d.id===next));
 				if(f) {
+					//console.log("drawing",next)
 					f.f();
+					//console.log("filtering out",next)
 					fs=fs.filter(d=>(d.id!==next));
 				}
-				next=false;
+				//next=false;
 			}
 			/*
 			let f=fs.shift();
