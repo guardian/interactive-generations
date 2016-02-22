@@ -3,10 +3,10 @@ import { strokeShadow } from '../lib/CSSUtils';
 
 export default function AgeChart(data,options) {
 	
-	//console.log("AgeChart",data)
+	console.log("AgeChart",data,options)
 	//console.log(options.deviation)
 
-	let FIELDNAME="income";
+	let FIELDNAME=options.fieldname || "income";
 
 	let SMALL=false;
 
@@ -15,6 +15,8 @@ export default function AgeChart(data,options) {
 	if(options.height) {
 		svg.attr("height",options.height)
 	}
+
+	let number_format=options.number_format || ((d)=>("$"+d3.format(",.0f"))) ;
 
 	/*let defs=svg.append("defs");
 
@@ -70,10 +72,12 @@ export default function AgeChart(data,options) {
 
 	let extents=options.extents;
 
-	let family_path,single_path;
+	console.log(extents)
 
+	let family_path,single_path;
+	//[0,45000]
 	let xscale=d3.scale.linear().domain(extents.years).range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
-		yscale=d3.scale.linear().domain([0,45000]).range([HEIGHT-(margins.top+margins.bottom),0]);
+		yscale=d3.scale.linear().domain(extents[FIELDNAME]).range([HEIGHT-(margins.top+margins.bottom),0]);
 
 	
 
@@ -82,6 +86,7 @@ export default function AgeChart(data,options) {
 		d.values.forEach(v=>{
 			d.markers[v.year]={
 				income:v.income,
+				perc:v.perc,
 				family:v.family,
 				single:v.single,
 				year:v.year
@@ -92,7 +97,7 @@ export default function AgeChart(data,options) {
 	let line = d3.svg.line()
 				    .x(function(d) { return xscale(d.x); })
 				    .y(function(d) { return yscale(d.y); })
-				    .defined(function(d) { return d.y; })
+				    .defined(function(d) { return typeof d.y !== 'undefined'; })
 
 	buildVisual();
 	if(options.markers) {
@@ -149,7 +154,7 @@ export default function AgeChart(data,options) {
 								y:v[FIELDNAME]
 							}
 						});
-
+						//console.log("AVERAGE LINE",values)
 						return line(values)
 					}
 				)
@@ -198,7 +203,7 @@ export default function AgeChart(data,options) {
 					.attr("class","line-name bg")
 					.attr("x",d=>xscale(d.values[d.values.length-4].year))
 					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
-					.text("Disposable income")
+					.text(d=>d.name)
 
 			country
 				.filter(d=>typeof(d.name)!=='undefined')
@@ -206,7 +211,7 @@ export default function AgeChart(data,options) {
 					.attr("class","line-name")
 					.attr("x",d=>xscale(d.values[d.values.length-4].year))
 					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
-					.text("Disposable income")
+					.text(d=>d.name)
 				
 		}
 
@@ -271,10 +276,10 @@ export default function AgeChart(data,options) {
 					//.tickValues((d,i) => {})
 					//.ticks(5)
 					.tickValues(()=>{
-						return ([0]).concat(yscale.ticks(2))
+						return ([0]).concat(yscale.ticks(5))
 					})
 				    .tickFormat((d,i)=>{
-				    	let length=([0]).concat(yscale.ticks(2)).length;
+				    	let length=([0]).concat(yscale.ticks(5)).length;
 				    	let value={index:i,length:length};
 				    	value[FIELDNAME]=d;
 				    	return labels.y.format(value)
@@ -390,7 +395,8 @@ export default function AgeChart(data,options) {
 				.attr("class","income bg")
 				.attr("x",0)
 				.attr("y",-15)
-				.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
+				.text(d=>number_format(d[FIELDNAME]))
+				//.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
 
 		marker.append("text")
 				.attr("class","year bg")
@@ -402,7 +408,9 @@ export default function AgeChart(data,options) {
 				.attr("class","income")
 				.attr("x",0)
 				.attr("y",-15)
-				.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
+				.text(d=>number_format(d[FIELDNAME]))
+				//.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
+
 		marker.append("text")
 				.attr("class","year")
 				.attr("x",0)
@@ -424,7 +432,9 @@ export default function AgeChart(data,options) {
 						})
 
 		marker.select("text.income")
-				.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
+				.text(d=>number_format(d[FIELDNAME]))
+				//.text(d=>d3.format(",.0%")(d[FIELDNAME]))
+				//.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
 
 		marker.select("text.year")
 				.text(d=>d.year)
@@ -449,6 +459,7 @@ export default function AgeChart(data,options) {
 					income:v.income,
 					family:v.family,
 					single:v.single,
+					perc:v.perc,
 					year:v.year
 				}
 			})
@@ -552,7 +563,10 @@ export default function AgeChart(data,options) {
 						})
 			
 			label.select("text.income")
-					.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
+					.text(d=>number_format(d[FIELDNAME]))
+					//.text(d=>d3.format(",.0%")(d[FIELDNAME]))
+					//.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
+
 			label.select("text.year")
 					.text(d=>d.year)
 
@@ -619,20 +633,21 @@ export default function AgeChart(data,options) {
 			diff=values[0][FIELDNAME]-values[1][FIELDNAME];
 
 		let perc=(values[0][FIELDNAME]-values[1][FIELDNAME])/values[1][FIELDNAME];
-
+		perc=values[0][FIELDNAME];
 		let how="similar",
 			by="";
 		if (perc>=0.1) {
 			how="higher";
-			by=d3.format(",.2%")(Math.abs(perc))+" "
+			by=number_format(Math.abs(perc),true)+" "
 		}
 		if (perc<=-0.1) {
 			how="lower";
-			by=d3.format(",.2%")(Math.abs(perc))+" "
+			by=number_format(Math.abs(perc),true)+" "
 		}
 
 		let country=data[0].values[0].country,
 			the=(country==="UK" || country==="US")?"the ":"",
+			//text=`In ${the}<b>${COUNTRY_NAMES[country]}</b>, in <b>${year}</b> the ${options.age} age group had a <b>${by}${how}</b> disposable income`;
 			text=`In ${the}<b>${COUNTRY_NAMES[country]}</b>, in <b>${year}</b> the ${options.age} age group had a <b>${by}${how}</b> disposable income`;
 
 
@@ -692,13 +707,15 @@ export default function AgeChart(data,options) {
 	            		.text(year)
 	            
 	            marker.select("text.income:not(.bg)")
-	            		.text("$"+d3.format(",.0f")(data[0].markers[year][FIELDNAME]));
+	            		.text(d=>number_format(data[0].markers[year][FIELDNAME]))
+	            		//.text("$"+d3.format(",.0f")(data[0].markers[year][FIELDNAME]));
 
 	            marker.select("text.year.bg")
 	            		.text(year)
 	            
 	            marker.select("text.income.bg")
-	            		.text("$"+d3.format(",.0f")(data[0].markers[year][FIELDNAME]));
+	            		.text(d=>number_format(data[0].markers[year][FIELDNAME]))
+	            		//.text("$"+d3.format(",.0f")(data[0].markers[year][FIELDNAME]));
             }
             
             

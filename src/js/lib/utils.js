@@ -170,13 +170,16 @@ export function updateExtents(data) {
         born:[1900,2015],
         years:[1978,2013],///d3.extent(data,d=>d.year),
         income:[d3.extent(data.filter(d=>d.income>0),d=>d.income)[0],50000],
-        perc:d3.extent(data.filter(d=>(typeof d.perc!=='undefined' && d.income>0)),d=>{
+        perc:d3.extent(data.filter(d=>(typeof d.perc!=='undefined' && d.perc!=="100.00" && d.income>0)),d=>{
+            //console.log(d.perc)
             return d.perc
         }),
         family:d3.extent(data.filter(d=>d.family>0),d=>d.family),
         single:d3.extent(data.filter(d=>d.single>0),d=>d.single),
         age:d3.set(data.map(d=>d.Age)).values()
     }
+    let max_perc=d3.max(extents.perc,d=>Math.abs(d));
+    extents.perc=[-max_perc,max_perc];
 
     return extents;
 }
@@ -193,6 +196,7 @@ export function nestData(data) {
                     income:d.income,
                     family:d.family,
                     single:d.single,
+                    perc:d.perc,
                     age:d.Age,
                     year:d.year
                 }
@@ -248,6 +252,9 @@ export function nestDataByAgeGroup(data,years,ages,countries) {
         .key(d => d.year)
         .rollup(leaves => {
             //console.log("!!!!!!!!!!!!!!!!!!!!!",leaves);
+            if(leaves[0].Age==="TOTAL") {
+                leaves[0].perc=0;
+            }
             return leaves[0];
         })
         /*.rollup(leaves => {
@@ -258,6 +265,7 @@ export function nestDataByAgeGroup(data,years,ages,countries) {
         })*/
         .entries(
             data
+                .filter(d=>(d.Age!=="TOTAL" || ages.indexOf("TOTAL")!==-1))
                 .filter(d=>d.income>0)
                 .filter(d=>{
                     if(!countries) {
@@ -285,12 +293,14 @@ export function nestDataByYear(data,ages,countries) {
         .rollup(leaves => {
             return {
                 income:d3.extent(leaves,d=>d.income),
+                perc:d3.extent(leaves,d=>d.perc),
                 family:d3.extent(leaves,d=>d.family),
                 single:d3.extent(leaves,d=>d.single)
             }
         })
         .entries(
             data
+            .filter(d=>(d.Age!=="TOTAL"))
             .filter(d=>d.income>0)
             .filter(d=>{
                 if(!countries) {
@@ -328,12 +338,15 @@ export function nestDataByCountry(data,years,ages,countries) {
         .rollup(leaves => {
             return {
                 income:d3.mean(leaves,d=>d.income),
+                perc:d3.mean(leaves,d=>d.perc),
                 family:d3.mean(leaves,d=>d.family),
                 single:d3.mean(leaves,d=>d.single)
             }
         })
         .entries(
-            data.filter(d=>{
+            data
+            .filter(d=>(d.Age!=="TOTAL"))
+            .filter(d=>{
                 if(!countries) {
                     return 1;
                 }
@@ -349,6 +362,82 @@ export function nestDataByCountry(data,years,ages,countries) {
         );
 
     return nested;
+}
+export function nestDataByCountryAgeYearsRanking(data,countries) {
+    let nested=d3.nest()
+            .key(d=>d.Country)
+            //.key(d=>d.age)
+            .key(d=>d.year)
+            .key(d=>d.age)
+            .rollup(leaves => {
+                return leaves.map(d=>({
+                    age:d.age,
+                    country:d.Country,
+                    income:d.income,
+                    perc:d.perc,
+                    year:d.year
+                }))[0]
+            })
+            .entries(
+                data
+                    .filter(d=>(d.Age!=="TOTAL"))
+                    .filter(d=>{
+                        if(!countries) {
+                            return 1;
+                        }
+                        return countries.indexOf(d.Country)>-1;
+                    })
+                    /*.filter(d=>{
+                        if(!ages) {
+                            return 1;
+                        }
+                        return ages.indexOf(d.age)>-1;
+                    })*/
+                    .sort((a,b)=>(a.year-b.year))
+            );
+    let flat=[];
+    nested.forEach(country=>{
+        country.ages=[];
+        country.values.forEach(year=>{
+
+
+
+
+            year.values=year.values.sort((a,b)=>(a.values.income - b.values.income))
+            let stacked=0;
+            year.values.forEach(d=>{
+                d.values.stacked_value=stacked;
+                stacked+=d.values.income;
+                flat.push(d.values);
+            })
+            /*
+            let age=country.ages.find(d=>d.age===year.key);
+            if(!age) {
+                country.ages.push({
+                    age:year.key,
+                    values:[]
+                })
+                age=country.ages[country.ages.length-1];
+            }
+            */
+        })
+    })
+    //console.log(flat)
+
+    nested=d3.nest()
+                .key(d=>d.country)
+                .key(d=>d.age)
+                .key(d=>d.year)
+                    .rollup(leaves => {
+                        return leaves[0];
+                    })
+                    .entries(flat.sort((a,b)=>(a.stacked - b.stacked)))
+
+    /*nested.forEach(country=>{
+        country.values=country.values.sort((a,b)=>(AGES.indexOf(a.key)-AGES.indexOf(b.key)))
+    })*/
+
+    return flat.sort((a,b)=>(a.stacked - b.stacked));
 }
 export function nestData2(data) {
 

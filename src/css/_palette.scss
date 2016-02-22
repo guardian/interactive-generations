@@ -52,6 +52,11 @@ $generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s, $
             fill: $current-color;
         }
     }
+    .plot.#{nth($generation-list, $i)} {
+        path {
+            fill: $current-color;   
+        }
+    }
     form.fancy-selector.#{nth($generation-list, $i)} {
         border-bottom-color: $current-color;
         .select-wrapper {

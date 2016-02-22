@@ -3,12 +3,12 @@ import { strokeShadow } from '../lib/CSSUtils';
 import AgeChart from './AgeChart';
 
 export function Age(data,options) {
-	//console.log(data,options)
+	console.log(data,options)
 
-	let FIELDNAME="income";
+	let FIELDNAME=options.fieldname || "income";
 
 	let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
-	//console.log("NESTED_DATA",nested_data)
+	
 
 	let avg_nested_data=nestDataByAgeGroup(data,options.group_years,["TOTAL"],options.countries);
 	//console.log("AVG_NESTED_DATA",avg_nested_data)
@@ -20,6 +20,7 @@ export function Age(data,options) {
 		a.values.forEach(d=>{
 			let range=nested_data_year.find(y=>y.key===d.key);
 			d.range=range.values.map(v=>{
+						//console.log(FIELDNAME,v)
 						return {
 							year:v.key,
 							value:v.values[FIELDNAME]
@@ -29,14 +30,15 @@ export function Age(data,options) {
 		})
 	})
 
-	
+	console.log("NESTED_DATA",nested_data)
 
 	let extents=updateExtents(data);
 
 	let chart=new AgeChart([{
 			key:options.countries[0],
-			name:"Disposable income",
-			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}})
+			//name:"Disposable income",
+			name:"Distance from average",
+			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}})
 		}]
 		,{
 			deviation:nested_data[0].values[0].range,
@@ -47,7 +49,8 @@ export function Age(data,options) {
 			countries:options.countries,
 			markers:options.markers,
 			incomes:options.incomes,
-			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}}),
+			fieldname:FIELDNAME,
+			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}),
 			//width:580,
 			height:420,
 			margins:{
@@ -76,9 +79,13 @@ export function Age(data,options) {
 					align:"right",
 					format:(d)=>{
 						//console.log("---->",d)
-						return ((d.index===d.length-1)?"disposable income (USD) $":"$")+""+d3.format(",.0")(d[FIELDNAME]);
+						return ((d.index===d.length-1)?"distance from average ":"")+""+d3.format("+,.1%")(d[FIELDNAME]);
+						//return ((d.index===d.length-1)?"disposable income (USD) $":"$")+""+d3.format(",.0")(d[FIELDNAME]);
 					}
 				}
+			},
+			number_format:(d,no_plus)=>{
+				return d3.format((no_plus?"":"+")+",.1%")(d);
 			},
 			pattern:true
 		}
@@ -129,12 +136,12 @@ export function Age(data,options) {
 
 		chart.update([{
 			key:options.countries[0],
-			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}})
+			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,perc:c.values.perc,single:c.values.single,year:+c.key}})
 		}],{
 			deviation:nested_data[0].values[0].range,
 			age:options.ages[0],
 			countries:options.countries,
-			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}})
+			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,perc:c.values.perc,single:c.values.single,year:+c.key}})
 		});
 	}
 

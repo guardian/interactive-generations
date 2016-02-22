@@ -9,6 +9,7 @@ import AgeSelector from './components/AgeSelector';
 import InlineSelector from './components/InlineSelector';
 import BubbleChart from './components/BubbleChart';
 import ActiveQueue from './lib/ActiveQueue';
+import FettuccineChart from './components/FettuccineChart';
 //import annotations from '../assets/data/annotations.json!json';
 
 export function init(el, context, config, mediator) {
@@ -72,9 +73,15 @@ export function init(el, context, config, mediator) {
                 //console.log("--->",data);
 
                 
+                /*COUNTRIES.forEach((d,i)=>{
+                    new FettuccineChart(data,{
+                        container:"#fettuccine",
+                        country:d,
+                        index:i
+                    })    
+                })
                 
-                
-                
+                return;*/
                 
 
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
@@ -117,7 +124,7 @@ export function init(el, context, config, mediator) {
                 let myAge,bubbleBuckets;
 
                 let queue=new ActiveQueue();
-
+                console.log(medians)
                 queue.add({
                     id:"age",
                     f: () => {
@@ -126,8 +133,10 @@ export function init(el, context, config, mediator) {
                             countries:[status.country],
                             ages:[status.age],
                             incomes:["income"],
+                            fieldname:"perc",
                             markers:true,
-                            group_years:group_years
+                            group_years:group_years,
+                            medians:d3.entries(medians[status.country]).map(d=>({date:new Date(+d.key,0,1),value:d.value}))
                         })
                         
                         myAge.addAnnotations();
@@ -135,7 +144,7 @@ export function init(el, context, config, mediator) {
                         
                     }
                 })
-
+                /*
                 queue.add({
                     id:"bb",
                     f: () => {
@@ -203,7 +212,7 @@ export function init(el, context, config, mediator) {
                 })
 
                 //console.log(queue.getList())
-
+                */
                 queue.start("age");
 
                 return;
