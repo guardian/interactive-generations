@@ -7,7 +7,8 @@ export function Age(data,options) {
 
 	let FIELDNAME=options.fieldname || "income";
 
-	let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
+	//let nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
+	let nested_data=nestDataByAgeGroup(data,options.group_years,[],options.countries);
 	
 
 	let avg_nested_data=nestDataByAgeGroup(data,options.group_years,["TOTAL"],options.countries);
@@ -37,8 +38,9 @@ export function Age(data,options) {
 	let chart=new AgeChart([{
 			key:options.countries[0],
 			//name:"Disposable income",
-			name:"Distance from average",
-			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}})
+			name:"Age",
+			values:nested_data.find(d=>(d.key===options.ages[0])).values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}),
+			all:nested_data.map(d=>d.values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:d.key,country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}))
 		}]
 		,{
 			deviation:nested_data[0].values[0].range,
@@ -50,20 +52,21 @@ export function Age(data,options) {
 			markers:options.markers,
 			incomes:options.incomes,
 			fieldname:FIELDNAME,
+			voronoi:true,
 			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}),
 			//width:580,
 			height:420,
 			margins:{
-				top:0,
+				top:20,
 				bottom:30,
 				left:10,
-				right:20
+				right:100
 			},
 			padding:{
 				top:0,
 				bottom:0,
 				left:0,
-				right:35
+				right:20
 			},
 			axis:{
 				x:true,
@@ -76,16 +79,20 @@ export function Age(data,options) {
 					}
 				},
 				y:{
-					align:"right",
+					align:"left",
 					format:(d)=>{
 						//console.log("---->",d)
-						return ((d.index===d.length-1)?"distance from average ":"")+""+d3.format("+,.1%")(d[FIELDNAME]);
+						if(d[FIELDNAME]===0) {
+							return "Average";
+						}
+						return d3.format("+,.0%")(d[FIELDNAME]);
+						//return ((d.index===d.length-1)?"distance from average ":"")+""+d3.format("+,.2%")(d[FIELDNAME]);
 						//return ((d.index===d.length-1)?"disposable income (USD) $":"$")+""+d3.format(",.0")(d[FIELDNAME]);
 					}
 				}
 			},
 			number_format:(d,no_plus)=>{
-				return d3.format((no_plus?"":"+")+",.1%")(d);
+				return d3.format((no_plus?"":"+")+",.2%")(d);
 			},
 			pattern:true
 		}
@@ -102,7 +109,8 @@ export function Age(data,options) {
 	}
 
 	function update() {
-		nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
+		//nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
+		nested_data=nestDataByAgeGroup(data,options.group_years,[],options.countries);
 		//console.log(nested_data)
 
 		avg_nested_data=nestDataByAgeGroup(data,options.group_years,["TOTAL"],options.countries);
@@ -132,11 +140,12 @@ export function Age(data,options) {
 		options.countries=[status.country];
 		update(status)
 		
-		//console.log(nested_data)
+		console.log("NESTED DATA",nested_data)
 
 		chart.update([{
 			key:options.countries[0],
-			values:nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,perc:c.values.perc,single:c.values.single,year:+c.key}})
+			values:nested_data.find(d=>(d.key===options.ages[0])).values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}),
+			all:nested_data.map(d=>d.values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:d.key,country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}))
 		}],{
 			deviation:nested_data[0].values[0].range,
 			age:options.ages[0],
@@ -154,10 +163,10 @@ export function Age(data,options) {
 }
 export function Ages(data,options) {
 
-	let FIELDNAME="income";
+	let FIELDNAME=options.fieldname || "income";
 
 	let nested_data=nestDataByAgeGroup(data,options.group_years);
-	//console.log(nested_data)
+	console.log("nested_data",nested_data)
 
 	let nested_data_year=nestDataByYear(data,null,options.countries);
 	//console.log("nested_data_year",nested_data_year)
@@ -221,37 +230,40 @@ export function Ages(data,options) {
 	
 
 	age
-					.each(function(d,i){
-						//console.log(d.key,d.country,d.values.filter(c=>c.key===d.country)[0].values)
+		.each(function(d,i){
+			//console.log(d.key,d.country,d.values.filter(c=>c.key===d.country)[0].values)
 
-						//console.log("!!!!!!!",d.values.filter(c=>c.key===d.country)[0])
+			//console.log("!!!!!!!",d.values.filter(c=>c.key===d.country)[0])
 
-						new AgeChart([{
-								key:d.country,
-								values:d.values.filter(c=>c.key===d.country)[0].values.map(c=>{return{key:d.key,country:d.country,income:c.values.income,family:c.values.family,single:c.values.single,year:+c.key}})
-							}]
-							,{
-							deviation:d.values.filter(c=>c.key===d.country)[0].range,
-							first:!i,
-							age:d.key,
-							container:this,
-							extents:extents,
-							countries:[d.country],
-							incomes:options.incomes,
-							margins:{
-								top:2,
-								bottom:2,
-								left:5,
-								right:5
-							},
-							height:80,
-							axis:{
-								x:false,
-								y:false
-							},
-							pattern:false
-						})
-					})
+			new AgeChart([{
+					key:d.country,
+					values:d.values.filter(c=>c.key===d.country)[0].values.map(c=>{return{key:d.key,country:d.country,income:c.values.income,perc:c.values.perc,family:c.values.family,single:c.values.single,year:+c.key}})
+				}]
+				,{
+					deviation:d.values.filter(c=>c.key===d.country)[0].range,
+					first:!i,
+					age:d.key,
+					fieldname:FIELDNAME,
+					container:this,
+					extents:extents,
+					countries:[d.country],
+					incomes:options.incomes,
+					margins:{
+						top:2,
+						bottom:2,
+						left:5,
+						right:5
+					},
+					height:80,
+					axis:{
+						x:false,
+						y:false,
+						zero:true
+					},
+					pattern:false
+				}
+			)
+		})
 
 
 

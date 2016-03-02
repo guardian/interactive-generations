@@ -53,6 +53,11 @@
 
 
 				}
+				line.arrow {
+					stroke-width:2;
+					stroke:#bbb;
+					shape-rendering: crispEdges;	
+				}
 				
 				
 				text {

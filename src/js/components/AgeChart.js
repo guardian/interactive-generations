@@ -1,5 +1,6 @@
 import { AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from '../lib/utils';
 import { strokeShadow } from '../lib/CSSUtils';
+import Voronoi from '../lib/Voronoi';
 
 export default function AgeChart(data,options) {
 	
@@ -18,35 +19,23 @@ export default function AgeChart(data,options) {
 
 	let number_format=options.number_format || ((d)=>("$"+d3.format(",.0f"))) ;
 
-	/*let defs=svg.append("defs");
-
-	defs.append("pattern")
-			.attr({
-				id:"patternStripe",
-				width:5,
-				height:5,
-				patternUnits:"userSpaceOnUse",
-				patternTransform:"rotate(45)"
-			})
-			.append("rect")
-				.attr({
-					width:1, 
-					height:5,
-					transform:"translate(0,0)"
-				})
-				.style({
-					fill:"#000",
-					"fill-opacity":0.1
-				})*/
-
 	let box=svg.node().getBoundingClientRect();
 	let WIDTH = options.width || box.width,
 		HEIGHT= options.height || box.height;
-	//console.log(HEIGHT)
 
 	SMALL=(WIDTH<=320);
 	HEIGHT=SMALL?HEIGHT*0.8:HEIGHT;
 	
+	let voronoi=false;
+	if(options.voronoi) {
+		voronoi=new Voronoi(WIDTH,HEIGHT,{
+			mouseOverCallback:(d) => {
+				highlightAge(d.d.key)
+			}
+		});
+	}
+	
+
 	let margins=options.margins || {
 		top:20,
 		bottom:50,
@@ -74,7 +63,7 @@ export default function AgeChart(data,options) {
 
 	console.log(extents)
 
-	let family_path,single_path;
+	let family_path,other_age;
 	//[0,45000]
 	let xscale=d3.scale.linear().domain(extents.years).range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
 		yscale=d3.scale.linear().domain(extents[FIELDNAME]).range([HEIGHT-(margins.top+margins.bottom),0]);
@@ -84,15 +73,19 @@ export default function AgeChart(data,options) {
 	data.forEach(d=>{
 		d.markers={};
 		d.values.forEach(v=>{
+
 			d.markers[v.year]={
 				income:v.income,
 				perc:v.perc,
 				family:v.family,
 				single:v.single,
-				year:v.year
+				year:v.year,
+				diff:v.income
 			}
+			
 		})
 	})
+		
 
 	let line = d3.svg.line()
 				    .x(function(d) { return xscale(d.x); })
@@ -104,15 +97,6 @@ export default function AgeChart(data,options) {
 		addMarkers();
 		//transition();
 	}
-	
-
-	/*d3.select(options.container)
-		.on("mouseenter",()=>{
-			d3.select(options.container).selectAll(".axis").classed("hidden",false)
-		})
-		.on("mouseleave",()=>{
-			d3.select(options.container).selectAll(".axis").classed("hidden",true)
-		})*/
 
 	function buildVisual() {
 		
@@ -136,7 +120,10 @@ export default function AgeChart(data,options) {
 							.append("g")
 								.attr("class",d=>(d.key.toLowerCase()+" country "+GENERATIONS[AGES_GENERATIONS[options.age]].short_name))
 								//.classed("unselected",d=>d.key!==options.selected)
-								.attr("rel",d=>d.key)
+								.attr("rel",d=>{
+									//console.log(d)
+									return d.key
+								})
 		
 
 
@@ -146,6 +133,8 @@ export default function AgeChart(data,options) {
 				.append("path")
 				.attr("class","avg")
 				.attr("d",() => {
+						let y = yscale(options.average[0][FIELDNAME]);
+						return "M"+(-margins.left)+","+y+"L"+(xscale.range()[1]+margins.left+padding.right)+","+y;
 						//console.log("AVERAGE",options.average)
 						//console.log("AAAAAARGHHHH",options)
 						let values=options.average.map(v => {
@@ -158,20 +147,37 @@ export default function AgeChart(data,options) {
 						return line(values)
 					}
 				)
-			country.append("text")
+			/*country.append("text")
 				.attr("class","avg")
 				.attr("x",d=>xscale(options.average[d.key==="DE"?3:0].year))
-				.attr("y",d=>yscale(options.average[d.key==="DE"?3:0][FIELDNAME])+15)
-				.text("Average income")
+				.attr("y",d=>yscale(options.average[d.key==="DE"?3:0][FIELDNAME])-7)
+				.text("Average income")*/
 		}
 
-		if(options.incomes.indexOf("income")>-1) {
+		if(data[0].all) {
+			other_age=country.append("g")
+					.attr("class","other-ages")
+					.selectAll("g.other-age")
+					.data(data[0].all,d => d[0].key)
+					.enter()
+					.append("g")
+						.attr("class",d=>{							
+							return ("other-age "+GENERATIONS[AGES_GENERATIONS[d[0].key]].short_name)
+						})
 
-			country
-				.append("path")
-				.attr("class","bg")
-				.attr("d",d => {
-						let values=d.values.map(v => {
+			other_age.append("path")
+					.attr("d",d => {
+						//console.log("path",d)
+						let values=d.map(v => {
+							if(voronoi) {
+								voronoi.add({
+									x:xscale(v.year),
+									y:yscale(v[FIELDNAME]),
+									d:v
+								});	
+							}
+							
+							
 							return {
 								x:v.year,
 								y:v[FIELDNAME]
@@ -179,13 +185,33 @@ export default function AgeChart(data,options) {
 						});
 
 						return line(values)
-					}
-				)
+					})
+
+		}
+
+		if(options.incomes.indexOf("income")>-1) {
+
+			/*country
+				.append("path")
+				.attr("class","bg")
+				.attr("d",d => {
+					//console.log("--------->",d)
+					let values=d.values.map(v => {
+						//console.log("vvvvvvvvv",v)
+						return {
+							x:v.year,
+							y:v[FIELDNAME]
+						}
+					});
+
+					return line(values)
+				})*/
 
 			family_path=country
 				.append("path")
 				.attr("class","family")
 				.attr("d",d => {
+						console.log("path",d)
 						let values=d.values.map(v => {
 							return {
 								x:v.year,
@@ -201,20 +227,24 @@ export default function AgeChart(data,options) {
 				.filter(d=>typeof(d.name)!=='undefined')
 					.append("text")
 					.attr("class","line-name bg")
-					.attr("x",d=>xscale(d.values[d.values.length-4].year))
-					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
-					.text(d=>d.name)
+					.attr("x",d=>xscale(d.values[d.values.length-1].year)+14)
+					.attr("y",d=>yscale(d.values[d.values.length-1][FIELDNAME]))
+					.attr("dy","0.25em")
+					.text(options.age)
 
 			country
 				.filter(d=>typeof(d.name)!=='undefined')
 					.append("text")
 					.attr("class","line-name")
-					.attr("x",d=>xscale(d.values[d.values.length-4].year))
-					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
-					.text(d=>d.name)
+					.attr("x",d=>xscale(d.values[d.values.length-1].year)+14)
+					.attr("y",d=>yscale(d.values[d.values.length-1][FIELDNAME]))
+					.attr("dy","0.25em")
+					.text(options.age)
+					//.text(d=>d.name)
 				
 		}
 
+		
 		
 
 		label=country.append("g")
@@ -225,7 +255,7 @@ export default function AgeChart(data,options) {
 						v.index=i;
 						v.length=d.values.length;
 						return v;
-					}))
+					}),d=>d.year)
 					.enter()
 					.append("g")
 						.attr("class","label")
@@ -279,6 +309,7 @@ export default function AgeChart(data,options) {
 						return ([0]).concat(yscale.ticks(5))
 					})
 				    .tickFormat((d,i)=>{
+
 				    	let length=([0]).concat(yscale.ticks(5)).length;
 				    	let value={index:i,length:length};
 				    	value[FIELDNAME]=d;
@@ -310,6 +341,14 @@ export default function AgeChart(data,options) {
 				.select("text")
 					.attr("x",labels.y.align==="left"?(-xscale.range()[1]-margins.left):padding.right)
 					.attr("y","-7")
+		if(options.axis.zero) {
+			yaxis.append("line")
+					.attr("class","zero")
+					.attr("x1",0)
+					.attr("x2",-xscale.range()[1])
+					.attr("y1",yscale(0))
+					.attr("y2",yscale(0))
+		}
 
 		let xAxis = d3.svg.axis()
 				    .scale(xscale)
@@ -364,6 +403,25 @@ export default function AgeChart(data,options) {
 				.attr("d",()=>{
 					return line(options.deviation.map(d=>({x:+d.year,y:d.value[1]})));
 				})
+		if(voronoi) {
+			voronoi.setCell(svg.append("g")
+							    .attr("class", "voronoi")
+							    .attr("transform","translate("+(margins.left+padding.left)+","+margins.top+")")
+							  	.selectAll("g"));
+			voronoi.resample();	
+		}
+		
+	}
+	
+	function highlightAge(age) {
+		console.log(age)
+		other_age
+			.classed("selected",false)
+			.filter(d=>{
+				//console.log(d[0].key,"===",age)
+				return (d[0].key === age)
+			})
+			.classed("selected",true)
 	}
 
 	function addMarkers() {
@@ -421,7 +479,6 @@ export default function AgeChart(data,options) {
 	function updateMarkers() {
 		let markers_data=[data[0].values[0]];
 		//console.log(markers_data)
-
 		marker
 			.attr("class","marker "+GENERATIONS[AGES_GENERATIONS[options.age]].short_name)
 			.data(markers_data)
@@ -460,7 +517,8 @@ export default function AgeChart(data,options) {
 					family:v.family,
 					single:v.single,
 					perc:v.perc,
-					year:v.year
+					year:v.year,
+					diff:v.income
 				}
 			})
 		})
@@ -473,14 +531,17 @@ export default function AgeChart(data,options) {
 	function update() {
 
 		country
-			.data(data.filter(d => options.countries.indexOf(d.key)>-1),d=>d.year)
+			.data(data.filter(d => {
+				console.log("{}{}{}{}{}{",d)
+				return options.countries.indexOf(d.key)>-1
+			}),d=>d.year)
 			.attr("class",d=>(d.key.toLowerCase()+" country "+GENERATIONS[AGES_GENERATIONS[options.age]].short_name))
 			.attr("rel",d=>d.key)
 
 		
 		if(options.incomes.indexOf("income")>-1) {
 
-			country
+			/*country
 				.select("path.bg")
 				.attr("d",d => {
 						let values=d.values.map(v => {
@@ -492,7 +553,7 @@ export default function AgeChart(data,options) {
 
 						return line(values)
 					}
-				)
+				)*/
 
 			country
 				.select("path.family")
@@ -508,32 +569,89 @@ export default function AgeChart(data,options) {
 					}
 				)
 
+			other_age.data(data[0].all,d => d[0].key)
+			if(voronoi) {
+				voronoi.clear();
+			}
+			other_age.select("path")
+					.attr("d",d => {
+						console.log("path",d)
+						let values=d.map(v => {
+							if(voronoi) {
+								voronoi.add({
+									x:xscale(v.year),
+									y:yscale(v[FIELDNAME]),
+									d:v
+								});
+							}
+
+							return {
+								x:v.year,
+								y:v[FIELDNAME]
+							}
+						});
+
+						return line(values)
+					})
+			if(voronoi) {
+				voronoi.resample();
+			}
+
 			
-			country
+			/*country
 				.select("text.line-name.bg")
 					.attr("x",d=>{
 						//console.log("LINE-NAME",d,d.values[d.values.length-4])
 						return xscale(d.values[d.values.length-4].year)
 					})
-					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
-			country
+					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)*/
+			/*country
 				.select("text.line-name:not(.bg)")
 					.attr("x",d=>{
 						return xscale(d.values[d.values.length-4].year)
 					})
-					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)
+					.attr("y",d=>yscale(d.values[d.values.length-4][FIELDNAME])-14)*/
+			country
+				.select("text.line-name.bg")
+					.attr("x",d=>xscale(d.values[d.values.length-1].year)+14)
+					.attr("y",d=>yscale(d.values[d.values.length-1][FIELDNAME]))
+					.text(options.age)
+			country
+				.select("text.line-name:not(.bg)")
+					.attr("x",d=>xscale(d.values[d.values.length-1].year)+14)
+					.attr("y",d=>yscale(d.values[d.values.length-1][FIELDNAME]))
+					.text(options.age)
 			
-			label=label
-				.data(data[0].values)
+			//label=label
+			//	.data(data[0].values)
 
+			console.log("DATA",label.data())
+
+			label=label.data(data[0].values.map((v,i)=>{
+					v.index=i;
+					v.length=data[0].values.length;
+					//console.log(":)",v)
+					return v;
+				}),d=>d.year)
+			
+			console.log("DATA",label.data())
+
+			/*
+			console.log("////////////",data);
+			label.datum((d,i)=> {
+					console.log("----->",d)
+					return d;
+				}
+				,d=>d.year)
+			*/
 			let new_label=label
 							.enter()
 							.append("g")
 								.attr("class","label")
 								.attr("rel",d=>d.year+" "+d[FIELDNAME])
-								.each(d=>{
-									//console.log("NEW ",d)
-								})
+								/*.each(d=>{
+									console.log("NEW ",d)
+								})*/
 								
 			new_label.append("circle")
 					.attr("class","bg")
@@ -544,10 +662,20 @@ export default function AgeChart(data,options) {
 					.attr("cx",0)
 					.attr("cy",0)
 					.attr("r",4)
+
+			new_label.append("text")
+					.attr("class","income bg")
+					.attr("x",0)
+					.attr("y",-10)
 			new_label.append("text")
 					.attr("class","income")
 					.attr("x",0)
 					.attr("y",-10)
+
+			new_label.append("text")
+					.attr("class","year bg")
+					.attr("x",0)
+					.attr("y",-24)
 			new_label.append("text")
 					.attr("class","year")
 					.attr("x",0)
@@ -561,13 +689,24 @@ export default function AgeChart(data,options) {
 								y=yscale(d[FIELDNAME])
 							return `translate(${x},${y})`
 						})
-			
-			label.select("text.income")
-					.text(d=>number_format(d[FIELDNAME]))
-					//.text(d=>d3.format(",.0%")(d[FIELDNAME]))
-					//.text(d=>"$"+d3.format(",.0f")(d[FIELDNAME]))
-
-			label.select("text.year")
+			/*label.each(function(d){
+				console.log("------------------->",d)
+			})*/
+			label.select("text.income:not(.bg)")
+					.text(function(d,i){
+						//return "XXX"
+						//console.log("D",this,d[FIELDNAME],labels.y.format(d))
+						//console.log(d[FIELDNAME],labels.y.format(d))
+						return labels.y.format(d)
+					})
+			label.select("text.income.bg")
+					.text(function(d,i){
+						return labels.y.format(d)
+					})
+					
+			label.select("text.year.bg")
+					.text(d=>d.year)
+			label.select("text.year:not(.bg)")
 					.text(d=>d.year)
 
 			deviation.select("path.bg")
@@ -596,25 +735,6 @@ export default function AgeChart(data,options) {
 			
 		}
 
-		if(options.average) {
-			country
-				.select("path.avg")
-				.attr("d",d => {
-						//console.log("AVERAGE",options.average)
-						let values=options.average.map(v => {
-							return {
-								x:v.year,
-								y:v[FIELDNAME]
-							}
-						});
-
-						return line(values)
-					}
-				)
-			country.select("text.avg")
-				.attr("x",d=>xscale(options.average[d.key==="DE"?3:0].year))
-				.attr("y",d=>yscale(options.average[d.key==="DE"?3:0][FIELDNAME])+15)
-		}
 	}
 
 	this.addAnnotations=()=>{
@@ -628,7 +748,7 @@ export default function AgeChart(data,options) {
 	function addAnnotations(index,position) {
 		//console.log(index)
 		let __markers=d3.values(data[0].markers),
-			values=[__markers[index],__markers[__markers.length-1]],
+			values=[__markers[index],__markers[__markers.length-3]],
 			year=values[0].year,
 			diff=values[0][FIELDNAME]-values[1][FIELDNAME];
 
@@ -679,7 +799,7 @@ export default function AgeChart(data,options) {
 	function transition() {
 	  	family_path
 	  		.transition()
-			.duration(10000)
+			.duration(5000)
 			//.attrTween("transform", translateAlong(family_path.node()))
 			.attrTween("stroke-dasharray", tweenDash)
 			//.each("end", transition);

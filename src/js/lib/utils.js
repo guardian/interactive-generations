@@ -124,7 +124,7 @@ export const COUNTRY_NAMES={
     "NO":"Norway",
     "SE":"Sweden"
 }
-export const COUNTRIES=(["UK","FR","DE","IT","ES","NO","SE","US","CA","AU"]);
+export const COUNTRIES=(["UK","FR","DE","IT","ES","US","CA","AU"]);//"NO","SE",
 
 export const age_fix={
     "80 years and over":"80+",
@@ -147,6 +147,7 @@ export function loadData(callback,options) {
                 d.perc_csv=+d["perc"];
                 d.family=+d["Head.or.Spouse_EDHIW"];
                 d.single=+d["Single.Person_EDHIW"];
+                
 
                 if(options.medians && d.Age!=="TOTAL") {
                     d.median=options.medians[d.Country.toUpperCase()][d.Year];
@@ -156,7 +157,7 @@ export function loadData(callback,options) {
             }, 
             (csv) => {
                 if(callback) {
-                    callback(csv.filter(d=>AGES.indexOf(d.Age)>-1)) 
+                    callback(csv.filter(d=>AGES.indexOf(d.Age)>-1).filter(d=>COUNTRIES.indexOf(d.Country)>-1)) 
                 }
 
             }
@@ -232,7 +233,7 @@ export function getAgeGroups(group_years) {
         
     });*/
 }
-export function nestDataByAgeGroup(data,years,ages,countries) {
+export function nestDataByAgeGroup(data,years=[],ages=[],countries=[]) {
     let group_years=years || 5;
 
     //console.log("!!!!!!",years,ages,countries)
@@ -268,14 +269,14 @@ export function nestDataByAgeGroup(data,years,ages,countries) {
                 .filter(d=>(d.Age!=="TOTAL" || ages.indexOf("TOTAL")!==-1))
                 .filter(d=>d.income>0)
                 .filter(d=>{
-                    if(!countries) {
+                    if(!countries || countries.length===0) {
                         return 1;
                     }
                     return countries.indexOf(d.Country)>-1;
                 })
                 .filter(d=>{
                     //console.log(ages,d)
-                    if(!ages) {
+                    if(!ages.length || !ages) {
                         return 1;
                     }
                     

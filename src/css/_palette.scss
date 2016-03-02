@@ -26,7 +26,8 @@ $generation-list: under-20s, gen-y, gen-x, baby-boomers, over-70s, average;
 $generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s, $average;
 @each $current-color in $generation-colors-list {
     $i: index($generation-colors-list, $current-color);
-    .country.#{nth($generation-list, $i)} {
+    .country.#{nth($generation-list, $i)},
+    .country .other-age.#{nth($generation-list, $i)} {
         path {
             stroke: $current-color;
         }
@@ -42,6 +43,7 @@ $generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s, $
             fill: $current-color;
         }
     }
+    
     .sparkline.#{nth($generation-list, $i)} {
         path {
             stroke: $current-color;
@@ -77,6 +79,9 @@ $generation-colors-list: $under-20s, $gen-y, $gen-x, $baby-boomers, $over-70s, $
         circle,rect {
             fill: $current-color;
         }
+    }
+    .arrow-marker {
+        fill: $current-color;
     }
 }
 

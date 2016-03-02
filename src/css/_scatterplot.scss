@@ -5,8 +5,11 @@
 		width:100%;
 		height:500px;
 		//border:1px solid #ddd;
-		
+		.arrow-marker {
+			stroke: none;
+		}
 		.age-timeline {
+			opacity: 0.5;
 			path {
 				
 				
@@ -15,9 +18,13 @@
 
 
 			}
+			line {
+				stroke:#ddd;
+				stroke-width:1;
+				fill:none;
+			}
 			&.unselected {
 				path {
-					stroke-opacity:0.3;
 					stroke:#ddd;
 				}
 			}
@@ -27,6 +34,19 @@
 			}
 			text {
 				@include fs-textSans(1);
+			}
+			text.title {
+				display: none;
+				pointer-events: none;
+				fill:#333;
+				font-weight:bold;
+				&.bg {
+					stroke:#fff;
+					stroke-width:3;
+				}
+				&.right-aligned {
+					text-anchor:end;
+				}
 			}
 			.marker {
 				&.hidden {
@@ -51,26 +71,44 @@
 			}
 			
 
-			&.selected {
+			
 				
-				path {
-					//stroke:#333;
-					stroke-opacity:1;
-					stroke-width:2;	
+			path {
+				//stroke:#333;
+				stroke-opacity:1;
+				stroke-width:2;
+
+			}
+			.marker {
+				circle {
+					//fill:#333;
+					stroke:#fff;
+					stroke-width:2;
+					visibility: visible;
+				}
+				text {
+					visibility: hidden;
+				}	
+			}
+			.age-label {
+				visibility: visible;
+			}
+			&.selected {
+				opacity: 1;
+				text.title {
+					display: block;
 				}
 				.marker {
-					circle {
-						//fill:#333;
-						stroke:#fff;
-						stroke-width:2;
-						visibility: visible;
-					}
 					text {
 						visibility: visible;
-					}	
+					}
+					circle {
+						fill-opacity:1;
+					}
 				}
-				.age-label {
-					visibility: visible;
+				path {
+					stroke-opacity:1;
+					stroke-width:4;	
 				}
 			}
 
@@ -92,6 +130,13 @@
 				.tick {
 					text {
 						text-anchor:start !important;
+					}
+				}
+			}
+			&.x {
+				.tick {
+					line {
+						display: block;
 					}
 				}
 			}

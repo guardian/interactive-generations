@@ -10,6 +10,7 @@ import InlineSelector from './components/InlineSelector';
 import BubbleChart from './components/BubbleChart';
 import ActiveQueue from './lib/ActiveQueue';
 import FettuccineChart from './components/FettuccineChart';
+import ArrowScatterplot from './components/ArrowScatterplot';
 //import annotations from '../assets/data/annotations.json!json';
 
 export function init(el, context, config, mediator) {
@@ -18,7 +19,7 @@ export function init(el, context, config, mediator) {
 
     let queries=window.location.search.replace("?","").split("&"),
         selected_age=25,
-        selected_country="UK";
+        selected_country="US";
     //console.log(queries)
     
     let group_years=5;
@@ -36,7 +37,7 @@ export function init(el, context, config, mediator) {
 
     let status={
         age:"25 to 29 years",
-        country:"UK"
+        country:"US"
     }
 
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
@@ -54,7 +55,35 @@ export function init(el, context, config, mediator) {
             loadData((data) => {
 
                 
+                
 
+                let totals=data.filter(d=>d.Age==="TOTAL")
+
+                let nested_totals=d3.nest()
+                    .key(d=>d.Country)
+                    .key(d=>d.Year)
+                    .entries(totals);
+
+                console.log(nested_totals)
+                let obj_totals={};
+                nested_totals.forEach(c=>{
+                    if(!obj_totals[c.key]) {
+                        obj_totals[c.key]={};
+                    }
+                    c.values.forEach(y=>{
+                        if(!obj_totals[c.key][y.key]) {
+                            obj_totals[c.key][y.key]=y.values[0].income;
+                        }
+                    })
+                })
+                console.log(obj_totals)
+
+                data.forEach(d=>{
+                    //d.perc=d.income - obj_totals[d.Country][d.Year];
+                })
+
+                console.log(data);
+                //return;
                 
                     
                 //console.log(data)
@@ -82,7 +111,19 @@ export function init(el, context, config, mediator) {
                 })
                 
                 return;*/
+                /*COUNTRIES.forEach((d,i)=>{
+                    new ArrowScatterplot(data,{
+                        container:"#scatter",
+                        ages:AGES,
+                        incomes:["income"],
+                        countries:d,
+                        group_years:group_years,
+                        selected_ages:[status.age]
+                    })    
+                });*/
                 
+
+                //return;
 
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup",
@@ -91,8 +132,8 @@ export function init(el, context, config, mediator) {
 
                         status.age=age;
                         myAge.update(status);
-                        myAge.removeAnnotations();
-                        myAge.addAnnotations();
+                        //myAge.removeAnnotations();
+                        //myAge.addAnnotations();
 
                         bubbleBuckets.updateAge(age);
                         
@@ -111,8 +152,8 @@ export function init(el, context, config, mediator) {
                     changeCallback:(country)=>{
                         status.country=country;
                         myAge.update(status);
-                        myAge.removeAnnotations();
-                        myAge.addAnnotations();
+                        //myAge.removeAnnotations();
+                        //myAge.addAnnotations();
                         myAge.updateDescription("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.");
                         
                         bubbleBuckets.selectCountry(country);
@@ -124,7 +165,8 @@ export function init(el, context, config, mediator) {
                 let myAge,bubbleBuckets;
 
                 let queue=new ActiveQueue();
-                console.log(medians)
+                //console.log(medians)
+                
                 queue.add({
                     id:"age",
                     f: () => {
@@ -139,12 +181,12 @@ export function init(el, context, config, mediator) {
                             medians:d3.entries(medians[status.country]).map(d=>({date:new Date(+d.key,0,1),value:d.value}))
                         })
                         
-                        myAge.addAnnotations();
+                        //myAge.addAnnotations();
                         setTimeout(()=>{queue.setNext("bb");},150)
                         
                     }
                 })
-                /*
+                
                 queue.add({
                     id:"bb",
                     f: () => {
@@ -156,6 +198,7 @@ export function init(el, context, config, mediator) {
                             },
                             ages:[status.age],
                             incomes:["income"],
+                            fieldname:"perc",
                             group_years:group_years,
                             clickCallback:(country)=>{
                                 
@@ -169,7 +212,7 @@ export function init(el, context, config, mediator) {
                         setTimeout(()=>{queue.setNext("bubbles");},500)
                     }
                 })
-
+                
                 queue.add({
                     id:"bubbles",
                     f: () => {
@@ -192,28 +235,69 @@ export function init(el, context, config, mediator) {
                 queue.add({
                     id:"ages",
                     f: () => {
+
                         new Ages(data.filter(d=>(d.Age!=="TOTAL")),{
                             container:"#ages",
                             countries:COUNTRIES,
                             incomes:["income"],//,"single"],
+                            fieldname:"perc",
                             selected:"Australia",
-                            group_years:10
+                            group_years:5
+                        })
+
+                        setTimeout(()=>{queue.setNext("transition");},50)
+                        //setTimeout(()=>{queue.setNext("scatter");},50)
+                    }
+                })
+                
+                
+
+                //console.log(queue.getList())
+                /*
+                queue.add({
+                    id:"scatter",
+                    f: () => {
+                        COUNTRIES.forEach((d,i)=>{
+                            new ArrowScatterplot(data,{
+                                container:"#scatter",
+                                ages:AGES,
+                                incomes:["income"],
+                                countries:d,
+                                group_years:group_years,
+                                selected_ages:[status.age]
+                            })    
+                        });
+
+                        setTimeout(()=>{queue.setNext("fettuccine");},50)
+                    }
+                })
+                */
+                /*
+                queue.add({
+                    id:"fettuccine",
+                    f: () => {
+                        COUNTRIES.forEach((d,i)=>{
+                            new FettuccineChart(data,{
+                                container:"#fettuccine",
+                                country:d,
+                                index:i
+                            })    
                         })
 
                         setTimeout(()=>{queue.setNext("transition");},50)
                     }
                 })
-
+                */
                 queue.add({
                     id:"transition",
                     f: () => {
                         myAge.transition();
                     }
                 })
-
-                //console.log(queue.getList())
-                */
+                
                 queue.start("age");
+
+
 
                 return;
                 

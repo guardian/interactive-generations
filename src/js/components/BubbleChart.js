@@ -91,7 +91,7 @@ export default function BubbleChart(data,options) {
 		top:0,
 		bottom:0,
 		left:10,
-		right:35
+		right:55
 	};
 
 	let samples=[],
@@ -114,7 +114,7 @@ export default function BubbleChart(data,options) {
 	//let xscale=d3.scale.linear().domain([extents.income[0],35000]).range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
 	let xscale=d3.scale.ordinal().domain(options.ages).rangePoints([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]),
 		yscale=d3.scale.linear().domain(extents.perc).range([HEIGHT-(margins.top+margins.bottom),0]),
-		rscale=d3.scale.sqrt().domain(extents.local_income).range([2,(WIDTH-(margins.left+margins.right+padding.left+padding.right))/options.ages.length*0.5]);
+		rscale=d3.scale.sqrt().domain(extents.local_income).range([2,(WIDTH-(margins.left+margins.right+padding.left+padding.right))/options.ages.length*0.4]);
 
 
 	let line = d3.svg.line()
@@ -208,6 +208,24 @@ export default function BubbleChart(data,options) {
 					.attr("x",0)
 					.attr("y",d=>rscale(d.income)+13)
 					.text(d=>d.year)
+
+		age_timeline.append("line")
+				.attr("class","arrow")
+				.attr("x1",25)
+				.attr("x2",25)
+				.attr("y1",d=>{
+					//console.log(d)
+					let v1=d.values[0].values[0]
+					console.log(v1.values.perc,yscale(v1.values.perc))
+					return yscale(v1.values.perc)
+				})
+				.attr("y2",d=>{
+					//console.log(d)
+					let v2=d.values[0].values[d.values[0].values.length-1];
+					console.log(v2)
+					return yscale(v2.values.perc)
+				})
+				.style("marker-end","url(#markerArrow)");
 
 		addXAxis();
 		addYAxis();
@@ -353,7 +371,7 @@ export default function BubbleChart(data,options) {
 				.attr("y",yscale.range()[0]-18)
 				.text(worse_text)
 		
-		yaxis.append("line")
+		/*yaxis.append("line")
 				.attr("class","yaxis-arrow")
 				.attr("x1",xscale("20 to 24 years")+padding.left)
 				.attr("x2",xscale("20 to 24 years")+padding.left)
@@ -367,7 +385,7 @@ export default function BubbleChart(data,options) {
 				.attr("x2",xscale("20 to 24 years")+padding.left)
 				.attr("y1",yscale(-0.18))
 				.attr("y2",yscale(-0.36))
-				.style("marker-end","url(#markerArrow)");
+				.style("marker-end","url(#markerArrow)");*/
 	}
 	function highlightBubbles(__age,__year) {
 		
