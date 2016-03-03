@@ -40,10 +40,10 @@ export function Age(data,options) {
 			//name:"Disposable income",
 			name:"Age",
 			values:nested_data.find(d=>(d.key===options.ages[0])).values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}),
-			all:nested_data.map(d=>d.values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:d.key,country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}))
+			all:options.others?nested_data.map(d=>d.values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:d.key,country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}})):null
 		}]
 		,{
-			deviation:nested_data[0].values[0].range,
+			deviation:[],//nested_data[0].values[0].range,
 			first:true,
 			age:options.ages[0],
 			container:options.container,
@@ -52,7 +52,8 @@ export function Age(data,options) {
 			markers:options.markers,
 			incomes:options.incomes,
 			fieldname:FIELDNAME,
-			voronoi:true,
+			voronoi:false,
+			others:options.others,
 			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}),
 			//width:580,
 			height:420,
@@ -60,7 +61,7 @@ export function Age(data,options) {
 				top:20,
 				bottom:30,
 				left:10,
-				right:100
+				right:10
 			},
 			padding:{
 				top:0,
@@ -79,22 +80,21 @@ export function Age(data,options) {
 					}
 				},
 				y:{
-					align:"left",
-					format:(d)=>{
-						//console.log("---->",d)
-						if(d[FIELDNAME]===0) {
-							return "Average";
-						}
-						return d3.format("+,.0%")(d[FIELDNAME]);
-						//return ((d.index===d.length-1)?"distance from average ":"")+""+d3.format("+,.2%")(d[FIELDNAME]);
-						//return ((d.index===d.length-1)?"disposable income (USD) $":"$")+""+d3.format(",.0")(d[FIELDNAME]);
-					}
+					align:options.y.align || "right",
+					format:options.y.format || ((d)=>{
+											//console.log("---->",d)
+											if(d[FIELDNAME]===0) {
+												return "";//"Average";
+											}
+											return d3.format("+,.0%")(d[FIELDNAME]);
+											//return ((d.index===d.length-1)?"distance from average ":"")+""+d3.format("+,.0%")(d[FIELDNAME]);
+											//return ((d.index===d.length-1)?"disposable income (USD) $":"$")+""+d3.format(",.0")(d[FIELDNAME]);
+										})
 				}
 			},
 			number_format:(d,no_plus)=>{
 				return d3.format((no_plus?"":"+")+",.2%")(d);
-			},
-			pattern:true
+			}
 		}
 	);
 
@@ -107,7 +107,9 @@ export function Age(data,options) {
 	this.transition= () =>{
 		chart.transition();
 	}
-
+	this.selectOthers= (ages) => {
+		chart.selectOthers(ages);
+	}
 	function update() {
 		//nested_data=nestDataByAgeGroup(data,options.group_years,options.ages,options.countries);
 		nested_data=nestDataByAgeGroup(data,options.group_years,[],options.countries);
@@ -147,7 +149,7 @@ export function Age(data,options) {
 			values:nested_data.find(d=>(d.key===options.ages[0])).values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}),
 			all:nested_data.map(d=>d.values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:d.key,country:options.countries[0],income:c.values.income,family:c.values.family,single:c.values.single,perc:c.values.perc,year:+c.key}}))
 		}],{
-			deviation:nested_data[0].values[0].range,
+			deviation:[],//nested_data[0].values[0].range,
 			age:options.ages[0],
 			countries:options.countries,
 			average:avg_nested_data[0].values.filter(c=>c.key===options.countries[0])[0].values.map(c=>{return{key:options.ages[0],country:options.countries[0],income:c.values.income,family:c.values.family,perc:c.values.perc,single:c.values.single,year:+c.key}})
@@ -192,27 +194,43 @@ export function Ages(data,options) {
 
 	let row=d3.select(options.container)
 		.selectAll("div.row")
-			.data(options.countries)
+			.data(options.countries.sort((a,b)=>{
+				if(a===options.country) {
+					return -1;
+				}
+				if(b===options.country) {
+					return 1;
+				}
+				return 0;
+			}))
 			.enter()
 			.append("div")
 			.attr("class","row")
-	let description=row.append("div")
-						.attr("class","description")
+			.classed("selected",d=>(d===options.country))
+	
+	/*let description=row.append("div")
+						.attr("class","description")*/
 
 
-	description.append("h2")
-			.html(d=>COUNTRY_NAMES[d])
+	/*description.append("h2")
+			.html(d=>COUNTRY_NAMES[d])*/
 
 
 
-	description.append("p")
-			.html("We serve freshly brewed coffee and a section of tasty treats and snacks. We are open for breakfast, lunch and afternoon tea. And unlike any other cafe in the town, we are open 7 days per week.")
+	/*description.append("p")
+			.html("We serve freshly brewed coffee and a section of tasty treats and snacks. We are open for breakfast, lunch and afternoon tea. And unlike any other cafe in the town, we are open 7 days per week.")*/
 
 	let ages=row.append("div")
 						.attr("class","ages")
+
+	ages.append("div")
+			.attr("class","age2")
+			.append("h3")
+				.html(d=>COUNTRY_NAMES[d]);
+
 	let age=ages.selectAll("div.age")
 				.data((c)=>{
-						return nested_data.sort((a,b)=>(AGES.indexOf(a.key)-AGES.indexOf(b.key))).map((d)=>{
+						let age_groups=nested_data.sort((a,b)=>(AGES.indexOf(a.key)-AGES.indexOf(b.key))).map((d)=>{
 							//console.log(d)
 							return {
 								country:c,
@@ -220,6 +238,10 @@ export function Ages(data,options) {
 								values:d.values
 							}
 						})
+
+
+
+						return age_groups.filter(d=>(d.key===options.age)).concat(age_groups.filter(d=>(d.key!==options.age)));
 					}
 				)
 				.enter()
@@ -270,6 +292,10 @@ export function Ages(data,options) {
 	age
 		.append("h4")
 			.html(d=>getShortAgeGroup(d.key))
+
+	this.select=(age,country)=>{
+		
+	}
 
 }
 

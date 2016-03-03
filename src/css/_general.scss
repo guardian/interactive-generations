@@ -51,7 +51,7 @@ figure.interactive {
         }
 
         @include mq(tablet) {
-            margin:10px 5rem 50px;
+            margin:10px 5rem 100px;
         
             &.main-column {
                 margin-left:15rem;
@@ -109,30 +109,47 @@ figure.interactive {
                 float: left;
             }
         }
-        .person-profile {
-            width:100%;
-            position: relative;
+
+    }
+    .person-profile {
+        width:100%;
+        position: relative;
+
+        @include mq(tablet) {
+            //position: absolute;
+            //z-index: 9999;
+            //top:0;
+        }
+
+        @include mq(tablet) {
+            //top:30px;
+        }
+        h2 {
+            margin-top:5px;
+        }
+        p {
+           
+            pointer-events:none;
 
             @include mq(tablet) {
-                position: absolute;
-                z-index: 9999;
-                top:0;
-            }
-
-            @include mq(tablet) {
-                top:30px;
+                width:500px;
             }
             
-            p {
-               
-                pointer-events:none;
+            
+        }
+    }
+    .answer {
+        margin:30px 0;
+        @include fs-headline(4);
 
-                @include mq(tablet) {
-                    width:500px;
-                }
-                
-                
-            }
+        @include mq(tablet) {
+            width:560px;
+        }
+        h2 {
+            display: inline;
+        }
+        h3 {
+            @include fs-header(5);
         }
     }
     .notes {

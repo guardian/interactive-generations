@@ -4,31 +4,62 @@
 	//overflow:hidden;
 	.row {
 		overflow:hidden;
-		margin-bottom:30px;
+		margin-bottom:0px;
+		
+		display: none;
+		@include mq(tablet) {
+			display: block;
+		}
+		&.selected {
+			display: block;
+		}
+
 		>div {
 			float:left;
 		}
 		.description {
-			width:260px;
-			padding-right:20px;
+			width:100%;
+			@include mq(tablet) {
+				width:120px;
+				padding-right:20px;
+			}
+			
 			h2 {
-				@include fs-header(3);
+				@include fs-header(1);
                 color:#333;
 				margin:0;
+				line-height: 65px;
 			}	
 			p {
 				padding-right:20px;
 			}
 		}
 		.ages {
-			width:calc(100% - 260px);
-			padding-top:20px;
+			@include mq(tablet) {
+				width:calc(100% - 0px);
+			}
 		}
-		
+		.age2 {
+			width:calc(100% / 3 * 2);
+			float:left;
+			h3 {
+				display: none;
+			}
+			@include mq(tablet) {
+				width:calc(100% / 14);
+				margin-top:0;
+				h3 {
+					display: block;
+					margin-top:20px;
+				}
+			}
+		}
 		.age {
 			width:calc(100% / 3); // /14
+			min-height: auto;
 			@include mq(tablet) {
-				width:calc(100% / 13); // /14
+				width:calc(100% / 14); // /14
+				margin-top:0;
 			}
 			
 			float:left;
@@ -38,6 +69,7 @@
                 color:#b3b3b4;
 				margin:0;
 				margin-bottom:15px;
+				text-align:center;
 			}
 			svg {
 				width:100%;

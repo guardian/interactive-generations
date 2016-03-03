@@ -37,7 +37,9 @@ export function init(el, context, config, mediator) {
 
     let status={
         age:"25 to 29 years",
-        country:"US"
+        parents_age:"50 to 54 years",
+        country:"US",
+        parents_country:"US"
     }
 
     el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
@@ -132,14 +134,15 @@ export function init(el, context, config, mediator) {
 
                         status.age=age;
                         myAge.update(status);
+                        parentsAge.selectOthers([status.age]);
                         //myAge.removeAnnotations();
                         //myAge.addAnnotations();
 
-                        bubbleBuckets.updateAge(age);
+                        //bubbleBuckets.updateAge(age);
                         
 
                         
-                        d3.selectAll(".person-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+                        d3.selectAll(".my-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
                         
                     }
                 })
@@ -152,17 +155,62 @@ export function init(el, context, config, mediator) {
                     changeCallback:(country)=>{
                         status.country=country;
                         myAge.update(status);
+                        ages.select(status.age,status.country);
                         //myAge.removeAnnotations();
                         //myAge.addAnnotations();
-                        myAge.updateDescription("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.");
+                       // myAge.updateDescription("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.");
                         
-                        bubbleBuckets.selectCountry(country);
+                        //bubbleBuckets.selectCountry(country);
 
                         
                     }
                 })
+
+                new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
+                    container:"#parentsAgeGroup",
+                    selected:status.parents_age,
+                    changeCallback:(age)=>{
+
+                        status.parents_age=age;
+                        parentsAge.update({
+                            age:status.parents_age,
+                            country:status.parents_country
+                        });
+                        //myAge.removeAnnotations();
+                        //myAge.addAnnotations();
+
+                        //bubbleBuckets.updateAge(age);
+                        
+
+                        
+                        d3.selectAll(".parents-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
+                        
+                    }
+                })
+
+
+
                 
-                let myAge,bubbleBuckets;
+                /*new InlineSelector(COUNTRIES.map(d=>({name:COUNTRY_NAMES[d],shortname:d})),{
+                    container:"#parentsCountry",
+                    selected:status.parents_country,
+                    changeCallback:(country)=>{
+                        status.parents_country=country;
+                        parentsAge.update({
+                            age:status.parents_age,
+                            country:status.parents_country
+                        });
+                        //myAge.removeAnnotations();
+                        //myAge.addAnnotations();
+                        parentsAge.updateDescription("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.");
+                        
+                        //bubbleBuckets.selectCountry(country);
+
+                        
+                    }
+                })*/
+                
+                let myAge,parentsAge,bubbleBuckets,ages;
 
                 let queue=new ActiveQueue();
                 //console.log(medians)
@@ -178,7 +226,37 @@ export function init(el, context, config, mediator) {
                             fieldname:"perc",
                             markers:true,
                             group_years:group_years,
-                            medians:d3.entries(medians[status.country]).map(d=>({date:new Date(+d.key,0,1),value:d.value}))
+                            medians:d3.entries(medians[status.country]).map(d=>({date:new Date(+d.key,0,1),value:d.value})),
+                            y:{
+                                format:(d)=>{
+                                            //console.log("---->",d)
+                                            if(d["perc"]===0) {
+                                                return "";//"Average";
+                                            }
+                                            return ((d.index===d.length-1)?"distance from average ":"")+""+d3.format("+,.0%")(d["perc"]);
+                                        }
+                            }
+                        })
+                        
+                        //myAge.addAnnotations();
+                        setTimeout(()=>{queue.setNext("parents_age");},150)
+                        
+                    }
+                })
+
+                queue.add({
+                    id:"parents_age",
+                    f: () => {
+                        parentsAge=new Age(data,{
+                            container:"#parentsAge",
+                            countries:[status.country],
+                            ages:[status.parents_age],
+                            incomes:["income"],
+                            fieldname:"perc",
+                            markers:true,
+                            group_years:group_years,
+                            others:[status.age],
+                            y:{}
                         })
                         
                         //myAge.addAnnotations();
@@ -209,11 +287,31 @@ export function init(el, context, config, mediator) {
                             //annotations:annotations
                         });
 
-                        setTimeout(()=>{queue.setNext("bubbles");},500)
+                        setTimeout(()=>{queue.setNext("ages");},500)
+                    }
+                })
+
+                queue.add({
+                    id:"ages",
+                    f: () => {
+
+                        ages=new Ages(data.filter(d=>(d.Age!=="TOTAL")),{
+                            container:"#ages",
+                            countries:COUNTRIES,
+                            incomes:["income"],//,"single"],
+                            fieldname:"perc",
+                            country:status.country,
+                            age:status.age,
+                            group_years:5
+                        })
+
+                        setTimeout(()=>{queue.setNext("transition");},50)
+                        //setTimeout(()=>{queue.setNext("scatter");},50)
+                        //setTimeout(()=>{queue.setNext("scatter");},50)
                     }
                 })
                 
-                queue.add({
+                /*queue.add({
                     id:"bubbles",
                     f: () => {
                         COUNTRIES.forEach(d=>{
@@ -230,25 +328,9 @@ export function init(el, context, config, mediator) {
                         
                         setTimeout(()=>{queue.setNext("ages");},250)
                     }
-                })
+                })*/
                 
-                queue.add({
-                    id:"ages",
-                    f: () => {
-
-                        new Ages(data.filter(d=>(d.Age!=="TOTAL")),{
-                            container:"#ages",
-                            countries:COUNTRIES,
-                            incomes:["income"],//,"single"],
-                            fieldname:"perc",
-                            selected:"Australia",
-                            group_years:5
-                        })
-
-                        setTimeout(()=>{queue.setNext("transition");},50)
-                        //setTimeout(()=>{queue.setNext("scatter");},50)
-                    }
-                })
+                
                 
                 
 

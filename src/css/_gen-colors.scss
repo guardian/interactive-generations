@@ -1,0 +1,77 @@
+/*
+@each $current-color in $generation-colors-list {
+    $i: index($generation-colors-list, $current-color);
+    .country.#{nth($generation-list, $i)},
+    .country .other-age.#{nth($generation-list, $i)} {
+        path {
+            stroke: $current-color;
+        }
+        circle {
+            fill: $current-color;
+        }
+        text.line-name {
+            fill: $current-color;   
+        }
+    }
+    .marker.#{nth($generation-list, $i)} {
+        circle,text {
+            fill: $current-color;
+        }
+    }
+    
+    .sparkline.#{nth($generation-list, $i)} {
+        path {
+            stroke: $current-color;
+        }
+    }
+    .bubble.#{nth($generation-list, $i)} {
+        circle {
+            fill: $current-color;
+        }
+    }
+    .plot.#{nth($generation-list, $i)} {
+        path {
+            fill: $current-color;   
+        }
+    }
+    form.fancy-selector.#{nth($generation-list, $i)} {
+        border-bottom-color: $current-color;
+        .select-wrapper {
+            color: $current-color;
+            &::after {
+                color: $current-color;
+            }
+            select {
+                color: inherit;
+            }
+        }
+        
+    }
+    .age-timeline.#{nth($generation-list, $i)} {
+        path {
+            stroke: $current-color;
+        }
+        circle,rect {
+            fill: $current-color;
+        }
+    }
+    .arrow-marker {
+        fill: $current-color;
+    }
+}
+
+$countries-list: australia, canada, germany, italy, spain, france, norway, sweden, us, uk;
+$colors-list: $australia, $canada, $germany, $italy, $spain, $france, $norway, $sweden, $us, $uk;
+@each $current-color in $colors-list {
+    $i: index($colors-list, $current-color);
+    .#{nth($countries-list, $i)} path,
+    .#{nth($countries-list, $i)} line.life {
+        //stop-color: $current-color;
+        stroke: $current-color;
+    }
+    .#{nth($countries-list, $i)} circle.life {
+        //stop-color: $current-color;
+        fill: $current-color;
+    }
+}
+*/

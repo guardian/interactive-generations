@@ -1,7 +1,7 @@
-#myAge.age {
+.age {
 	margin-top:0;
 	@include mq(tablet) {
-		margin-top:115px;
+		//margin-top:115px;
 	}
 	position:relative;
 	$margin: 0px;
@@ -20,19 +20,24 @@
 				fill:none;
 				stroke-width:4;
 				&.avg {
-					stroke:#999;
+					stroke:#999 !important;
 					stroke-width:2;
 					stroke-dasharray:2,3;
 					stroke-linecap:butt;
 				}
 				&.bg {
-					stroke:#dadada;
+					stroke:#dadada !important;
 				}
 			}
-			text.line-name {
+			
+			text.line-name,
+			text.other-line-name {
 				@include fs-textSans(2);
 				font-weight: bold;
-				text-anchor:start;
+				text-anchor:middle;
+				
+				
+			
 				&.bg {
 					stroke:#fff;
 					stroke-width:2px;
@@ -40,6 +45,18 @@
 					stroke-linejoin:miter;
 					stroke-opacity:1;
 					fill:#fff;
+				}
+			}
+			&.up {
+				text.line-name,
+				text.other-line-name {
+					fill:$up;
+				}
+			}
+			&.down {
+				text.line-name,
+				text.other-line-name {
+					fill:$down;
 				}
 			}
 			text.avg {
@@ -102,18 +119,79 @@
 					}
 				}
 			}
+			.arrow line {
+				stroke-width:2;
+			}
+			&.up {
+				path,
+				.arrow line{
+					stroke:$up;
+				}
+				.label {
+					circle {
+						fill:$up;
+					}
+				}
+			}
+			&.down {
+				path,
+				.arrow line {
+					stroke:$down;
+				}
+				.label {
+					circle {
+						fill:$down;
+					}
+				}
+			}
 			.other-ages {
 				.other-age {
 					path {
 						stroke-width:2;
 						stroke-opacity:0.5;
-						//stroke:#dadada;
+						stroke:#dadada;
+					}
+					text {
+						fill:none;
+						display: none;
+						&.bg {
+								stroke:#fff;
+								stroke-width:2px;
+								stroke-linecap:butt;
+								stroke-linejoin:miter;
+								stroke-opacity:1;
+								fill:#fff;
+							}
 					}
 					&.selected {
 						path {
+							stroke:#aaa;
 							stroke-width:3;
 							stroke-opacity:1;
 						}
+						text {
+							fill:#aaa;
+							text-anchor:middle;
+							display: block;
+
+							
+						}
+						/*&.up {
+							path {
+								stroke:$up;
+							}
+							text {
+								fill:$up;
+							}
+						}
+						&.down {
+							path {
+								stroke:$down;
+							}
+							text {
+								fill:$down;
+							}
+						}*/	
 					}
 				}
 			}
@@ -126,14 +204,14 @@
 					stroke:#333;
 					stroke-width:0;
 				}
-				&.family {
+				&.down {
 					circle {
-						//fill:#f37021;
+						fill:$down;
 					}
 				}
-				&.single {
+				&.up {
 					circle {
-						fill:#999;
+						fill:$up;
 					}
 				}
 

@@ -47,17 +47,17 @@ export function BubbleBuckets(data,options) {
 						.append("div")
 							.attr("class","bucket")
 							.classed("selected",d=>options.countries.indexOf(d.key)>-1)
-							.on("click",(d)=>{
+							/*.on("click",(d)=>{
 								//console.log(d)
 								if(options.clickCallback) {
 									options.clickCallback(d.key);
 								}
-							})
+							})*/
 	let margins={
 			top:10,
 			bottom:30,
-			left:10,
-			right:10
+			left:0,
+			right:20
 		};
 	/*
 	let annotations=buckets
@@ -260,7 +260,13 @@ function BubbleBucket(data,options) {
 					.data(data.values)
 					.enter()
 					.append("g")
-						.attr("class","sparkline "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name)
+						//.attr("class","sparkline "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name)
+						.attr("class",d=>{
+							//"sparkline "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name
+							let direction=(d.values[0].values.perc>d.values[d.values.length-1].values.perc)?"down":"up";
+							console.log("SPPPPAAAAAAAAAAARK",d.values[0].values.perc,">",d.values[d.values.length-1].values.perc)
+							return "sparkline "+direction
+						})
 						.classed("highlight",d => options.ages.indexOf(d.key)>-1)
 						.attr("transform",d=>{
 							let x=0,//xscale(d.key)-sparkline_xscale.range()[1]/2,

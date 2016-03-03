@@ -9,7 +9,7 @@ form.fancy-selector {
     //width:100px;
     //height: 30px;
     background-color: #f7f7f7; 
-    border-bottom:1px solid #f37021;
+    border-bottom:1px solid #999;
 
     @include mq(tablet) {
         
@@ -17,7 +17,7 @@ form.fancy-selector {
         //border-radius: 10px;
         //border: 1px solid #bdbdbd;
         background-color: #f7f7f7; 
-        border-bottom:1px solid #f37021;
+        border-bottom:1px solid #999;
 
         margin:0 5px;
         padding:0;// 10px;
@@ -30,7 +30,7 @@ form.fancy-selector {
 
         &::after {
             content: "\25BE";
-            color:#f37021;
+            color:#999;
             background-color: #f7f7f7; 
             padding-right:5px;
             position:absolute;
@@ -47,7 +47,7 @@ form.fancy-selector {
         width:calc(100% + 40px);
 
         @include fs-header(5);
-        color:#f37021;
+        color:#000;
         font-size:24px;
 
         margin:0;// 5px;
