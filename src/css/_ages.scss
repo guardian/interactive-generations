@@ -42,11 +42,12 @@
 		.age2 {
 			width:calc(100% / 3 * 2);
 			float:left;
+			min-height: 20px;
 			h3 {
 				display: none;
 			}
 			@include mq(tablet) {
-				width:calc(100% / 14);
+				width:calc(100% / 13);
 				margin-top:0;
 				h3 {
 					display: block;
@@ -58,7 +59,7 @@
 			width:calc(100% / 3); // /14
 			min-height: auto;
 			@include mq(tablet) {
-				width:calc(100% / 14); // /14
+				width:calc(100% / 13); // /14
 				margin-top:0;
 			}
 			

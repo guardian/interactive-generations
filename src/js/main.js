@@ -1,17 +1,18 @@
 import mainHTML from './text/main.html!text'
 import medians from '../assets/data/medians.json!json'
 import { getAgeGroups,loadData,AGES,COUNTRIES,age_fix,AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from './lib/utils';
-import Generations from './components/Generations';
+//import Generations from './components/Generations';
 import {Ages,Age} from './components/Ages';
 import {BubbleBuckets} from './components/BubbleBuckets';
 import { requestAnimationFrame, cancelAnimationFrame } from './lib/request-animation-frame-shim';
 import AgeSelector from './components/AgeSelector';
 import InlineSelector from './components/InlineSelector';
-import BubbleChart from './components/BubbleChart';
+//import BubbleChart from './components/BubbleChart';
 import ActiveQueue from './lib/ActiveQueue';
-import FettuccineChart from './components/FettuccineChart';
-import ArrowScatterplot from './components/ArrowScatterplot';
+//import FettuccineChart from './components/FettuccineChart';
+//import ArrowScatterplot from './components/ArrowScatterplot';
 //import annotations from '../assets/data/annotations.json!json';
+import {Q1} from './components/Answers';
 
 export function init(el, context, config, mediator) {
     
@@ -127,6 +128,10 @@ export function init(el, context, config, mediator) {
 
                 //return;
 
+                let q1=new Q1(data,{
+                    container:"#q1"
+                });
+
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup",
                     selected:status.age,
@@ -134,6 +139,8 @@ export function init(el, context, config, mediator) {
 
                         status.age=age;
                         myAge.update(status);
+                        q1.update(status.age,status.country);
+
                         parentsAge.selectOthers([status.age]);
                         //myAge.removeAnnotations();
                         //myAge.addAnnotations();
@@ -154,8 +161,19 @@ export function init(el, context, config, mediator) {
                     selected:status.country,
                     changeCallback:(country)=>{
                         status.country=country;
+                        status.parents_country=country;
                         myAge.update(status);
+                        q1.update(status.age,status.country);
+
+                        parentsAge.update({
+                            age:status.parents_age,
+                            country:status.parents_country
+                        });
+                        parentsAge.selectOthers([status.age]);
+
                         ages.select(status.age,status.country);
+
+                        
                         //myAge.removeAnnotations();
                         //myAge.addAnnotations();
                        // myAge.updateDescription("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.");
@@ -239,7 +257,7 @@ export function init(el, context, config, mediator) {
                         })
                         
                         //myAge.addAnnotations();
-                        setTimeout(()=>{queue.setNext("parents_age");},150)
+                        //setTimeout(()=>{queue.setNext("parents_age");},150)
                         
                     }
                 })
@@ -374,6 +392,7 @@ export function init(el, context, config, mediator) {
                     id:"transition",
                     f: () => {
                         myAge.transition();
+                        parentsAge.transition();
                     }
                 })
                 

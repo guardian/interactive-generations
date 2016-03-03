@@ -15,7 +15,7 @@ export const AGES=([
     "65 to 69 years",
     "70 to 74 years",
     "75 to 79 years",
-    "80 years and over",
+    //"80 years and over",
     "TOTAL"
 ]);
 export const AGES10=([

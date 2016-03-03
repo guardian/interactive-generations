@@ -245,6 +245,7 @@ export default function AgeChart(data,options) {
 					.attr("x",d=>xscale(d[Math.floor(d.length/4)].year))
 					.attr("y",d=>yscale(d[Math.floor(d.length/4)][FIELDNAME]))
 					.attr("dy",d=>{
+						return 0;
 						let d1=d[Math.floor(d.length/4)-1],
 							d2=d[Math.floor(d.length/4)+1];
 
@@ -260,6 +261,7 @@ export default function AgeChart(data,options) {
 					.attr("x",d=>xscale(d[Math.floor(d.length/4)].year))
 					.attr("y",d=>yscale(d[Math.floor(d.length/4)][FIELDNAME]))
 					.attr("dy",d=>{
+						return 0;
 						let d1=d[Math.floor(d.length/4)-1],
 							d2=d[Math.floor(d.length/4)+1];
 

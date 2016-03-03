@@ -61,7 +61,7 @@ export function Age(data,options) {
 				top:20,
 				bottom:30,
 				left:10,
-				right:10
+				right:25
 			},
 			padding:{
 				top:0,
@@ -240,7 +240,7 @@ export function Ages(data,options) {
 						})
 
 
-
+						return age_groups;
 						return age_groups.filter(d=>(d.key===options.age)).concat(age_groups.filter(d=>(d.key!==options.age)));
 					}
 				)
@@ -294,7 +294,7 @@ export function Ages(data,options) {
 			.html(d=>getShortAgeGroup(d.key))
 
 	this.select=(age,country)=>{
-		
+
 	}
 
 }
