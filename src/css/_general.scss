@@ -140,6 +140,7 @@ figure.interactive {
     }
     .answer {
         margin:30px 0;
+        font-weight: 200;
         @include fs-headline(4);
 
         @include mq(tablet) {
