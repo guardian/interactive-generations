@@ -173,8 +173,10 @@ export function Q4(data,options) {
 
 		let highest_earner=all_ages.find(d=>d.perc===max);
 
-		let only_highest_earner=data.filter(d=>d.Age===highest_earner.Age),
+		let only_highest_earner=all_ages.filter(d=>d.Age===highest_earner.Age),
 			although=(only_highest_earner[0].perc>only_highest_earner[only_highest_earner.length-1].perc)?"although they are poorer than before":("and they have gained in relative terms since "+only_highest_earner[0].Year)
+
+		//console.log("--->",only_highest_earner)
 
 		let gained=(these_data[these_data.length-1].perc>these_data[0].perc)?"gained":"lost";
 		let txt=`<h2>People ${age} have ${gained} relative to the national average.</h2> ${highest_earner.Age} are now the highest earners ${although}`

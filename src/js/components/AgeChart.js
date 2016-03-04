@@ -317,7 +317,7 @@ export default function AgeChart(data,options) {
 					//.attr("dy","0.25em")
 					.attr("x",d=>xscale(d.values[Math.floor(d.values.length*3/4)].year))
 					.attr("y",d=>yscale(d.values[Math.floor(d.values.length*3/4)][FIELDNAME]))
-					.attr("dy","20px")
+					.attr("dy","30px")
 					.text(options.age)
 
 			country
@@ -338,7 +338,7 @@ export default function AgeChart(data,options) {
 						}
 						return "15px";
 					})*/
-					.attr("dy","20px")
+					.attr("dy","30px")
 					.text(options.age)
 					//.text(d=>d.name)
 				

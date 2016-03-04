@@ -310,7 +310,10 @@ export function Ages(data,options) {
 				//this.parentNode.prepend()
 				this.parentNode.insertBefore(this,this.parentNode.firstChild)
 			})
-		age.classed("selected",d=>(d.key===age))
+		/*age.classed("selected",d=>{
+			console.log("!!!!",age,d)
+			return (d.key===age)
+		})*/
 	}
 
 }
