@@ -12,7 +12,7 @@ import ActiveQueue from './lib/ActiveQueue';
 //import FettuccineChart from './components/FettuccineChart';
 //import ArrowScatterplot from './components/ArrowScatterplot';
 //import annotations from '../assets/data/annotations.json!json';
-import {Q1} from './components/Answers';
+import {Q1,Q2,Q3,Q4} from './components/Answers';
 
 export function init(el, context, config, mediator) {
     
@@ -59,7 +59,7 @@ export function init(el, context, config, mediator) {
 
                 
                 
-
+                /*
                 let totals=data.filter(d=>d.Age==="TOTAL")
 
                 let nested_totals=d3.nest()
@@ -80,12 +80,13 @@ export function init(el, context, config, mediator) {
                     })
                 })
                 console.log(obj_totals)
+                */
 
-                data.forEach(d=>{
+                //data.forEach(d=>{
                     //d.perc=d.income - obj_totals[d.Country][d.Year];
-                })
+                //})
 
-                console.log(data);
+                //console.log(data);
                 //return;
                 
                     
@@ -129,8 +130,17 @@ export function init(el, context, config, mediator) {
                 //return;
 
                 let q1=new Q1(data,{
-                    container:"#q1"
-                });
+                        container:"#q1"
+                    }),
+                    q2=new Q2(data,{
+                        container:"#q2"
+                    }),
+                    q3=new Q3(data,{
+                        container:"#q3"
+                    }),
+                    q4=new Q4(data,{
+                        container:"#q4"
+                    });
 
                 new InlineSelector(getAgeGroups(5).map(d=>({name:d.age,shortname:d.age_short})),{
                     container:"#myAgeGroup",
@@ -138,14 +148,18 @@ export function init(el, context, config, mediator) {
                     changeCallback:(age)=>{
 
                         status.age=age;
+                        
                         myAge.update(status);
                         q1.update(status.age,status.country);
+                        q2.update(status.age,status.country);
+                        q3.update(status.age,status.country,status.parents_age);
+                        q4.update(status.age,status.country);
 
                         parentsAge.selectOthers([status.age]);
                         //myAge.removeAnnotations();
                         //myAge.addAnnotations();
-
-                        //bubbleBuckets.updateAge(age);
+                        //console.log(COUNTRIES)
+                        bubbleBuckets.updateAge(status.age);
                         
 
                         
@@ -164,6 +178,9 @@ export function init(el, context, config, mediator) {
                         status.parents_country=country;
                         myAge.update(status);
                         q1.update(status.age,status.country);
+                        q2.update(status.age,status.country);
+                        q3.update(status.age,status.country,status.parents_age);
+                        q4.update(status.age,status.country);
 
                         parentsAge.update({
                             age:status.parents_age,
@@ -178,7 +195,7 @@ export function init(el, context, config, mediator) {
                         //myAge.addAnnotations();
                        // myAge.updateDescription("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.");
                         
-                        //bubbleBuckets.selectCountry(country);
+                        bubbleBuckets.selectCountry(country);
 
                         
                     }
@@ -190,6 +207,9 @@ export function init(el, context, config, mediator) {
                     changeCallback:(age)=>{
 
                         status.parents_age=age;
+
+                        q3.update(status.age,status.country,status.parents_age);
+
                         parentsAge.update({
                             age:status.parents_age,
                             country:status.parents_country
@@ -236,6 +256,12 @@ export function init(el, context, config, mediator) {
                 queue.add({
                     id:"age",
                     f: () => {
+
+                        q1.update(status.age,status.country);
+                        q2.update(status.age,status.country);
+                        q3.update(status.age,status.country,status.parents_age);
+                        q4.update(status.age,status.country);
+
                         myAge=new Age(data,{
                             container:"#myAge",
                             countries:[status.country],
@@ -257,7 +283,7 @@ export function init(el, context, config, mediator) {
                         })
                         
                         //myAge.addAnnotations();
-                        //setTimeout(()=>{queue.setNext("parents_age");},150)
+                        setTimeout(()=>{queue.setNext("parents_age");},150)
                         
                     }
                 })
@@ -286,7 +312,7 @@ export function init(el, context, config, mediator) {
                 queue.add({
                     id:"bb",
                     f: () => {
-                        bubbleBuckets=new BubbleBuckets(data,{
+                        bubbleBuckets=new BubbleBuckets(data.filter(d=>(d.Age!=="TOTAL")),{
                             container:"#buckets",
                             countries:[status.country],
                             filter:{
@@ -298,8 +324,8 @@ export function init(el, context, config, mediator) {
                             group_years:group_years,
                             clickCallback:(country)=>{
                                 
-                                bubbleBuckets.selectCountry(country);
-                                country_selector.selectOption(country);
+                                //bubbleBuckets.selectCountry(country);
+                                //country_selector.selectOption(country);
                             }
                             //,
                             //annotations:annotations
@@ -402,29 +428,7 @@ export function init(el, context, config, mediator) {
 
                 return;
                 
-                /*
-                AgeSelector(getAgeGroups(group_years),{
-                    age:selected_age+" to "+(selected_age+group_years),
-                    changeCallback:(age)=>{
-                        bubbleBuckets.updateAge(age)
-                    }
-                })
-                */
                 
-                
-                /*
-                new BubbleBuckets(data,{
-                    container:"#buckets",
-                    ages:[selected_age+" to "+(selected_age+group_years)],
-                    incomes:["income"],
-                    group_years:group_years
-                })
-                */
-                //return;
-                
-                
-                
-                //return;
                 
                 
                 

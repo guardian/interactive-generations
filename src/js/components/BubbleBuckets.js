@@ -38,6 +38,8 @@ export function BubbleBuckets(data,options) {
 
 	let extents=updateExtents(data);
 
+	console.log("COUNTRIES",COUNTRIES)
+
 	let buckets=d3.select(options.container)
 					.append("div")
 						.attr("class","buckets")
@@ -114,6 +116,8 @@ export function BubbleBuckets(data,options) {
 
 	this.updateAge=(age)=>{
 
+		console.log("updateAge",age)
+
 		options.filter.ages=[age];
 
 		nested_data=nestDataByCountry(data,options.group_years);
@@ -131,14 +135,17 @@ export function BubbleBuckets(data,options) {
 			}
 		}
 
-		//console.log(nested_data)
+		console.log(nested_data.sort((a,b)=>{
+			console.log(COUNTRIES,COUNTRIES.indexOf(a.key),"-",COUNTRIES.indexOf(b.key))
+			return COUNTRIES.indexOf(a.key)-COUNTRIES.indexOf(b.key);
+		}))
 
 		buckets
 			//.data(nested_data)
 			.data(nested_data.sort((a,b)=>(COUNTRIES.indexOf(a.key)-COUNTRIES.indexOf(b.key))))
 				.select("div.chart")
 				.each(function(d,i){
-					//console.log(i,d)
+					console.log(i,d)
 					bubble_buckets[i].updateAge(d,age);
 				})
 
@@ -264,7 +271,7 @@ function BubbleBucket(data,options) {
 						.attr("class",d=>{
 							//"sparkline "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name
 							let direction=(d.values[0].values.perc>d.values[d.values.length-1].values.perc)?"down":"up";
-							console.log("SPPPPAAAAAAAAAAARK",d.values[0].values.perc,">",d.values[d.values.length-1].values.perc)
+							//console.log("SPPPPAAAAAAAAAAARK",d.values[0].values.perc,">",d.values[d.values.length-1].values.perc)
 							return "sparkline "+direction
 						})
 						.classed("highlight",d => options.ages.indexOf(d.key)>-1)
@@ -298,7 +305,8 @@ function BubbleBucket(data,options) {
 					.data(data.values)
 					.enter()
 					.append("g")
-						.attr("class","bubble "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name)
+						//.attr("class","bubble "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name)
+						.attr("class","bubble")
 						.classed("highlight",d => options.ages.indexOf(d.key)>-1)
 						.attr("transform",d=>{
 							let x=sparkline_xscale(d.values[d.values.length-1].key),//xscale(d.key),
@@ -412,7 +420,8 @@ function BubbleBucket(data,options) {
 
 		bubble.data(data.values);
 		bubble
-			.attr("class","bubble "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name)
+			//.attr("class","bubble "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name)
+			.attr("class","bubble")
 			.transition()
 			.duration(500)
 			.delay(250)
@@ -429,7 +438,13 @@ function BubbleBucket(data,options) {
 
 		sparkline.data(data.values);
 		sparkline
-			.attr("class","sparkline "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name)
+			//.attr("class","sparkline "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name)
+			.attr("class",d=>{
+							//"sparkline "+GENERATIONS[AGES_GENERATIONS[options.ages[0]]].short_name
+							let direction=(d.values[0].values.perc>d.values[d.values.length-1].values.perc)?"down":"up";
+							//console.log("SPPPPAAAAAAAAAAARK",d.values[0].values.perc,">",d.values[d.values.length-1].values.perc)
+							return "sparkline "+direction
+						})
 			.transition()
 			.duration(500)
 			.delay(250)

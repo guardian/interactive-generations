@@ -124,7 +124,7 @@ export const COUNTRY_NAMES={
     "NO":"Norway",
     "SE":"Sweden"
 }
-export const COUNTRIES=(["UK","FR","DE","IT","ES","US","CA","AU"]);//"NO","SE",
+export const COUNTRIES=["UK","FR","DE","IT","ES","US","CA","AU"];//"NO","SE",
 
 export const age_fix={
     "80 years and over":"80+",
@@ -221,7 +221,7 @@ export function getAgeGroups(group_years) {
     return AGES.map(d=>({
         age:d,
         age_short:d
-    }))
+    })).filter(d=>d.age!=="TOTAL")
     /*
     return AGES.map(d=>{
         let year=+d.split(" ")[0];
@@ -338,6 +338,7 @@ export function nestDataByCountry(data,years,ages,countries) {
         .key(d => d.year)
         .rollup(leaves => {
             return {
+                country:leaves[0].Country,
                 income:d3.mean(leaves,d=>d.income),
                 perc:d3.mean(leaves,d=>d.perc),
                 family:d3.mean(leaves,d=>d.family),

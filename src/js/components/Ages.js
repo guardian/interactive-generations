@@ -3,7 +3,7 @@ import { strokeShadow } from '../lib/CSSUtils';
 import AgeChart from './AgeChart';
 
 export function Age(data,options) {
-	console.log(data,options)
+	//console.log(data,options)
 
 	let FIELDNAME=options.fieldname || "income";
 
@@ -31,7 +31,7 @@ export function Age(data,options) {
 		})
 	})
 
-	console.log("NESTED_DATA",nested_data)
+	//console.log("NESTED_DATA",nested_data)
 
 	let extents=updateExtents(data);
 
@@ -142,7 +142,7 @@ export function Age(data,options) {
 		options.countries=[status.country];
 		update(status)
 		
-		console.log("NESTED DATA",nested_data)
+		//console.log("NESTED DATA",nested_data)
 
 		chart.update([{
 			key:options.countries[0],
@@ -168,7 +168,7 @@ export function Ages(data,options) {
 	let FIELDNAME=options.fieldname || "income";
 
 	let nested_data=nestDataByAgeGroup(data,options.group_years);
-	console.log("nested_data",nested_data)
+	//console.log("nested_data",nested_data)
 
 	let nested_data_year=nestDataByYear(data,null,options.countries);
 	//console.log("nested_data_year",nested_data_year)
@@ -193,21 +193,30 @@ export function Ages(data,options) {
 	//console.log(extents);
 
 	let row=d3.select(options.container)
-		.selectAll("div.row")
-			.data(options.countries.sort((a,b)=>{
-				if(a===options.country) {
-					return -1;
-				}
-				if(b===options.country) {
-					return 1;
-				}
-				return 0;
-			}))
-			.enter()
-			.append("div")
-			.attr("class","row")
-			.classed("selected",d=>(d===options.country))
+		.append("div")
+			.attr("class","rows")
+			.selectAll("div.row")
+				/*.data(options.countries.sort((a,b)=>{
+					if(a===options.country) {
+						return -1;
+					}
+					if(b===options.country) {
+						return 1;
+					}
+					return 0;
+				}))*/
+				.data(options.countries)
+				.enter()
+				.append("div")
+				.attr("class","row")
+				.classed("selected",d=>(d===options.country))
 	
+	row
+		.filter(d=>d===options.country)
+		.each(function(d){
+			//this.parentNode.prepend()
+			this.parentNode.insertBefore(this,this.parentNode.firstChild)
+		})
 	/*let description=row.append("div")
 						.attr("class","description")*/
 
@@ -241,7 +250,7 @@ export function Ages(data,options) {
 
 
 						return age_groups;
-						return age_groups.filter(d=>(d.key===options.age)).concat(age_groups.filter(d=>(d.key!==options.age)));
+						//return age_groups.filter(d=>(d.key===options.age)).concat(age_groups.filter(d=>(d.key!==options.age)));
 					}
 				)
 				.enter()
@@ -294,7 +303,14 @@ export function Ages(data,options) {
 			.html(d=>getShortAgeGroup(d.key))
 
 	this.select=(age,country)=>{
-
+		options.country=country;
+		row
+			.filter(d=>d===options.country)
+			.each(function(d){
+				//this.parentNode.prepend()
+				this.parentNode.insertBefore(this,this.parentNode.firstChild)
+			})
+		age.classed("selected",d=>(d.key===age))
 	}
 
 }

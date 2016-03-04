@@ -4,7 +4,7 @@ import Voronoi from '../lib/Voronoi';
 
 export default function AgeChart(data,options) {
 	
-	console.log("AgeChart",data,options)
+	//console.log("AgeChart",data,options)
 	//console.log(options.deviation)
 
 	let FIELDNAME=options.fieldname || "income";
@@ -96,7 +96,7 @@ export default function AgeChart(data,options) {
 
 	let extents=options.extents;
 
-	console.log(extents)
+	//console.log(extents)
 
 	let family_path,other_age;
 	//[0,45000]
@@ -207,7 +207,7 @@ export default function AgeChart(data,options) {
 							return ("other-age "+GENERATIONS[AGES_GENERATIONS[d[0].key]].short_name)
 						})*/
 						.attr("class",d=>{
-							console.log("WHAT COLOR?",d)
+							//console.log("WHAT COLOR?",d)
 							let direction=(d[0].perc>d[d.length-1].perc)?"down":"up";
 
 							return "other-age "+direction;
@@ -296,7 +296,7 @@ export default function AgeChart(data,options) {
 				.append("path")
 				.attr("class","family")
 				.attr("d",d => {
-						console.log("path",d)
+						//console.log("path",d)
 						let values=d.values.map(v => {
 							return {
 								x:v.year,
@@ -540,7 +540,7 @@ export default function AgeChart(data,options) {
 	}
 	
 	function highlightAge(age) {
-		console.log(age)
+		//console.log(age)
 		if(other_age) {
 			other_age
 				.classed("selected",false)
@@ -675,7 +675,7 @@ export default function AgeChart(data,options) {
 
 		country
 			.data(data.filter(d => {
-				console.log("{}{}{}{}{}{",d)
+				//console.log("{}{}{}{}{}{",d)
 				return options.countries.indexOf(d.key)>-1
 			}),d=>d.year)
 			//.attr("class",d=>(d.key.toLowerCase()+" country "+GENERATIONS[AGES_GENERATIONS[options.age]].short_name))
@@ -784,7 +784,7 @@ export default function AgeChart(data,options) {
 			//label=label
 			//	.data(data[0].values)
 
-			console.log("DATA",label.data())
+			//console.log("DATA",label.data())
 
 			label=label.data(data[0].values.map((v,i)=>{
 					v.index=i;
@@ -796,9 +796,9 @@ export default function AgeChart(data,options) {
 			//console.log("DATA",label.data())
 
 			/*
-			console.log("////////////",data);
+			//console.log("////////////",data);
 			label.datum((d,i)=> {
-					console.log("----->",d)
+					//console.log("----->",d)
 					return d;
 				}
 				,d=>d.year)
@@ -809,7 +809,7 @@ export default function AgeChart(data,options) {
 								.attr("class","label")
 								.attr("rel",d=>d.year+" "+d[FIELDNAME])
 								/*.each(d=>{
-									console.log("NEW ",d)
+									//console.log("NEW ",d)
 								})*/
 								
 			new_label.append("circle")
@@ -849,7 +849,7 @@ export default function AgeChart(data,options) {
 							return `translate(${x},${y})`
 						})
 			/*label.each(function(d){
-				console.log("------------------->",d)
+				//console.log("------------------->",d)
 			})*/
 			label.select("text.income:not(.bg)")
 					.text(function(d,i){
