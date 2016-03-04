@@ -51,7 +51,7 @@ export function init(el, context, config, mediator) {
         el.innerHTML = headerHTML;
     } else {
         el.innerHTML = '';
-        header.innerHTML = headerHTML;
+        header[0].innerHTML = headerHTML;
     }
 
 
