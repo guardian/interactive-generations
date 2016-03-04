@@ -61,7 +61,7 @@ export function Age(data,options) {
 				top:20,
 				bottom:30,
 				left:10,
-				right:25
+				right:35
 			},
 			padding:{
 				top:0,
@@ -302,18 +302,19 @@ export function Ages(data,options) {
 		.append("h4")
 			.html(d=>getShortAgeGroup(d.key))
 
-	this.select=(age,country)=>{
-		options.country=country;
+	this.select=(__age,__country)=>{
+		options.country=__country;
 		row
 			.filter(d=>d===options.country)
 			.each(function(d){
 				//this.parentNode.prepend()
 				this.parentNode.insertBefore(this,this.parentNode.firstChild)
 			})
-		/*age.classed("selected",d=>{
-			console.log("!!!!",age,d)
-			return (d.key===age)
-		})*/
+		age
+			.classed("selected",d=>{
+				//console.log("!!!!",__age,d)
+				return (d.key===__age && d.country===options.country)
+			})
 	}
 
 }

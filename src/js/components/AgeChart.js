@@ -404,14 +404,14 @@ export default function AgeChart(data,options) {
 				.attr("x",0)
 				.attr("y",-10)
 				.text((d,i)=>{
-					return labels.y.format(d)
+					return number_format(d[FIELDNAME])
 				})
 		label.append("text")
 				.attr("class","income")
 				.attr("x",0)
 				.attr("y",-10)
 				.text((d,i)=>{
-					return labels.y.format(d)
+					return number_format(d[FIELDNAME])
 				})
 		label.append("text")
 				.attr("class","year bg")
@@ -856,11 +856,11 @@ export default function AgeChart(data,options) {
 						//return "XXX"
 						//console.log("D",this,d[FIELDNAME],labels.y.format(d))
 						//console.log(d[FIELDNAME],labels.y.format(d))
-						return labels.y.format(d)
+						return number_format(d[FIELDNAME])
 					})
 			label.select("text.income.bg")
 					.text(function(d,i){
-						return labels.y.format(d)
+						return number_format(d[FIELDNAME])
 					})
 					
 			label.select("text.year.bg")

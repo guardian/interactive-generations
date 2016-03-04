@@ -58,8 +58,8 @@ export function BubbleBuckets(data,options) {
 	let margins={
 			top:10,
 			bottom:30,
-			left:0,
-			right:20
+			left:10,
+			right:10
 		};
 	/*
 	let annotations=buckets

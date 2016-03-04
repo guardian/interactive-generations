@@ -45,6 +45,32 @@
 		max-width: 880px;
 
 	}
+
+	.person-profile {
+		color:#fff;
+		font-family: $f-serif-headline;
+		font-weight: 200;
+		//font-size: 40px;
+		span {
+			@include fs-headline(5);
+			font-weight: 200;
+		}
+		form.fancy-selector {
+			@include fs-headline(5);
+			font-weight: bold;
+			background-color:#5c6970;
+
+			.select-wrapper {
+		        &::after {
+		        	color:#eee;
+		            background-color: #5c6970; 
+		        }
+		    }
+		    select {
+		    	color:#fff;
+		    }
+		}
+	}
 }
 
 
