@@ -1,4 +1,5 @@
 import mainHTML from './text/main.html!text'
+import headerHTML from './text/header.html!text'
 import medians from '../assets/data/medians.json!json'
 import { getAgeGroups,loadData,AGES,COUNTRIES,age_fix,AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from './lib/utils';
 //import Generations from './components/Generations';
@@ -43,7 +44,18 @@ export function init(el, context, config, mediator) {
         parents_country:"US"
     }
 
-    el.innerHTML = mainHTML.replace(/%assetPath%/g, config.assetPath);
+    //adds header
+    let header = document.querySelectorAll('.content__head,.article__header');
+
+    if(header.length == 0){
+        el.innerHTML = headerHTML;
+    } else {
+        el.innerHTML = '';
+        header.innerHTML = headerHTML;
+    }
+
+
+    el.innerHTML += mainHTML.replace(/%assetPath%/g, config.assetPath);
     //document.querySelector(".country-text h2").innerHTML=selected_age+" to "+(selected_age+group_years)+" years old in "+selected_country;
 
     //let frameRequest = requestAnimationFrame(function checkInnerHTML(time) {

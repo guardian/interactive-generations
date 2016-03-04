@@ -1,0 +1,195 @@
+.gv-page-header {
+	background: #425159;
+	min-height: 460px;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+	* {
+		box-sizing: border-box;
+	}
+
+	.gv-header-container {
+	
+		margin: 0px auto;
+		padding: 20px;
+	}
+	.gv-header-blank {
+		height: 60px;
+		width: 300px;
+		border: 3px solid #fff;
+		border-radius: 4px;
+		display: inline-block;
+		margin-right: 10px;
+	}
+}
+
+.gv-page-header {
+	padding: 10px 0;
+	h1 {
+		font-family: $f-serif-headline;
+		font-weight: 200;
+		margin: 10px 0;
+		color: #fff;
+		max-width: 640px;
+		font-size: 40px;
+		line-height: 1;
+	}
+
+	h1.gv-fill-in {
+		color: #fff;
+		font-weight: 400;
+	}
+
+	p {
+		color: #fff;
+		@include fs-bodyCopy(2);
+		max-width: 880px;
+
+	}
+}
+
+
+
+@media(min-width:660px){
+
+	.gv-wrapper {
+		max-width: 660px;
+		padding: 0 20px;
+	}
+
+	.gv-container {
+
+	}
+
+	.gv-blank {
+		width: 260px;
+	}
+
+	.gv-page-header {
+		.gv-header-blank {
+			width: 460px;
+		}
+	}
+	
+}
+
+@media(min-width:740px){
+
+	.gv-wrapper {
+		max-width:740px;
+	}
+
+	.gv-col-content {
+		float: left;
+		width: 66%;
+	}
+
+	.gv-col-response {
+		float: left;
+		width: 33%;
+		padding-left: 20px;
+	}
+
+	.gv-page-header {
+		
+		.gv-header-container {
+
+			max-width: 740px;
+		}
+		
+	}
+
+
+}
+
+@media(min-width:980px){
+
+	.gv-wrapper {
+		max-width:980px;
+	}
+
+	.gv-col-content {
+		width: 620px;
+	}
+
+	.gv-col-response {
+		width: 220px;
+	}
+
+	.gv-page-header {
+		
+		.gv-header-container {
+
+			max-width: 740px;
+		}
+		
+	}
+
+}
+
+@media(min-width:980px){
+	.gv-page-header {
+		
+		.gv-header-container {
+
+			max-width: 980px;
+		}
+		
+	}
+}
+
+@media(min-width:1140px){
+
+	.gv-wrapper {
+		max-width:1140px;
+	}
+
+	.gv-col-content {
+		margin-left: 160px;
+	}
+
+	.gv-header {
+		padding-left: 160px;
+	}
+
+	.gv-page-header {
+		
+
+		.gv-header-container {
+
+			max-width: 1140px;
+			padding-left: 180px;
+		}
+		
+	}
+
+}
+
+
+@media(min-width:1300px){
+
+	.gv-wrapper {
+		max-width:1300px;
+	}
+
+	.gv-col-content {
+		margin-left: 240px;
+	}
+
+	.gv-col-response {
+		width: 260px;
+	}
+
+	.gv-header {
+		padding-left: 240px;
+	}
+
+	.gv-page-header {
+		.gv-header-container {
+			max-width: 1260px;
+			padding-left: 240px;
+		}
+	}
+
+
+
+}
