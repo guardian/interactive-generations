@@ -2,17 +2,15 @@ import mainHTML from './text/main.html!text'
 import headerHTML from './text/header.html!text'
 import medians from '../assets/data/medians.json!json'
 import { getAgeGroups,loadData,AGES,COUNTRIES,age_fix,AGES_GENERATIONS,GENERATIONS,COUNTRY_NAMES } from './lib/utils';
-//import Generations from './components/Generations';
+
 import {Ages,Age} from './components/Ages';
 import {BubbleBuckets} from './components/BubbleBuckets';
 import { requestAnimationFrame, cancelAnimationFrame } from './lib/request-animation-frame-shim';
 import AgeSelector from './components/AgeSelector';
 import InlineSelector from './components/InlineSelector';
-//import BubbleChart from './components/BubbleChart';
+
 import ActiveQueue from './lib/ActiveQueue';
-//import FettuccineChart from './components/FettuccineChart';
-//import ArrowScatterplot from './components/ArrowScatterplot';
-//import annotations from '../assets/data/annotations.json!json';
+
 import {Q1,Q2,Q3,Q4} from './components/Answers';
 
 export function init(el, context, config, mediator) {
@@ -74,31 +72,6 @@ export function init(el, context, config, mediator) {
                     d.age=d.Age;//(age_fix[d.Age] || d.Age).replace(/years/gi,""); 
                 });
                 
-                //console.log("--->",data);
-
-                
-                /*COUNTRIES.forEach((d,i)=>{
-                    new FettuccineChart(data,{
-                        container:"#fettuccine",
-                        country:d,
-                        index:i
-                    })    
-                })
-                
-                return;*/
-                /*COUNTRIES.forEach((d,i)=>{
-                    new ArrowScatterplot(data,{
-                        container:"#scatter",
-                        ages:AGES,
-                        incomes:["income"],
-                        countries:d,
-                        group_years:group_years,
-                        selected_ages:[status.age]
-                    })    
-                });*/
-                
-
-                //return;
 
                 let q1=new Q1(data,{
                         container:"#q1"
@@ -307,65 +280,6 @@ export function init(el, context, config, mediator) {
                     }
                 })
                 
-                /*queue.add({
-                    id:"bubbles",
-                    f: () => {
-                        COUNTRIES.forEach(d=>{
-                            new BubbleChart(data.filter(d=>(d.Age!=="TOTAL")),{
-                                    container:"#bubbles",
-                                    countries:[d],
-                                    ages:AGES.filter(d=>(d!=="TOTAL")),
-                                    incomes:["income"],
-                                    group_years:group_years,
-                                    selected_ages:["20 to 24 years","40 to 44 years","75 to 79 years","50 to 54 years"],
-                                    medians:d3.entries(medians[d]).map(d=>({date:new Date(+d.key,0,1),value:d.value}))
-                            })    
-                        });
-                        
-                        setTimeout(()=>{queue.setNext("ages");},250)
-                    }
-                })*/
-                
-                
-                
-                
-
-                //console.log(queue.getList())
-                /*
-                queue.add({
-                    id:"scatter",
-                    f: () => {
-                        COUNTRIES.forEach((d,i)=>{
-                            new ArrowScatterplot(data,{
-                                container:"#scatter",
-                                ages:AGES,
-                                incomes:["income"],
-                                countries:d,
-                                group_years:group_years,
-                                selected_ages:[status.age]
-                            })    
-                        });
-
-                        setTimeout(()=>{queue.setNext("fettuccine");},50)
-                    }
-                })
-                */
-                /*
-                queue.add({
-                    id:"fettuccine",
-                    f: () => {
-                        COUNTRIES.forEach((d,i)=>{
-                            new FettuccineChart(data,{
-                                container:"#fettuccine",
-                                country:d,
-                                index:i
-                            })    
-                        })
-
-                        setTimeout(()=>{queue.setNext("transition");},50)
-                    }
-                })
-                */
                 queue.add({
                     id:"transition",
                     f: () => {
