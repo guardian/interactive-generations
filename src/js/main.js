@@ -161,7 +161,7 @@ export function init(el, context, config, mediator) {
                         //console.log(COUNTRIES)
                         bubbleBuckets.updateAge(status.age);
                         
-
+                        ages.select(status.age,status.country);
                         
                         d3.selectAll(".my-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
                         
@@ -217,37 +217,15 @@ export function init(el, context, config, mediator) {
                         //myAge.removeAnnotations();
                         //myAge.addAnnotations();
 
-                        //bubbleBuckets.updateAge(age);
+                        bubbleBuckets.updateAge(age);
                         
-                        ages.select(status.age,status.country);
+                        
 
                         
                         d3.selectAll(".parents-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
                         
                     }
                 })
-
-
-
-                
-                /*new InlineSelector(COUNTRIES.map(d=>({name:COUNTRY_NAMES[d],shortname:d})),{
-                    container:"#parentsCountry",
-                    selected:status.parents_country,
-                    changeCallback:(country)=>{
-                        status.parents_country=country;
-                        parentsAge.update({
-                            age:status.parents_age,
-                            country:status.parents_country
-                        });
-                        //myAge.removeAnnotations();
-                        //myAge.addAnnotations();
-                        parentsAge.updateDescription("Well, the way they make shows is, they make one show. That show's called a pilot. Then they show that show to the people who make shows, and on the strength of that one show they decide if they're going to make more shows.");
-                        
-                        //bubbleBuckets.selectCountry(country);
-
-                        
-                    }
-                })*/
                 
                 let myAge,parentsAge,bubbleBuckets,ages;
 
@@ -349,6 +327,8 @@ export function init(el, context, config, mediator) {
                             age:status.age,
                             group_years:5
                         })
+
+                        ages.select(status.age,status.country);
 
                         setTimeout(()=>{queue.setNext("transition");},50)
                         //setTimeout(()=>{queue.setNext("scatter");},50)

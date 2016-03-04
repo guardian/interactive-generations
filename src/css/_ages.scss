@@ -40,17 +40,13 @@
 			}
 		}
 		.age2 {
-			width:calc(100% / 3 * 2);
 			float:left;
-			min-height: 20px;
-			h3 {
-				display: none;
-			}
+			display: none;
 			@include mq(tablet) {
+				display: block;
 				width:calc(100% / 13);
 				margin-top:0;
 				h3 {
-					display: block;
 					margin-top:20px;
 				}
 			}
@@ -71,6 +67,19 @@
 				margin:0;
 				margin-bottom:15px;
 				text-align:center;
+			}
+			&.selected {
+				h4 {
+					font-weight: bold;
+					color:#333;
+				}
+				svg {
+					g.country {
+						path {
+							stroke-width:4;
+						}
+					}
+				}
 			}
 			svg {
 				width:100%;
