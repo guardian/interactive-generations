@@ -61,7 +61,7 @@ export function Age(data,options) {
 				top:20,
 				bottom:30,
 				left:10,
-				right:35
+				right:40
 			},
 			padding:{
 				top:0,
@@ -235,7 +235,15 @@ export function Ages(data,options) {
 	ages.append("div")
 			.attr("class","age2")
 			.append("h3")
-				.html(d=>COUNTRY_NAMES[d]);
+				.html(d=>{
+					if(d==="UK") {
+						return "UK";
+					}
+					if(d==="US") {
+						return "US";
+					}
+					return COUNTRY_NAMES[d]
+				});
 
 	let age=ages.selectAll("div.age")
 				.data((c)=>{
@@ -256,7 +264,9 @@ export function Ages(data,options) {
 				.enter()
 				.append("div")
 					.attr("class","age")
-					//.style("width",d => "calc(100% / "+nested_data.length+")")
+					.classed("highlight",d=>{
+						return d.key===options.age;
+					})
 					.attr("rel",d=>d.key);
 	
 
@@ -314,6 +324,9 @@ export function Ages(data,options) {
 			.classed("selected",d=>{
 				//console.log("!!!!",__age,d)
 				return (d.key===__age && d.country===options.country)
+			})
+			.classed("highlight",d=>{
+				return d.key===__age;
 			})
 	}
 

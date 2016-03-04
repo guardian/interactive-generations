@@ -27,29 +27,29 @@ export function Q1(data,options) {
 		//console.log(v_now.perc,v_past.perc,diff,extents)
 
 		let better="";
-		let was=`It was much better to be that age in ${first_year}.`;
+		let was=``;
 
 		if(diff>=0) {
-			better="a bit better off";
+			better="richer";//"a bit better off";
 			was="";
 		}
 		if(diff>0.05) {
-			better="better off"
+			better="richer"
 		}
 		if(diff<0) {
-			better="a bit worse off"
-			was=`It was just a bit better to be that age in ${first_year}.`
+			better="poorer";//a bit worse off"
+			was=``
 		}
 		if(diff<-0.05) {
-			better="worse off"
+			better="poorer"
 		}
 		if(extents.indexOf(v_now.perc)>-1) {
-			ever="every";
+			ever="";
 		}
 		
 
 
-		let txt=`<h2>You are ${better} than ${ever} people that age in the past.</h2>
+		let txt=`<h2>Compared to the national average, you are ${better} than ${ever} people of your age in the past.</h2>
 			${was}
 			In real terms, your disposable income is about ${"$"+dollars(Math.abs(raw_diff))} ${raw_diff>0?"more":"less"} than in ${first_year}.`;
 
@@ -102,15 +102,15 @@ export function Q2(data,options) {
 			txt_best_worst="";
 
 		if(best) {
-			txt=`<h2>And ${COUNTRY_NAMES[country]} is the best place to be that age</h2><br/>`;
+			txt=`<h2>And ${COUNTRY_NAMES[country]} is the best place to be that age</h2>.`;
 			txt_best_worst=`The worst place to be your age is ${COUNTRY_NAMES[worst_country.Country]}`;
 		}
 		if(worst) {
-			txt=`<h2>And ${COUNTRY_NAMES[country]} is the worst place to be that age</h2><br/>`;	
+			txt=`<h2>And ${COUNTRY_NAMES[country]} is the worst place to be that age</h2>.`;	
 			txt_best_worst=`The best place to be your age is ${COUNTRY_NAMES[best_country.Country]}`;
 		}
 		if(!best && !worst) {
-			txt=`<h2>But hey, you are doing better than ${age} in ${COUNTRY_NAMES[worst_country.Country]}</h2><br/>`;
+			txt=`<h2>But hey, you are doing better than ${age} in ${COUNTRY_NAMES[worst_country.Country]}</h2>.`;
 			txt_best_worst=`The best place to be your age is ${COUNTRY_NAMES[best_country.Country]}`;
 		}
 
