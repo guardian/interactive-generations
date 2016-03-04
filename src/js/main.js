@@ -70,6 +70,7 @@ export function init(el, context, config, mediator) {
             
                 data.forEach(d=>{
                     d.age=d.Age;//(age_fix[d.Age] || d.Age).replace(/years/gi,""); 
+                    
                 });
                 
 

@@ -38,7 +38,7 @@ export function BubbleBuckets(data,options) {
 
 	let extents=updateExtents(data);
 
-	console.log("COUNTRIES",COUNTRIES)
+	//console.log("COUNTRIES",COUNTRIES)
 
 	let buckets=d3.select(options.container)
 					.append("div")

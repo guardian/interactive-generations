@@ -143,7 +143,10 @@ export function loadData(callback,options) {
 
                 d.Country=(country_fix[d.Country] || d.Country).toUpperCase();
                 d.year=+d.Year;
-                d.income=+d["EDHIW"];
+                //d.income=+d["EDHIW"];
+                
+                d.income=+d["Head.or.Spouse_EDHIW"];
+
                 d.perc_csv=+d["perc"];
                 d.family=+d["Head.or.Spouse_EDHIW"];
                 d.single=+d["Single.Person_EDHIW"];

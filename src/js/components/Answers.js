@@ -14,6 +14,8 @@ export function Q1(data,options) {
 
 		//console.log(these_data)
 
+		let dollars=d3.format(",.0d");
+
 		let v_past=these_data[0],
 			v_now=these_data[these_data.length-1],
 			diff=v_now.perc-v_past.perc,
@@ -49,7 +51,7 @@ export function Q1(data,options) {
 
 		let txt=`<h2>You are ${better} than ${ever} people that age in the past.</h2>
 			${was}
-			In real terms, your disposable income is about ${"$"+Math.abs(raw_diff)} ${raw_diff>0?"more":"less"} than in ${first_year}.`;
+			In real terms, your disposable income is about ${"$"+dollars(Math.abs(raw_diff))} ${raw_diff>0?"more":"less"} than in ${first_year}.`;
 
 		//console.log("Q1",txt)
 
@@ -148,8 +150,10 @@ export function Q3(data,options) {
 			more=raw_diff>0?"more":"less",
 			first_year=other[0].year;
 
+		let dollars=d3.format(",.0d");
+
 		let txt=`<h2>They are doing ${better} than you!</h2>
-			In real terms, their disposable income is about ${"$"+Math.abs(raw_diff)} ${raw_diff>0?"more":"less"} than in ${first_year}.`;
+			In real terms, their disposable income is about ${"$"+dollars(Math.abs(raw_diff))} ${raw_diff>0?"more":"less"} than in ${first_year}.`;
 
 		container.html(txt);
 

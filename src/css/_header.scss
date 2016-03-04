@@ -51,19 +51,32 @@
 		font-family: $f-serif-headline;
 		font-weight: 200;
 		//font-size: 40px;
-		span {
-			@include fs-headline(5);
-			font-weight: 200;
+		h2 {
+			height: 60px;
+			position: relative;
+			span {
+				@include fs-headline(5);
+				font-weight: 200;
+				display: block;
+				float:left;
+				height: 60px;
+			    line-height: 55px;
+			    margin-top: 0px;
+			}
 		}
+		
 		form.fancy-selector {
 			@include fs-headline(5);
 			font-weight: bold;
 			background-color:#5c6970;
+			float:left;
 
 			.select-wrapper {
+				padding-top:10px;
 		        &::after {
 		        	color:#eee;
-		            background-color: #5c6970; 
+		            background-color: #5c6970;
+		            top:10px;
 		        }
 		    }
 		    select {
