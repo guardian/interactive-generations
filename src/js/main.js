@@ -231,6 +231,7 @@ export function init(el, context, config, mediator) {
 
                         //bubbleBuckets.updateAge(age);
                         
+                        ages.select(status.age,status.country);
 
                         
                         d3.selectAll(".parents-profile form.fancy-selector").attr("class","fancy-selector "+GENERATIONS[AGES_GENERATIONS[age]].short_name)
