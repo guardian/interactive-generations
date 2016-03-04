@@ -69,48 +69,7 @@ export function init(el, context, config, mediator) {
             
             loadData((data) => {
 
-                
-                
-                /*
-                let totals=data.filter(d=>d.Age==="TOTAL")
-
-                let nested_totals=d3.nest()
-                    .key(d=>d.Country)
-                    .key(d=>d.Year)
-                    .entries(totals);
-
-                console.log(nested_totals)
-                let obj_totals={};
-                nested_totals.forEach(c=>{
-                    if(!obj_totals[c.key]) {
-                        obj_totals[c.key]={};
-                    }
-                    c.values.forEach(y=>{
-                        if(!obj_totals[c.key][y.key]) {
-                            obj_totals[c.key][y.key]=y.values[0].income;
-                        }
-                    })
-                })
-                console.log(obj_totals)
-                */
-
-                //data.forEach(d=>{
-                    //d.perc=d.income - obj_totals[d.Country][d.Year];
-                //})
-
-                //console.log(data);
-                //return;
-                
-                    
-                //console.log(data)
-                
-                /*new Generations(data,{
-                    container:"#generations",
-                    countries:["US"],//,"Italy","US","UK"],
-                    selected:"Australia"
-                })*/
-
-                
+            
                 data.forEach(d=>{
                     d.age=d.Age;//(age_fix[d.Age] || d.Age).replace(/years/gi,""); 
                 });

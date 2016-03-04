@@ -61,7 +61,7 @@ export function Age(data,options) {
 				top:20,
 				bottom:30,
 				left:10,
-				right:30
+				right:35
 			},
 			padding:{
 				top:0,
