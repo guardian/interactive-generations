@@ -27,8 +27,11 @@ export default function InlineSelector(list,__options) {
 					.append("option")
 						.attr("value",d=>d.shortname)
 						.html((d)=>{
-							//console.log(d)
-							return d.name ;
+							
+							if(d.name==="US" || d.name==="UK") {
+								return "the "+d.name;
+							}
+							return d.name;
 						})
 						/*.each(function(d){
 							let search=window.location.search.replace(/\?/gi,"").toLowerCase();
@@ -48,7 +51,13 @@ export default function InlineSelector(list,__options) {
 				return (d.shortname===options.selected);
 			})
 			.attr("selected","selected")
-			.html(d=>(d.name))
+			.html((d)=>{
+							
+				if(d.name==="US" || d.name==="UK") {
+					return "the "+d.name;
+				}
+				return d.name;
+			})
 	}
 
 	this.selectOption=(value)=>{

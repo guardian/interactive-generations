@@ -114,9 +114,9 @@ const country_fix={
 
 export const COUNTRY_NAMES={
     "AU":"Australia",
-    "UK":"the UK",
+    "UK":"UK",
     "IT":"Italy",
-    "US":"the US",
+    "US":"US",
     "ES":"Spain",
     "FR":"France",
     "DE":"Germany",

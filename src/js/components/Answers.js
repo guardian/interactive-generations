@@ -97,21 +97,33 @@ export function Q2(data,options) {
 
 		//console.log(d3.values(all_country_last_data))
 		//console.log(extents,best,worst,best_country,worst_country)
+		let the1="";
+		if(country==="US" || country==="UK") {
+			the1="the";
+		}
+		let the2="";
+		if(worst_country.Country==="US" || worst_country.Country==="UK") {
+			the2="the";
+		}
+		let the3="";
+		if(best_country.Country==="US" || best_country.Country==="UK") {
+			the3="the";
+		}
 
 		let txt="",
 			txt_best_worst="";
 
 		if(best) {
-			txt=`<h2>And ${COUNTRY_NAMES[country]} is the best place to be that age</h2>.`;
-			txt_best_worst=`The worst place to be your age is ${COUNTRY_NAMES[worst_country.Country]}`;
+			txt=`<h2>And ${the1} ${COUNTRY_NAMES[country]} is the best place to be that age</h2>.`;
+			txt_best_worst=`The worst place to be your age is ${the2} ${COUNTRY_NAMES[worst_country.Country]}`;
 		}
 		if(worst) {
-			txt=`<h2>And ${COUNTRY_NAMES[country]} is the worst place to be that age</h2>.`;	
-			txt_best_worst=`The best place to be your age is ${COUNTRY_NAMES[best_country.Country]}`;
+			txt=`<h2>And ${the1} ${COUNTRY_NAMES[country]} is the worst place to be that age</h2>.`;	
+			txt_best_worst=`The best place to be your age is ${the3} ${COUNTRY_NAMES[best_country.Country]}`;
 		}
 		if(!best && !worst) {
-			txt=`<h2>But hey, you are doing better than ${age} in ${COUNTRY_NAMES[worst_country.Country]}</h2>.`;
-			txt_best_worst=`The best place to be your age is ${COUNTRY_NAMES[best_country.Country]}`;
+			txt=`<h2>But hey, you are doing better than ${age} in ${the1} ${COUNTRY_NAMES[worst_country.Country]}</h2>.`;
+			txt_best_worst=`The best place to be your age is ${the3} ${COUNTRY_NAMES[best_country.Country]}`;
 		}
 
 		//console.log(txt,txt_best_worst)
