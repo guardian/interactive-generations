@@ -60,7 +60,7 @@ figure.interactive {
 
         @media(min-width:1140px){
             &.main-column {
-                margin-left:190px;
+                margin-left:160px;
             }
         }
         @media(min-width:1300px){
@@ -169,5 +169,6 @@ figure.interactive {
         margin-top:30px;
         @include fs-textSans(1);
         color:#767676;
+        margin-bottom:30px;
     }
 }
