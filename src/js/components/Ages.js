@@ -162,6 +162,10 @@ export function Age(data,options) {
 		strokeShadow(p)
 	}
 
+	this.resize=()=>{
+		//console.log("resize")
+	}
+
 }
 export function Ages(data,options) {
 

@@ -297,7 +297,9 @@ export function init(el, context, config, mediator) {
 
 
 
-                return;
+                window.addEventListener("optimizedResize", function() {
+                    myAge.resize();
+                });
                 
                 
                 
@@ -306,10 +308,28 @@ export function init(el, context, config, mediator) {
                 
             },{assetPath:config.assetPath,medians:medians});
 
-            return; 
+            
         }
-        //frameRequest = requestAnimationFrame(checkInnerHTML);
-    //});
 
+        ;(function() {
+            var throttle = function(type, name, obj) {
+                var obj = obj || window;
+                var running = false;
+                var func = function() {
+                    if (running) { return; }
+                    running = true;
+                    requestAnimationFrame(() => {
+                        obj.dispatchEvent(new CustomEvent(name));
+                        running = false;
+                    });
+                };
+                obj.addEventListener(type, func);
+            };
+
+            //* init - you can init any event
+            throttle ("resize", "optimizedResize");
+        })();
+
+        
 
 }
