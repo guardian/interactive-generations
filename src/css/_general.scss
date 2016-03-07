@@ -152,6 +152,10 @@ figure.interactive {
     .answer {
         margin:30px 0;
         
+        &#q1 {
+            margin-top:0;
+        }
+
         @include fs-headline(4);
         font-weight: 200;
 

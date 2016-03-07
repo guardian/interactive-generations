@@ -59,7 +59,7 @@ export default function AgeChart(data,options) {
 		HEIGHT= options.height || box.height;
 
 	SMALL=(WIDTH<=320);
-	HEIGHT=SMALL?HEIGHT*0.8:HEIGHT;
+	//HEIGHT=SMALL?HEIGHT*0.8:HEIGHT;
 	
 	let voronoi=false;
 	if(options.voronoi) {
@@ -489,9 +489,9 @@ export default function AgeChart(data,options) {
 					})
 				    .tickFormat((d)=>{
 				    	let year=d3.format("0d")(d);
-				    	if(!SMALL) {
-				    		return year;	
-				    	}
+				    	//if(!SMALL) {
+				    	//	return year;	
+				    	//}
 				    	if(year%1000===0) {
 				    		return year;
 				    	}
@@ -968,7 +968,7 @@ export default function AgeChart(data,options) {
 		HEIGHT= options.height || box.height;
 
 		SMALL=(WIDTH<=320);
-		HEIGHT=SMALL?HEIGHT*0.8:HEIGHT;
+		//HEIGHT=SMALL?HEIGHT*0.8:HEIGHT;
 
 		xscale.range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]);
 		yscale.range([HEIGHT-(margins.top+margins.bottom),0]);

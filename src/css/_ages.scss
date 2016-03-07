@@ -56,7 +56,7 @@
 		}
 		.age {
 			width:calc(100% / 3); // /14
-			min-height: auto;
+			min-height: 60px;
 			@include mq(tablet) {
 				width:calc(100% / 13); // /14
 				margin-top:0;
