@@ -15,31 +15,35 @@ import {Q1,Q2,Q3,Q4} from './components/Answers';
 
 export function init(el, context, config, mediator) {
     
-
-
-    let queries=window.location.search.replace("?","").split("&"),
-        selected_age=25,
-        selected_country="US";
-    //console.log(queries)
     
     let group_years=5;
-
-    queries.forEach(q => {
-      let query=q.split("=");
-
-      if(query[0]==="a") {
-          selected_age= +query[1];
-      }
-      if(query[0]==="c") {
-          selected_country=query[1];
-      }  
-    })
 
     let status={
         age:"25 to 29 years",
         parents_age:"50 to 54 years",
         country:"UK",
         parents_country:"UK"
+    }
+
+    if(window.guardian) {
+        if(window.guardian.config) {
+            if(window.guardian.config.page) {
+                if(window.guardian.config.page.edition) {
+                    if(window.guardian.config.page.edition==="US") {
+                        status.country="US";
+                        status.parents_country="US";
+                    }
+                    if(window.guardian.config.page.edition==="UK") {
+                        status.country="UK";
+                        status.parents_country="UK";
+                    }
+                    if(window.guardian.config.page.edition==="AU") {
+                        status.country="AU";
+                        status.parents_country="AU";
+                    }
+                }
+            }
+        }
     }
 
     //adds header
