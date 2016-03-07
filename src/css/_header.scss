@@ -23,15 +23,33 @@
 }
 
 .gv-page-header {
-	padding: 10px 0;
+	padding: 0 0 20px 0;
 	h1 {
 		font-family: $f-serif-headline;
 		font-weight: 200;
 		margin: 10px 0;
-		color: #a1afb7;
+		color: #fff;
 		max-width: 640px;
-		font-size: 40px;
+		font-size: 36px;
 		line-height: 1;
+	}
+
+	h1.compare {
+		font-size: 28px;
+		margin-top: 30px;
+		padding-top: 10px;
+		position: relative;
+
+	}
+
+	h1.compare::before {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 120px;
+		height: 1px;
+		background: #a1afb7;
+		content: " ";
 	}
 
 	h1.gv-fill-in {
@@ -40,9 +58,9 @@
 	}
 
 	p {
-		color: #fff;
+		color: #a1afb7;
 		@include fs-bodyCopy(2);
-		max-width: 880px;
+		max-width: 640px;
 
 	}
 
@@ -106,6 +124,19 @@
 	.gv-page-header {
 		.gv-header-blank {
 			width: 460px;
+		}
+
+		h1 {
+			font-size: 42px;
+		}
+
+		h1.compare {
+			font-size: 32px;
+			line-height: 32px;
+		}
+
+		p {
+			@include fs-bodyCopy(3);
 		}
 	}
 	

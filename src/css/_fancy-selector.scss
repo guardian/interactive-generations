@@ -62,14 +62,14 @@ form.fancy-selector {
         -webkit-box-shadow: none;
         box-shadow: none;
 
-        @include mq(tablet) {
+       // @include mq(tablet) {
             text-align:left;
             background-color: transparent;
            // margin: 0;//0 0 0 3px;
 
             -webkit-box-shadow: none;
             box-shadow: none;    
-        }
+        //}
         outline: 0;
         
         border:none;
