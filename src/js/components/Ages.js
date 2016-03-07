@@ -163,7 +163,7 @@ export function Age(data,options) {
 	}
 
 	this.resize=()=>{
-		//console.log("resize")
+		chart.resize();
 	}
 
 }

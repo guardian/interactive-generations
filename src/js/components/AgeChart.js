@@ -14,7 +14,7 @@ export default function AgeChart(data,options) {
 	let svg=d3.select(options.container)
 						.append("svg")
 
-	let defs=svg.append("defs");
+	/*let defs=svg.append("defs");
 		defs.append("marker")
 				.attr({
 					id:"markerArrowUp",
@@ -46,7 +46,7 @@ export default function AgeChart(data,options) {
 					.style({
 						fill:"#dc2a7d",
 						stroke:"none"
-					})
+					})*/
 
 	if(options.height) {
 		svg.attr("height",options.height)
@@ -93,6 +93,7 @@ export default function AgeChart(data,options) {
 	}
 
 	let country,marker,deviation,axes,label;
+	let xaxis,yaxis,xAxis,yAxis;
 
 	let extents=options.extents;
 
@@ -425,7 +426,7 @@ export default function AgeChart(data,options) {
 				.text(d=>d.year)
 		
 
-		let yAxis = d3.svg.axis()
+		yAxis = d3.svg.axis()
 				    .scale(yscale)
 				    .orient("left")
 				    //.ticks(options.indicator.ticks || 5)
@@ -443,7 +444,7 @@ export default function AgeChart(data,options) {
 				    })
 				    
 
-		let yaxis=axes.append("g")
+		yaxis=axes.append("g")
 			      .attr("class", "y axis")
 			      //.classed("hidden",!options.first)
 			      .classed("hidden",!options.axis.x)
@@ -476,7 +477,7 @@ export default function AgeChart(data,options) {
 					.attr("y2",yscale(0))
 		}
 
-		let xAxis = d3.svg.axis()
+		xAxis = d3.svg.axis()
 				    .scale(xscale)
 				    .orient("bottom")
 				    //.ticks(2)
@@ -499,7 +500,7 @@ export default function AgeChart(data,options) {
 				    })
 				    
 
-		let xaxis=axes.append("g")
+		xaxis=axes.append("g")
 			      .attr("class", "x axis")
 			      //.classed("hidden",!options.first)
 			      .classed("hidden",!options.axis.x)
@@ -959,6 +960,150 @@ export default function AgeChart(data,options) {
 		strokeShadow(annotation.node())
 	}
 	this.transition = () => {
+		transition();
+	}
+	this.resize= () => {
+		let box=svg.node().getBoundingClientRect();
+		WIDTH = options.width || box.width;
+		HEIGHT= options.height || box.height;
+
+		SMALL=(WIDTH<=320);
+		HEIGHT=SMALL?HEIGHT*0.8:HEIGHT;
+
+		xscale.range([0,WIDTH-(margins.left+margins.right+padding.left+padding.right)]);
+		yscale.range([HEIGHT-(margins.top+margins.bottom),0]);
+
+		country
+			.select("path.bg")
+			.attr("d",d => {
+					let values=d.values.map(v => {
+						return {
+							x:v.year,
+							y:v[FIELDNAME]
+						}
+					});
+
+					return line(values)
+				}
+			)
+
+		country
+			.select("path.family")
+			.attr("d",d => {
+					let values=d.values.map(v => {
+						return {
+							x:v.year,
+							y:v[FIELDNAME]
+						}
+					});
+
+					return line(values)
+				}
+			)
+
+		label.attr("transform",d=>{
+							let x=xscale(d.year),
+								y=yscale(d[FIELDNAME])
+							return `translate(${x},${y})`
+						})
+		country
+				.select("path.avg")
+				.attr("d",() => {
+						let y = yscale(options.average[0][FIELDNAME]);
+						return "M"+(-margins.left)+","+y+"L"+(xscale.range()[1]+margins.left+padding.right)+","+y;
+						//console.log("AVERAGE",options.average)
+						//console.log("AAAAAARGHHHH",options)
+						let values=options.average.map(v => {
+							return {
+								x:v.year,
+								y:v[FIELDNAME]
+							}
+						});
+						//console.log("AVERAGE LINE",values)
+						return line(values)
+					}
+				)
+		if(other_age) {
+		
+			other_age.select("path")
+					.attr("d",d => {
+						
+						let values=d.map(v => {
+							if(voronoi) {
+								voronoi.add({
+									x:xscale(v.year),
+									y:yscale(v[FIELDNAME]),
+									d:v
+								});
+							}
+
+							return {
+								x:v.year,
+								y:v[FIELDNAME]
+							}
+						});
+
+						return line(values)
+					})
+		}
+
+		xaxis.attr("transform", "translate("+0+"," + yscale.range()[0] + ")")
+			      .call(xAxis);
+
+		yaxis.attr("transform", "translate("+(xscale.range()[1])+"," + 0 + ")")
+			      .call(yAxis);
+
+		yaxis.selectAll(".tick")
+				//.filter((d,i) => d!==0)
+				.select("line")
+					//.classed("visible",true)
+					.attr("x1",(d,i)=>{
+						return padding.right
+					})
+					.attr("x2",(d,i) => {
+						return -WIDTH;
+						return xscale.range()[1]
+					})
+		yaxis.selectAll(".tick")
+				.classed("left",labels.y.align==="left")
+				.classed("right",labels.y.align==="right")
+				.select("text")
+					.attr("x",labels.y.align==="left"?(-xscale.range()[1]-margins.left):padding.right)
+					.attr("y","-7")
+		
+		yaxis.select("line.zero")
+				.attr("x1",0)
+				.attr("x2",-xscale.range()[1])
+				.attr("y1",yscale(0))
+				.attr("y2",yscale(0))
+		
+		
+
+		deviation.select("path.bg")
+			.attr("d",()=>{
+				let points1=options.deviation.map(d=>({x:+d.year,y:d.value[0]})),
+					points2=options.deviation.map(d=>({x:+d.year,y:d.value[1]})).reverse();
+				return line(points1.concat(points2));
+			});
+
+		deviation.select("path.b1")
+				.attr("d",()=>{
+					return line(options.deviation.map(d=>({x:+d.year,y:d.value[0]})));
+				});
+		deviation.select("path.b2")
+				.attr("d",()=>{
+					return line(options.deviation.map(d=>({x:+d.year,y:d.value[1]})));
+				});
+
+		country.select(".line-name.bg")
+					.attr("x",d=>xscale(d.values[Math.floor(d.values.length*3/4)].year))
+					.attr("y",d=>yscale(d.values[Math.floor(d.values.length*3/4)][FIELDNAME]));
+
+		country.select(".line-name.fg")
+					.attr("x",d=>xscale(d.values[Math.floor(d.values.length*3/4)].year))
+					.attr("y",d=>yscale(d.values[Math.floor(d.values.length*3/4)][FIELDNAME]))
+
+		updateMarkers();
 		transition();
 	}
 	function transition() {

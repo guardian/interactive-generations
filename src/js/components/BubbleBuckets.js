@@ -156,13 +156,18 @@ export function BubbleBuckets(data,options) {
 		buckets.classed("selected",d=>(d.key===country));
 	}
 
-	new Slider(data,{
+	this.resize=()=> {
+		//console.log("resize")
+		bubble_buckets.forEach(d=>d.resize());
+	}
+
+	/*new Slider(data,{
 		container:options.container,
 		dragCallback:(year)=>{
 			bubble_buckets.forEach(d=>{d.update(year)})
 			
 		}
-	})	
+	})*/	
 
 }
 function BubbleBucket(data,options) {
@@ -349,12 +354,12 @@ function BubbleBucket(data,options) {
 
 			})
 	deviation.append("path")
-			.attr("class","border")
+			.attr("class","border b1")
 			.attr("d",()=>{
 				return line(data.range.map(d=>({x:+d.year,y:d.value[0]})));
 			})
 	deviation.append("path")
-			.attr("class","border")
+			.attr("class","border b2")
 			.attr("d",()=>{
 				return line(data.range.map(d=>({x:+d.year,y:d.value[1]})));
 			})
@@ -579,7 +584,74 @@ function BubbleBucket(data,options) {
 			})
 	}
 
+	this.resize=()=>{
+		let box=svg.node().getBoundingClientRect();
+		WIDTH = options.width || box.width;
+		HEIGHT= options.height || box.height;
 
+		xscale.rangePoints([0,WIDTH-(margins.left+margins.right)]);
+		sparkline_xscale.range([0,(WIDTH-(margins.left+margins.right))/1]);
+		yscale.range([HEIGHT-(margins.top+margins.bottom),0]);
+
+		//console.log(WIDTH,HEIGHT)
+
+		gauge
+			.attr("x1",0)
+			.attr("x2",WIDTH)
+			.attr("y1",0)
+			.attr("y1",0)
+
+		
+		sparkline.select("path")
+					.attr("d",d=>{
+						return line(d.values.map(v=>{
+							return {
+								x:+v.key,
+								y:v.values[FIELDNAME]
+							}
+						}))
+					})
+
+		bubble.attr("transform",d=>{
+						let x=sparkline_xscale(d.values[d.values.length-1].key),//xscale(d.key),
+							y=yscale(d.values[d.values.length-1].values[FIELDNAME]);
+						return `translate(${x},${y})`;
+					})
+
+		deviation.select("path")
+				.attr("d",()=>{
+
+					let points1=data.range.map(d=>({x:+d.year,y:d.value[0]})),
+						points2=data.range.map(d=>({x:+d.year,y:d.value[1]})).reverse();
+
+					return line(points1.concat(points2));
+
+				})
+		deviation.select("path.b1")
+				.attr("d",()=>{
+					return line(data.range.map(d=>({x:+d.year,y:d.value[0]})));
+				})
+		deviation.select("path.b2")
+				.attr("d",()=>{
+					return line(data.range.map(d=>({x:+d.year,y:d.value[1]})));
+				})				    
+
+		yaxis
+	      .attr("transform", "translate("+(-margins.left)+"," + 0 + ")")
+	      .call(yAxis);
+
+		yaxis.selectAll(".tick")
+				.select("line")
+					.classed("hidden",1)//d=>(d!==0))
+					.attr("x2",(d,i) => {
+						return WIDTH
+					})
+		yaxis.selectAll(".tick")
+				.select("text")
+					.attr("x",0)
+					.attr("y","-7")
+
+	}
 
 }
 function Slider(data,options){

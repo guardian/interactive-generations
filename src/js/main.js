@@ -299,6 +299,8 @@ export function init(el, context, config, mediator) {
 
                 window.addEventListener("optimizedResize", function() {
                     myAge.resize();
+                    parentsAge.resize();
+                    bubbleBuckets.resize();
                 });
                 
                 
