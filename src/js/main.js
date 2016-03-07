@@ -166,7 +166,7 @@ export function init(el, context, config, mediator) {
                         //myAge.removeAnnotations();
                         //myAge.addAnnotations();
 
-                        bubbleBuckets.updateAge(age);
+                        //bubbleBuckets.updateAge(age);
                         
                         
 

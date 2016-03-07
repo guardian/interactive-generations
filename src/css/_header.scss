@@ -60,6 +60,17 @@
 		font-weight: 400;
 	}
 
+	h2 {
+		@include fs-header(3);
+		a {
+			color:#fff;
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	}
+
 	p {
 		color: #a1afb7;
 		@include fs-bodyCopy(2);

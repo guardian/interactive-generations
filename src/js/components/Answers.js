@@ -132,9 +132,11 @@ export function Q2(data,options) {
 
 	}
 }
-function capitalize(string) {
-	if(string==="") return "";
-	return string.charAt(0).toUpperCase() + this.slice(1);
+function capitalize(str) {
+	if(str==="") {
+		return "";
+	}
+	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export function Q3(data,options) {

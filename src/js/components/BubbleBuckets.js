@@ -116,7 +116,7 @@ export function BubbleBuckets(data,options) {
 
 	this.updateAge=(age)=>{
 
-		console.log("updateAge",age)
+		//console.log("updateAge",age)
 
 		options.filter.ages=[age];
 
@@ -135,17 +135,17 @@ export function BubbleBuckets(data,options) {
 			}
 		}
 
-		console.log(nested_data.sort((a,b)=>{
+		/*console.log(nested_data.sort((a,b)=>{
 			console.log(COUNTRIES,COUNTRIES.indexOf(a.key),"-",COUNTRIES.indexOf(b.key))
 			return COUNTRIES.indexOf(a.key)-COUNTRIES.indexOf(b.key);
-		}))
+		}))*/
 
 		buckets
 			//.data(nested_data)
 			.data(nested_data.sort((a,b)=>(COUNTRIES.indexOf(a.key)-COUNTRIES.indexOf(b.key))))
 				.select("div.chart")
 				.each(function(d,i){
-					console.log(i,d)
+					//console.log(i,d)
 					bubble_buckets[i].updateAge(d,age);
 				})
 
