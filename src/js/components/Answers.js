@@ -170,8 +170,11 @@ export function Q3(data,options) {
 
 		let dollars=d3.format(",.0d");
 
-		let txt=`<h2>They are doing ${better} than you!</h2>
-			In real terms, their disposable income is about ${"$"+dollars(Math.abs(raw_diff))} ${raw_diff>0?"more":"less"} than in ${first_year}.`;
+		let txt=`<h2>They are doing ${better} than you!</h2> `;
+		if(last_my.Age===last_other.Age) {
+			txt="";
+		}
+		txt+=`In real terms, their disposable income is about ${"$"+dollars(Math.abs(raw_diff))} ${raw_diff>0?"more":"less"} than in ${first_year}.`;
 
 		container.html(txt);
 
